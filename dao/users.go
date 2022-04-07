@@ -85,7 +85,10 @@ func CreateUser(users *module.Users) error {
 
 func CountUserByUsername(username *string) (int, error) {
 	var count int
-	where := map[string]interface{}{"username": *username}
+	where := map[string]interface{}{}
+	if username != nil {
+		where["username"] = *username
+	}
 	selectFields := []string{"count(1) count"}
 	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {

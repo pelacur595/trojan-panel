@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"trojan/module/vo"
 	"trojan/service"
+	"trojan/util"
 )
 
 func PanelGroup(c *gin.Context) {
@@ -26,6 +27,15 @@ func PanelGroup(c *gin.Context) {
 		TotalFlow:    userVo.Quota,
 		ResidualFlow: userVo.Quota - int(userVo.Upload) - int(userVo.Download),
 		NodeCount:    nodeCount,
+		ExpireTime:   userVo.ExpireTime,
+	}
+	if util.IsAdmin(userInfo.RoleNames) {
+		userCount, err := service.CountUserByUsername(nil)
+		if err != nil {
+			vo.Fail(err.Error(), c)
+			return
+		}
+		panelGroupVo.UserCount = userCount
 	}
 	vo.Success(panelGroupVo, c)
 }

@@ -3,7 +3,6 @@ package util
 import (
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan/module/constant"
 	"trojan/module/vo"
 )
 
@@ -36,6 +35,11 @@ func ToByte(b int) int {
 	}
 }
 
-func IsAdmin(id uint) bool {
-	return constant.SYSADMIN == id || constant.ADMIN == id
+func IsAdmin(roleNames []string) bool {
+	for _, item := range roleNames {
+		if item == "admin" {
+			return true
+		}
+	}
+	return false
 }
