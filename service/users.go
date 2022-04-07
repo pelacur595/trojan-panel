@@ -119,6 +119,10 @@ func UpdateUserById(users *module.Users) error {
 		if err := DisableUsers([]string{*users.Username}); err != nil {
 			return err
 		}
+	} else {
+		if err := EnableUser(users.Username); err != nil {
+			return err
+		}
 	}
 	return nil
 }
