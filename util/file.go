@@ -1,0 +1,194 @@
+package util
+
+import (
+	"archive/zip"
+	"flag"
+	"fmt"
+	"github.com/sirupsen/logrus"
+	"io"
+	"io/ioutil"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+	"trojan/module/constant"
+)
+
+// 解压
+func Unzip(src string, dest string) error {
+	// 打开读取压缩文件
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	// 遍历压缩文件内的文件，写入磁盘
+	for _, f := range r.File {
+		filePath := filepath.Join(dest, f.Name)
+
+		if !strings.HasPrefix(filePath, filepath.Clean(dest)+string(os.PathSeparator)) {
+			return fmt.Errorf("%s: 非法的文件路径", filePath)
+		}
+
+		// 如果是目录，就创建目录
+		if f.FileInfo().IsDir() {
+			if err = os.MkdirAll(filePath, os.ModePerm); err != nil {
+				return err
+			}
+			continue
+		}
+
+		outFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			return err
+		}
+
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(outFile, rc)
+		if err != nil {
+			return err
+		}
+
+		rc.Close()
+		outFile.Close()
+	}
+	return nil
+}
+
+// 删除文件夹内的子文件包括目录
+func RemoveSubFile(filePath string) error {
+	dir, err := ioutil.ReadDir(filePath)
+	if err != nil {
+		return err
+	}
+	for _, d := range dir {
+		if err := os.RemoveAll(path.Join([]string{filePath, d.Name()}...)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// 判断文件或者文件夹是否存在
+func Exists(path string) bool {
+	// 获取文件信息
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		return false
+	}
+	return true
+}
+
+// 初始化文件/文件夹
+func InitFile() {
+	logPath := constant.LogPath
+	if !Exists(logPath) {
+		if err := os.Mkdir(logPath, os.ModePerm); err != nil {
+			logrus.Errorf("创建logs文件夹异常 err: %v\n", err)
+			panic(err)
+		}
+	}
+	webFilePath := constant.WebFilePath
+	if !Exists(webFilePath) {
+		if err := os.Mkdir(webFilePath, os.ModePerm); err != nil {
+			logrus.Errorf("创建webfile文件夹异常 err: %v\n", err)
+			panic(err)
+		}
+	}
+	configPath := constant.ConfigPath
+	if !Exists(configPath) {
+		if err := os.Mkdir(configPath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config文件夹异常 err: %v\n", err)
+			panic(err)
+		}
+	}
+
+	configFilePath := constant.ConfigFilePath
+	if !Exists(configFilePath) {
+		file, err := os.Create(configFilePath)
+		if err != nil {
+			logrus.Errorf("创建config.ini文件异常 err: %v\n", err)
+			panic(err)
+		}
+		defer file.Close()
+
+		var (
+			host     string
+			password string
+			port     string
+		)
+		flag.StringVar(&host, "host", "localhost", "database host")
+		flag.StringVar(&password, "password", "123456", "database password")
+		flag.StringVar(&port, "port", "3306", "database port")
+		flag.Parse()
+		_, err = file.WriteString(fmt.Sprintf(
+			`[mysql]
+host=%s
+user=root
+password=%s
+port=%s
+[log]
+filename=logs/trojan-panel.log
+max_size=1
+max_backups=5
+max_age=30
+compress=true
+`, host, password, port))
+		if err != nil {
+			logrus.Errorf("config.ini文件写入异常 err: %v\n", err)
+			panic(err)
+		}
+		flag.Usage = usage
+	}
+
+	rbacModelConfigPath := constant.RbacModelFilePath
+	if !Exists(rbacModelConfigPath) {
+		file, err := os.Create(rbacModelConfigPath)
+		if err != nil {
+			logrus.Errorf("创建rbac_model.conf文件异常 err: %v\n", err)
+			panic(err)
+		}
+		defer file.Close()
+
+		_, err = file.WriteString(
+			`[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+`)
+		if err != nil {
+			logrus.Errorf("rbac_model.conf文件写入异常 err: %v\n", err)
+			panic(err)
+		}
+	}
+}
+
+func usage() {
+	_, _ = fmt.Fprintf(os.Stderr, `trojan panel help
+Usage: trojanpanel [-host] [-password] [-port]
+
+Options:
+	-host    	 database host
+	-password    database password
+	-port    	 database port
+	-h 			 help
+`)
+}

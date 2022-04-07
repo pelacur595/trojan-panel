@@ -1,0 +1,16 @@
+package api
+
+import (
+	"github.com/gin-gonic/gin"
+	"trojan/module/vo"
+	"trojan/service"
+)
+
+func SelectNodeTypeList(c *gin.Context) {
+	nodeTypeVos, err := service.SelectNodeTypeList()
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nodeTypeVos, c)
+}
