@@ -19,8 +19,8 @@ func main() {
 func init() {
 	util.InitFile()
 	core.InitConfig()
-	dao.InitDB()
 	middleware.InitLog()
-	api.InitValidator()
+	dao.InitDB()
 	middleware.InitCron()
+	api.InitValidator()
 }
