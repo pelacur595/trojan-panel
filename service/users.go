@@ -147,8 +147,9 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 	u := constant.USER
 	var deleted uint = 0
 	milli := util.DayToMilli(systemVo.RegisterExpireDays)
+	registerQuota := util.ToByte(systemVo.RegisterQuota)
 	user := module.Users{
-		Quota:      &systemVo.RegisterQuota,
+		Quota:      &registerQuota,
 		Username:   userRegisterDto.Username,
 		Pass:       userRegisterDto.Pass,
 		RoleId:     &u,
