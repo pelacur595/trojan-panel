@@ -34,7 +34,7 @@ func InitDB() {
 
 	var count int
 	if err = db.QueryRow("SELECT COUNT(1) FROM information_schema.TABLES WHERE table_schema = 'trojan' GROUP BY table_schema;").
-		Scan(&count); err != sql.ErrNoRows {
+		Scan(&count); err != nil && err != sql.ErrNoRows {
 		logrus.Errorf("查询数据库异常 err: %v\n", err)
 		panic(err)
 	}
