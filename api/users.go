@@ -125,14 +125,14 @@ func DeleteUserById(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
-func UpdateUserPassById(c *gin.Context) {
+func UpdateUserPassByUsername(c *gin.Context) {
 	var userUpdatePassDto dto.UserUpdatePassDto
 	_ = c.ShouldBindJSON(&userUpdatePassDto)
 	if err := validate.Struct(&userUpdatePassDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.UpdateUserPassById(userUpdatePassDto.OldPass, userUpdatePassDto.NewPass, userUpdatePassDto.Id); err != nil {
+	if err := service.UpdateUserPassByUsername(userUpdatePassDto.OldPass, userUpdatePassDto.NewPass, userUpdatePassDto.Username); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}

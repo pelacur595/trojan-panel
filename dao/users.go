@@ -2,7 +2,6 @@ package dao
 
 import (
 	"crypto/sha256"
-	"database/sql"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -223,16 +222,15 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 	return &usersVo, nil
 }
 
-func UpdateUserPassById(oldPass *string, newPass *string, id *uint) error {
-	username, err := SelectUsernameByIdAndPass(id, oldPass)
+func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string) error {
+	_, err := SelectUserByUsernameAndPass(username, oldPass)
 	if err != nil {
-		return err
+		return errors.New(constant.OriPassError)
 	}
-
 	encryPass := base64.StdEncoding.EncodeToString([]byte(*newPass))
-	encryPassword := sha256.Sum224([]byte(fmt.Sprintf("%s&%s", username, *newPass)))
+	encryPassword := sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *username, *newPass)))
 
-	where := map[string]interface{}{"id": *id}
+	where := map[string]interface{}{"username": *username}
 	update := map[string]interface{}{
 		"`pass`":   encryPass,
 		"password": fmt.Sprintf("%x", encryPassword),
@@ -248,23 +246,6 @@ func UpdateUserPassById(oldPass *string, newPass *string, id *uint) error {
 		return errors.New(constant.SysError)
 	}
 	return nil
-}
-
-func SelectUsernameByIdAndPass(id *uint, pass *string) (string, error) {
-	var username string
-	encryPass := base64.StdEncoding.EncodeToString([]byte(*pass))
-	where := map[string]interface{}{"id": *id, "pass": encryPass}
-	selectFields := []string{"username"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
-
-	err = db.QueryRow(buildSelect, values...).Scan(&username)
-	if err == sql.ErrNoRows {
-		return "", errors.New(constant.OriPassError)
-	} else if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	return username, nil
 }
 
 func UpdateUserById(users *module.Users) error {

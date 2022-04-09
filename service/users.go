@@ -80,8 +80,8 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 	return userVo, nil
 }
 
-func UpdateUserPassById(oldPass *string, newPass *string, id *uint) error {
-	if err := dao.UpdateUserPassById(oldPass, newPass, id); err != nil {
+func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string) error {
+	if err := dao.UpdateUserPassByUsername(oldPass, newPass, username); err != nil {
 		return err
 	}
 	return nil

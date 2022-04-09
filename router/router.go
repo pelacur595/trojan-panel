@@ -38,7 +38,7 @@ func Router(router *gin.Engine) {
 			// 通过id删除账户
 			user.POST("/deleteUserById", api.DeleteUserById)
 			// 修改密码
-			user.POST("/updateUserPassById", api.UpdateUserPassById)
+			user.POST("/updateUserPassByUsername", api.UpdateUserPassByUsername)
 			// 修改账户
 			user.POST("/updateUserById", api.UpdateUserById)
 		}
