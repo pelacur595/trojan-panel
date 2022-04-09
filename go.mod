@@ -1,6 +1,6 @@
 module trojan
 
-go 1.16
+go 1.17
 
 require (
 	github.com/Blank-Xu/sql-adapter v0.0.0-20210714092925-0bdd0d548758
