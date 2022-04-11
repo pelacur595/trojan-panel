@@ -30,4 +30,6 @@ const (
 	RoleNotExist string = "不存在该角色"
 
 	SystemNotExist string = "不存在该系统设置"
+
+	RateLimiterError string = "点的太快啦"
 )

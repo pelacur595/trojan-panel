@@ -7,7 +7,7 @@ import (
 )
 
 func Router(router *gin.Engine) {
-	router.Use(middleware.LogHandler())
+	router.Use(middleware.RateLimiterHandler(), middleware.LogHandler())
 	trojanAuth := router.Group("/api/auth")
 	{
 		// 登录

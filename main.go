@@ -17,10 +17,18 @@ func main() {
 }
 
 func init() {
+	// 文件
 	util.InitFile()
+	// 全局配置
 	core.InitConfig()
+	// 日志
 	middleware.InitLog()
+	// 数据库
 	dao.InitDB()
+	// 定时任务
 	middleware.InitCron()
+	// 限流
+	middleware.InitRateLimiter()
+	// 参数校验
 	api.InitValidator()
 }
