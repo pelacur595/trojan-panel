@@ -87,7 +87,7 @@ DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
-  `ip` varchar(128) NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `ip` varchar(64) NOT NULL DEFAULT '' COMMENT 'IP地址',
   `port` int(10) unsigned NOT NULL DEFAULT '443' COMMENT '端口',
   `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '类型 1/trojan-go 2/trojan-gfw',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
