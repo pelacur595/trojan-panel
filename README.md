@@ -9,20 +9,19 @@ Trojan Panel后端
 SET CGO_ENABLED=0
 SET GOOS=windows
 SET GOARCH=amd64
-go build -o build/trojan-panel_dev.exe
-go build -ldflags="-H windowsgui" -o build/trojan-panel.exe
+go build -ldflags="-H windowsgui -s -w" -o build/trojan-panel_win.exe
 
 # Mac
 SET CGO_ENABLED=0
 SET GOOS=darwin
 SET GOARCH=amd64
-go build -o build/trojan-panel_mac
+go build -ldflags "-s -w" -o build/trojan-panel_mac
 
 # Linux
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
-go build -o build/trojan-panel
+go build -ldflags "-s -w" -o build/trojan-panel
 ```
 
 # Telegram讨论组
