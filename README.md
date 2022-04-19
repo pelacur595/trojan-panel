@@ -22,6 +22,9 @@ SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
 go build -ldflags "-s -w" -o build/trojan-panel
+# 加密编译
+go install mvdan.cc/garble@latest
+garble -literals build -o build/trojan-panel
 ```
 
 # Telegram讨论组
