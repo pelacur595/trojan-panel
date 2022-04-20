@@ -34,4 +34,5 @@ garble -literals build -o build/trojan-panel
 
 # 致谢
 
-- [trojan](https://trojan-gfw.github.io/trojan/authenticator)
+- [trojan-gfw](https://github.com/trojan-gfw/trojan)
+- [trojan-go](https://github.com/p4gefau1t/trojan-go)
