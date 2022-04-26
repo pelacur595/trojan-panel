@@ -122,17 +122,19 @@ func InitFile() {
 
 		var (
 			host     string
+			user     string
 			password string
 			port     string
 		)
 		flag.StringVar(&host, "host", "localhost", "database host")
+		flag.StringVar(&user, "user", "root", "database user")
 		flag.StringVar(&password, "password", "123456", "database password")
 		flag.StringVar(&port, "port", "3306", "database port")
 		flag.Parse()
 		_, err = file.WriteString(fmt.Sprintf(
 			`[mysql]
 host=%s
-user=root
+user=%s
 password=%s
 port=%s
 [log]
@@ -141,7 +143,7 @@ max_size=1
 max_backups=5
 max_age=30
 compress=true
-`, host, password, port))
+`, host, user, password, port))
 		if err != nil {
 			logrus.Errorf("config.ini文件写入异常 err: %v\n", err)
 			panic(err)
