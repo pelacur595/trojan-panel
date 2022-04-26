@@ -18,7 +18,7 @@ func InitDB() {
 	var err error
 
 	db, err = manager.
-		New("trojan", mySQLConfig.User, mySQLConfig.Password, mySQLConfig.Host).
+		New("trojan_panel_db", mySQLConfig.User, mySQLConfig.Password, mySQLConfig.Host).
 		Set(
 			manager.SetCharset("utf8"),
 			manager.SetAllowCleartextPasswords(true),
@@ -33,7 +33,7 @@ func InitDB() {
 	}
 
 	var count int
-	if err = db.QueryRow("SELECT COUNT(1) FROM information_schema.TABLES WHERE table_schema = 'trojan' GROUP BY table_schema;").
+	if err = db.QueryRow("SELECT COUNT(1) FROM information_schema.TABLES WHERE table_schema = 'trojan_panel_db' GROUP BY table_schema;").
 		Scan(&count); err != nil && err != sql.ErrNoRows {
 		logrus.Errorf("查询数据库异常 err: %v\n", err)
 		panic(err)
