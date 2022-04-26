@@ -18,13 +18,13 @@ SET GOARCH=amd64
 go build -ldflags "-s -w" -o build/trojan-panel_mac
 
 # Linux
+go install mvdan.cc/garble@latest
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
 # 普通编译
 go build -ldflags "-s -w" -o build/trojan-panel
 # 加密编译（推荐）
-go install mvdan.cc/garble@latest
 garble -literals build -o build/trojan-panel
 ```
 
