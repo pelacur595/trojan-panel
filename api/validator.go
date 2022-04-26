@@ -31,3 +31,11 @@ func validatePositiveInt(f validator.FieldLevel) bool {
 	compile := regexp.MustCompile(reg)
 	return compile.MatchString(str)
 }
+
+// 邮箱 只支持163 126 qq gmail
+func validateEmail(f validator.FieldLevel) bool {
+	str := strconv.FormatUint(f.Field().Uint(), 10)
+	reg := "^([A-Za-z0-9_\\-\\.])+\\@(163.com|126.com|qq.com|gmail.com)$"
+	compile := regexp.MustCompile(reg)
+	return compile.MatchString(str)
+}

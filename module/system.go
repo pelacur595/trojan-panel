@@ -8,6 +8,10 @@ type System struct {
 	OpenRegister       *uint      `ddb:"open_register"`        // 开放注册 0/否 1/是
 	RegisterQuota      *int       `ddb:"register_quota"`       // 注册用户默认配额 单位/byte
 	RegisterExpireDays *uint      `ddb:"register_expire_days"` // 注册用户过期天数 单位/天
+	EmailHost          *string    `ddb:"email_host"`           // 系统邮箱设置-host
+	EmailPort          *int       `ddb:"email_port"`           // 系统邮箱设置-port
+	EmailUsername      *string    `ddb:"email_username"`       // 系统邮箱设置-username
+	EmailPassword      *string    `ddb:"email_password"`       // 系统邮箱设置-password
 	CreateTime         *time.Time `ddb:"create_time"`
 	UpdateTime         *time.Time `ddb:"update_time"`
 }

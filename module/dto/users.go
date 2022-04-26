@@ -19,6 +19,7 @@ type UserCreateDto struct {
 	Quota      *int    `json:"quota" form:"quota" validate:"-"`
 	Username   *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
 	Pass       *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
+	Email      *string `json:"email" form:"email" validate:"required,validateEmail"`
 	RoleId     *uint   `json:"roleId" form:"roleId" validate:"required,oneof=2 3"`
 	Deleted    *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
 	ExpireTime *uint   `json:"expireTime" form:"expireTime" validate:"required,gte=0"`
@@ -29,6 +30,7 @@ type UserUpdateDto struct {
 	Quota      *int    `json:"quota" form:"quota" validate:"-"`
 	Username   *string `json:"username" form:"username" validate:"omitempty,min=6,max=20,validateStr"`
 	Pass       *string `json:"pass" form:"pass" validate:"omitempty,min=6,max=20,validateStr"`
+	Email      *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
 	RoleId     *uint   `json:"roleId" form:"roleId" validate:"required,oneof=1 2 3"`
 	Deleted    *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
 	ExpireTime *uint   `json:"expireTime" form:"expireTime" validate:"required,gte=0"`
@@ -42,4 +44,5 @@ type UserLoginDto struct {
 type UserRegisterDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr,excludes=admin"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
+	Email    *string `json:"email" form:"email" validate:"required,validateEmail"`
 }

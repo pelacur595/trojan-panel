@@ -162,6 +162,7 @@ func UpdateUserById(c *gin.Context) {
 		Quota:      &toByte,
 		Username:   userUpdateDto.Username,
 		Pass:       userUpdateDto.Pass,
+		Email:      userUpdateDto.Email,
 		RoleId:     userUpdateDto.RoleId,
 		Deleted:    userUpdateDto.Deleted,
 		ExpireTime: userUpdateDto.ExpireTime,

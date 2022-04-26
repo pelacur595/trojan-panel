@@ -10,6 +10,7 @@ type UsersVo struct {
 	Download   uint      `json:"download"`
 	Upload     uint      `json:"upload"`
 	Username   string    `json:"username"`
+	Email      string    `json:"email"`
 	RoleId     uint      `json:"roleId"`
 	Deleted    uint      `json:"deleted"`
 	ExpireTime uint      `json:"expireTime"`

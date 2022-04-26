@@ -10,3 +10,11 @@ type SystemVo struct {
 type SettingVo struct {
 	OpenRegister uint `json:"openRegister"`
 }
+
+type SystemEmailVo struct {
+	Id            uint   `json:"id"`
+	EmailHost     string `json:"emailHost"`
+	EmailPort     int    `json:"emailPort"`
+	EmailUsername string `json:"emailUsername"`
+	EmailPassword string `json:"emailPassword"`
+}

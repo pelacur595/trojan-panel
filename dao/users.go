@@ -18,7 +18,7 @@ func SelectUserById(id *uint) (*vo.UsersVo, error) {
 
 	var user module.Users
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "role_id", "username", "FLOOR(quota/1024/1024) quota", "FLOOR(upload/1024/1024) upload", "FLOOR(download/1024/1024) download,deleted,expire_time"}
+	selectFields := []string{"id", "role_id", "username", "email", "FLOOR(quota/1024/1024) quota", "FLOOR(upload/1024/1024) upload", "FLOOR(download/1024/1024) download,deleted,expire_time"}
 	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -44,6 +44,7 @@ func SelectUserById(id *uint) (*vo.UsersVo, error) {
 		Id:         *user.Id,
 		Quota:      *user.Quota,
 		Username:   *user.Username,
+		Email:      *user.Email,
 		RoleId:     *user.RoleId,
 		Upload:     *user.Upload,
 		Download:   *user.Download,
@@ -65,6 +66,7 @@ func CreateUser(users *module.Users) error {
 		"`quota`":     *users.Quota,
 		"username":    *users.Username,
 		"`pass`":      encryPass,
+		"email":       users.Email,
 		"`role_id`":   *users.RoleId,
 		"deleted":     *users.Deleted,
 		"expire_time": *users.ExpireTime,
@@ -256,6 +258,9 @@ func UpdateUserById(users *module.Users) error {
 		encryPassword := sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *users.Username, *users.Pass)))
 		update["`pass`"] = encryPass
 		update["`password`"] = fmt.Sprintf("%x", encryPassword)
+	}
+	if users.Email != nil {
+		update["email"] = *users.Email
 	}
 	if users.Quota != nil {
 		update["quota"] = *users.Quota
