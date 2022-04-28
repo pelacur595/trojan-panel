@@ -43,6 +43,10 @@ func UpdateSystemById(c *gin.Context) {
 		OpenRegister:       systemUpdateDto.OpenRegister,
 		RegisterQuota:      systemUpdateDto.RegisterQuota,
 		RegisterExpireDays: systemUpdateDto.RegisterExpireDays,
+		EmailHost:          systemUpdateDto.EmailHost,
+		EmailPort:          systemUpdateDto.EmailPort,
+		EmailUsername:      systemUpdateDto.EmailUsername,
+		EmailPassword:      systemUpdateDto.EmailPassword,
 	}
 	if err := service.UpdateSystemById(&system); err != nil {
 		vo.Fail(constant.SysError, c)

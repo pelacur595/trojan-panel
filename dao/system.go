@@ -13,7 +13,7 @@ import (
 func SelectSystemByName(name *string) (*vo.SystemVo, error) {
 	var system module.System
 	buildSelect, values, err := builder.NamedQuery(
-		"select id,open_register,register_quota,register_expire_days from `system` where name = {{name}}",
+		"select id,open_register,register_quota,register_expire_days,email_host,email_port,email_username,email_password from `system` where name = {{name}}",
 		map[string]interface{}{"name": *name})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -40,6 +40,10 @@ func SelectSystemByName(name *string) (*vo.SystemVo, error) {
 		OpenRegister:       *system.OpenRegister,
 		RegisterQuota:      *system.RegisterQuota,
 		RegisterExpireDays: *system.RegisterExpireDays,
+		EmailHost:          *system.EmailHost,
+		EmailPort:          *system.EmailPort,
+		EmailUsername:      *system.EmailUsername,
+		EmailPassword:      *system.EmailPassword,
 	}
 	return &systemVo, nil
 }
@@ -55,6 +59,18 @@ func UpdateSystemById(system *module.System) error {
 	}
 	if system.RegisterExpireDays != nil {
 		update["register_expire_days"] = *system.RegisterExpireDays
+	}
+	if system.EmailHost != nil {
+		update["email_host"] = *system.EmailHost
+	}
+	if system.EmailPort != nil {
+		update["email_port"] = *system.EmailPort
+	}
+	if system.EmailUsername != nil {
+		update["email_username"] = *system.EmailUsername
+	}
+	if system.EmailPassword != nil {
+		update["email_password"] = *system.EmailPassword
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("`system`", where, update)
