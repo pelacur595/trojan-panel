@@ -32,10 +32,15 @@ func CreateNode(c *gin.Context) {
 		return
 	}
 	node := module.Node{
-		Name: nodeCreateDto.Name,
-		Ip:   nodeCreateDto.Ip,
-		Port: nodeCreateDto.Port,
-		Type: nodeCreateDto.Type,
+		Name:            nodeCreateDto.Name,
+		Ip:              nodeCreateDto.Ip,
+		Port:            nodeCreateDto.Port,
+		Type:            nodeCreateDto.Type,
+		WebsocketEnable: nodeCreateDto.WebsocketEnable,
+		WebsocketPath:   nodeCreateDto.WebsocketPath,
+		SsEnable:        nodeCreateDto.SsEnable,
+		SsMethod:        nodeCreateDto.SsMethod,
+		SsPassword:      nodeCreateDto.SsPassword,
 	}
 	if err := service.CreateNode(&node); err != nil {
 		vo.Fail(err.Error(), c)
@@ -81,11 +86,16 @@ func UpdateNodeById(c *gin.Context) {
 		return
 	}
 	node := module.Node{
-		Id:   nodeUpdateDto.Id,
-		Name: nodeUpdateDto.Name,
-		Ip:   nodeUpdateDto.Ip,
-		Port: nodeUpdateDto.Port,
-		Type: nodeUpdateDto.Type,
+		Id:              nodeUpdateDto.Id,
+		Name:            nodeUpdateDto.Name,
+		Ip:              nodeUpdateDto.Ip,
+		Port:            nodeUpdateDto.Port,
+		Type:            nodeUpdateDto.Type,
+		WebsocketEnable: nodeUpdateDto.WebsocketEnable,
+		WebsocketPath:   nodeUpdateDto.WebsocketPath,
+		SsEnable:        nodeUpdateDto.SsEnable,
+		SsMethod:        nodeUpdateDto.SsMethod,
+		SsPassword:      nodeUpdateDto.SsPassword,
 	}
 	if err := service.UpdateNodeById(&node); err != nil {
 		vo.Fail(err.Error(), c)
@@ -106,8 +116,7 @@ func NodeQRCode(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	qrCode, err := service.NodeQRCode(&userInfo.Id, nodeQRCodeDto.Name, nodeQRCodeDto.Ip,
-		nodeQRCodeDto.Port, nodeQRCodeDto.Type)
+	qrCode, err := service.NodeQRCode(&userInfo.Id, nodeQRCodeDto)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
@@ -127,7 +136,7 @@ func NodeURL(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	url, err := service.NodeURL(&userInfo.Id, nodeQRCodeDto.Name, nodeQRCodeDto.Ip, nodeQRCodeDto.Port, nodeQRCodeDto.Type)
+	url, err := service.NodeURL(&userInfo.Id, nodeQRCodeDto)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return

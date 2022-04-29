@@ -9,6 +9,7 @@ import (
 	"trojan/dao"
 	"trojan/module"
 	"trojan/module/constant"
+	"trojan/module/dto"
 	"trojan/module/vo"
 )
 
@@ -56,8 +57,8 @@ func UpdateNodeById(node *module.Node) error {
 	return nil
 }
 
-func NodeQRCode(userId *uint, name *string, ip *string, port *uint, nodeType *uint) ([]byte, error) {
-	nodeUrl, err := NodeURL(userId, name, ip, port, nodeType)
+func NodeQRCode(userId *uint, NodeQRCodeDto dto.NodeQRCodeDto) ([]byte, error) {
+	nodeUrl, err := NodeURL(userId, NodeQRCodeDto)
 	if err != nil {
 		return nil, err
 	}
@@ -70,31 +71,42 @@ func NodeQRCode(userId *uint, name *string, ip *string, port *uint, nodeType *ui
 	return qrCode, nil
 }
 
-func NodeURL(userId *uint, name *string, ip *string, port *uint, nodeType *uint) (string, error) {
+func NodeURL(userId *uint, nodeQRCodeDto dto.NodeQRCodeDto) (string, error) {
 	password, err := dao.UserQRCode(userId)
 	if err != nil {
 		return "", err
 	}
-	nodeTypeVo, err := dao.SelectNodeTypeById(nodeType)
+	nodeTypeVo, err := dao.SelectNodeTypeById(nodeQRCodeDto.Type)
 	if err != nil {
 		return "", err
 	}
-	if nodeTypeVo.Prefix == "" || ip == nil || *ip == "" || port == nil || *port == 0 {
+	if nodeTypeVo.Prefix == "" ||
+		nodeQRCodeDto.Ip == nil || *nodeQRCodeDto.Ip == "" ||
+		nodeQRCodeDto.Port == nil || *nodeQRCodeDto.Port == 0 {
 		return "", errors.New(constant.NodeURLError)
 	}
-	return fmt.Sprintf("%s://%s@%s:%d#%s", nodeTypeVo.Prefix, password, *ip, *port, url.PathEscape(*name)), nil
+	var builder strings.Builder
+	builder.WriteString(fmt.Sprintf("%s://%s@%s:%d", nodeTypeVo.Prefix, password, *nodeQRCodeDto.Ip, *nodeQRCodeDto.Port))
+	if nodeTypeVo.Prefix == constant.TrojanGoPrefix {
+		if nodeQRCodeDto.WebsocketEnable != nil && *nodeQRCodeDto.WebsocketEnable != 0 &&
+			nodeQRCodeDto.WebsocketPath != nil && *nodeQRCodeDto.WebsocketPath != "" {
+			builder.WriteString("&type=ws")
+			builder.WriteString(fmt.Sprintf("&path=%s", *nodeQRCodeDto.WebsocketPath))
+		}
+		if nodeQRCodeDto.SsEnable != nil && *nodeQRCodeDto.SsEnable != 0 ||
+			nodeQRCodeDto.SsMethod != nil && *nodeQRCodeDto.SsMethod != "" ||
+			nodeQRCodeDto.SsPassword != nil && *nodeQRCodeDto.SsPassword != "" {
+			builder.WriteString(fmt.Sprintf("encryption=ss;%s:%s", *nodeQRCodeDto.SsMethod, *nodeQRCodeDto.SsPassword))
+		}
+	}
+	if nodeQRCodeDto.Name != nil && *nodeQRCodeDto.Name != "" {
+		builder.WriteString(fmt.Sprintf("#%s", *nodeQRCodeDto.Name))
+	}
+	return url.PathEscape(builder.String()), nil
 }
 
 func CountNode() (int, error) {
 	nodeCount, err := dao.CountNode()
-	if err != nil {
-		return 0, err
-	}
-	return nodeCount, nil
-}
-
-func CountNodeByName(queryName *string) (int, error) {
-	nodeCount, err := dao.CountNodeByName(queryName)
 	if err != nil {
 		return 0, err
 	}
