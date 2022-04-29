@@ -36,12 +36,16 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	nodeVo := vo.NodeVo{
-		Id:         *node.Id,
-		Name:       *node.Name,
-		Ip:         *node.Ip,
-		Port:       *node.Port,
-		Type:       *node.Type,
-		CreateTime: *node.CreateTime,
+		Id:              *node.Id,
+		Name:            *node.Name,
+		Ip:              *node.Ip,
+		Port:            *node.Port,
+		Type:            *node.Type,
+		WebsocketEnable: *node.WebsocketEnable,
+		SsEnable:        *node.SsEnable,
+		SsMethod:        *node.SsMethod,
+		SsPassword:      *node.SsPassword,
+		CreateTime:      *node.CreateTime,
 	}
 	return &nodeVo, nil
 }
@@ -49,10 +53,15 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 func CreateNode(node *module.Node) error {
 	var data []map[string]interface{}
 	data = append(data, map[string]interface{}{
-		"name": *node.Name,
-		"ip":   *node.Ip,
-		"port": *node.Port,
-		"type": *node.Type,
+		"name":             *node.Name,
+		"ip":               *node.Ip,
+		"port":             *node.Port,
+		"type":             *node.Type,
+		"websocket_enable": *node.WebsocketEnable,
+		"websocket_path":   *node.WebsocketPath,
+		"ss_enable":        *node.SsEnable,
+		"ss_method":        *node.SsMethod,
+		"ss_password":      *node.SsPassword,
 	})
 
 	buildInsert, values, err := builder.BuildInsert("node", data)
@@ -97,8 +106,8 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
-	selectFields := []string{"id", "`name`", "ip", "port",
-		"type", "create_time"}
+	selectFields := []string{"id", "`name`", "ip", "type", "websocket_enable", "ss_enable",
+		"create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -120,12 +129,13 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	var nodeVos []vo.NodeVo
 	for _, item := range nodes {
 		nodeVos = append(nodeVos, vo.NodeVo{
-			Id:         *item.Id,
-			Name:       *item.Name,
-			Ip:         *item.Ip,
-			Port:       *item.Port,
-			Type:       *item.Type,
-			CreateTime: *item.CreateTime,
+			Id:              *item.Id,
+			Name:            *item.Name,
+			Ip:              *item.Ip,
+			Type:            *item.Type,
+			WebsocketEnable: *item.WebsocketEnable,
+			SsEnable:        *item.SsEnable,
+			CreateTime:      *item.CreateTime,
 		})
 	}
 
@@ -168,6 +178,21 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.Type != nil {
 		update["type"] = *node.Type
+	}
+	if node.WebsocketEnable != nil {
+		update["websocket_enable"] = *node.WebsocketEnable
+	}
+	if node.WebsocketPath != nil && *node.WebsocketPath != "" {
+		update["websocket_path"] = *node.WebsocketPath
+	}
+	if node.SsEnable != nil {
+		update["ss_enable"] = *node.SsEnable
+	}
+	if node.SsMethod != nil && *node.SsMethod != "" {
+		update["ss_method"] = *node.SsMethod
+	}
+	if node.SsPassword != nil && *node.SsPassword != "" {
+		update["ss_password"] = *node.SsPassword
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node", where, update)
