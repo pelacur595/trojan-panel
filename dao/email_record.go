@@ -11,7 +11,7 @@ import (
 	"trojan/module/vo"
 )
 
-func SelectEmailRecordPage(queryToEmail *string, pageNum *uint, pageSize *uint) (*vo.EmailRecordPageVo, error) {
+func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint, pageSize *uint) (*vo.EmailRecordPageVo, error) {
 	var (
 		total        uint
 		emailRecords []module.EmailRecord
@@ -21,6 +21,9 @@ func SelectEmailRecordPage(queryToEmail *string, pageNum *uint, pageSize *uint) 
 	var whereCount = map[string]interface{}{}
 	if queryToEmail != nil && *queryToEmail != "" {
 		whereCount["to_email like"] = fmt.Sprintf("%%%s%%", *queryToEmail)
+	}
+	if queryState != nil {
+		whereCount["state"] = queryState
 	}
 
 	selectFieldsCount := []string{"count(1)"}
@@ -41,6 +44,9 @@ func SelectEmailRecordPage(queryToEmail *string, pageNum *uint, pageSize *uint) 
 		"_limit":   []uint{offset, *pageSize}}
 	if queryToEmail != nil && *queryToEmail != "" {
 		where["to_email like"] = fmt.Sprintf("%%%s%%", *queryToEmail)
+	}
+	if queryState != nil {
+		whereCount["state"] = queryState
 	}
 	selectFields := []string{"id", "`to_email`", "subject", "content",
 		"state", "create_time"}
@@ -90,7 +96,6 @@ func CreateEmailRecord(emailRecord *module.EmailRecord) error {
 		"to_email": *emailRecord.ToEmail,
 		"subject":  *emailRecord.Subject,
 		"content":  *emailRecord.Content,
-		"state":    *emailRecord.State,
 	})
 
 	buildInsert, values, err := builder.BuildInsert("email_record", data)
@@ -101,6 +106,28 @@ func CreateEmailRecord(emailRecord *module.EmailRecord) error {
 	if _, err = db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
+	}
+	return nil
+}
+
+func UpdateEmailRecordById(emailRecord *module.EmailRecord) error {
+	where := map[string]interface{}{"id": *emailRecord.Id}
+	update := map[string]interface{}{}
+	if emailRecord.State != nil {
+		update["`state`"] = *emailRecord.State
+	}
+
+	if len(update) > 0 {
+		buildUpdate, values, err := builder.BuildUpdate("email_record", where, update)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+
+		if _, err := db.Exec(buildUpdate, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
 	}
 	return nil
 }
