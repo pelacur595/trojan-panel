@@ -9,7 +9,7 @@ import (
 var Config = new(AppConfig)
 
 // 初始化全局配置文件
-func InitConfig() {
+func init() {
 	if err := ini.MapTo(Config, constant.ConfigFilePath); err != nil {
 		logrus.Errorf("配置文件加载失败 err: %v\n", err)
 		panic(err)

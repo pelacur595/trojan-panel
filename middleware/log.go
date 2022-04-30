@@ -9,7 +9,7 @@ import (
 )
 
 // 日志初始化
-func InitLog() {
+func init() {
 	// 使用滚动压缩方式记录日志
 	logConfig := core.Config.LogConfig
 	logrus.SetOutput(&lumberjack.Logger{

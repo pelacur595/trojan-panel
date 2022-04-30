@@ -7,12 +7,30 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"trojan/module/constant"
 )
+
+func DownloadFile(url string, fileName string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if err = ioutil.WriteFile(fileName, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}
 
 // 解压
 func Unzip(src string, dest string) error {
@@ -88,7 +106,7 @@ func Exists(path string) bool {
 }
 
 // 初始化文件/文件夹
-func InitFile() {
+func init() {
 	logPath := constant.LogPath
 	if !Exists(logPath) {
 		if err := os.Mkdir(logPath, os.ModePerm); err != nil {

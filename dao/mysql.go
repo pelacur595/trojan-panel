@@ -13,7 +13,7 @@ import (
 var db *sql.DB
 
 // 初始化数据库
-func InitDB() {
+func init() {
 	mySQLConfig := core.Config.MySQLConfig
 	var err error
 

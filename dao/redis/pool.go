@@ -10,7 +10,7 @@ import (
 
 var pool *redis.Pool
 
-func InitRedis() {
+func init() {
 	redisConfig := core.Config.RedisConfig
 	pool = &redis.Pool{
 		MaxIdle:     redisConfig.MaxIdle,
