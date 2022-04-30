@@ -8,11 +8,11 @@ import (
 	"trojan/core"
 )
 
-var redisPool *redis.Pool
+var pool *redis.Pool
 
 func InitRedis() {
 	redisConfig := core.Config.RedisConfig
-	redisPool = &redis.Pool{
+	pool = &redis.Pool{
 		MaxIdle:     redisConfig.MaxIdle,
 		MaxActive:   redisConfig.MaxActive,
 		Wait:        redisConfig.Wait,
@@ -38,7 +38,7 @@ func InitRedis() {
 }
 
 func SelectDb(db int) *Reply {
-	conn := redisPool.Get()
+	conn := pool.Get()
 	defer conn.Close()
 	return getReply(conn.Do("select", db))
 }

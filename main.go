@@ -5,6 +5,7 @@ import (
 	"trojan/api"
 	"trojan/core"
 	"trojan/dao"
+	"trojan/dao/redis"
 	"trojan/middleware"
 	"trojan/router"
 	"trojan/util"
@@ -25,6 +26,8 @@ func init() {
 	middleware.InitLog()
 	// 数据库
 	dao.InitDB()
+	// Redis
+	redis.InitRedis()
 	// 定时任务
 	middleware.InitCron()
 	// 限流
