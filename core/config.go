@@ -43,8 +43,8 @@ type LogConfig struct {
 type RedisConfig struct {
 	Host      string `ini:"host"`
 	Port      int    `ini:"port"`
-	Db        int    `ini:"db"`
 	Password  string `ini:"password"`
+	Db        int    `ini:"db"`
 	MaxIdle   int    `ini:"max_idle"`
 	MaxActive int    `ini:"max_active"`
 	Wait      bool   `ini:"wait"`

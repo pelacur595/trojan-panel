@@ -127,8 +127,8 @@ func InitFile() {
 			port           string
 			redisHost      string
 			redisPort      string
-			redisDb        string
 			redisPassword  string
+			redisDb        string
 			redisMaxIdle   string
 			redisMaxActive string
 			redisWait      string
@@ -137,13 +137,13 @@ func InitFile() {
 		flag.StringVar(&user, "user", "root", "数据库用户名")
 		flag.StringVar(&password, "password", "123456", "数据库密码")
 		flag.StringVar(&port, "port", "3306", "数据库端口")
-		flag.StringVar(&redisHost, "host", "127.0.0.1", "Redis地址")
-		flag.StringVar(&redisPort, "port", "6379", "Redis端口")
-		flag.StringVar(&redisDb, "db", "0", "Redis默认数据库")
-		flag.StringVar(&redisPassword, "password", "123456", "Redis密码")
-		flag.StringVar(&redisMaxIdle, "max_idle", "2", "Redis最大空闲连接数")
-		flag.StringVar(&redisMaxActive, "max_active", "2", "Redis最大连接数")
-		flag.StringVar(&redisWait, "wait", "true", "Redis是否等待")
+		flag.StringVar(&redisHost, "redisHost", "127.0.0.1", "Redis地址")
+		flag.StringVar(&redisPort, "redisPort", "6379", "Redis端口")
+		flag.StringVar(&redisPassword, "redisPassword", "123456", "Redis密码")
+		flag.StringVar(&redisDb, "redisDb", "0", "Redis默认数据库")
+		flag.StringVar(&redisMaxIdle, "redisMaxIdle", "2", "Redis最大空闲连接数")
+		flag.StringVar(&redisMaxActive, "redisMaxActive", "2", "Redis最大连接数")
+		flag.StringVar(&redisWait, "redisWait", "true", "Redis是否等待")
 		flag.Parse()
 		_, err = file.WriteString(fmt.Sprintf(
 			`[mysql]
@@ -160,12 +160,12 @@ compress=true
 [redis]
 host=%s
 port=%s
-db=%s
 password=%s
+db=%s
 max_idle=%s
 max_active=%s
 wait=%s
-`, host, user, password, port, redisHost, redisPort, redisDb, redisPassword,
+`, host, user, password, port, redisHost, redisPort, redisPassword, redisDb,
 			redisMaxIdle, redisMaxIdle, redisWait))
 		if err != nil {
 			logrus.Errorf("config.ini文件写入异常 err: %v\n", err)
