@@ -19,6 +19,7 @@ func InitConfig() {
 type AppConfig struct {
 	MySQLConfig `ini:"mysql"`
 	LogConfig   `ini:"log"`
+	RedisConfig `ini:"redis"`
 }
 
 // MySQL
@@ -36,4 +37,15 @@ type LogConfig struct {
 	MaxBackups int    `ini:"max_backups"` // 最大保留过期文件个数
 	MaxAge     int    `ini:"max_age"`     // 保留过期文件的最大时间间隔,单位是天
 	Compress   bool   `ini:"compress"`    // 是否需要压缩滚动日志, 使用的 gzip 压缩
+}
+
+// Redis
+type RedisConfig struct {
+	Host      string `ini:"host"`
+	Port      int    `ini:"port"`
+	Db        int    `ini:"db"`
+	Password  string `ini:"password"`
+	MaxIdle   int    `ini:"max_idle"`
+	MaxActive int    `ini:"max_active"`
+	Wait      bool   `ini:"wait"`
 }

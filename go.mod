@@ -11,6 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-jwt/jwt v3.2.1+incompatible
+	github.com/gomodule/redigo v1.8.8
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
