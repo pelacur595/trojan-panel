@@ -32,4 +32,6 @@ const (
 	SystemNotExist string = "不存在该系统设置"
 
 	RateLimiterError string = "点的太快啦"
+
+	GrpcError string = "远程服务连接失败"
 )
