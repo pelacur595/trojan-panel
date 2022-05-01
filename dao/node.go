@@ -6,6 +6,7 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
+	"trojan/core"
 	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/vo"
@@ -128,6 +129,11 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 
 	var nodeVos []vo.NodeVo
 	for _, item := range nodes {
+		api := core.TrojanGoApi()
+		onLine, err := api.OnLine(*item.Ip)
+		if err != nil {
+			return nil, err
+		}
 		nodeVos = append(nodeVos, vo.NodeVo{
 			Id:              *item.Id,
 			Name:            *item.Name,
@@ -136,6 +142,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			WebsocketEnable: *item.WebsocketEnable,
 			SsEnable:        *item.SsEnable,
 			CreateTime:      *item.CreateTime,
+			OnLine:          onLine,
 		})
 	}
 

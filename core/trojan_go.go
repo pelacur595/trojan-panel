@@ -51,8 +51,22 @@ func apiClient(addr string) (service.TrojanServerServiceClient, *grpc.ClientConn
 	return service.NewTrojanServerServiceClient(conn), conn, nil
 }
 
+func (t *trojanGoApi) OnLine(ip string) (int, error) {
+	users, err := t.ListUsers(ip)
+	if err != nil {
+		return 0, err
+	}
+	var num = 0
+	for _, user := range users {
+		if user.SpeedCurrent != nil {
+			num++
+		}
+	}
+	return num, nil
+}
+
 // 查询节点上的所有用户
-func (t *trojanGoApi) listUsers(ip string) ([]*service.UserStatus, error) {
+func (t *trojanGoApi) ListUsers(ip string) ([]*service.UserStatus, error) {
 	client, conn, err := apiClient(ip)
 	if err != nil {
 		return nil, err
@@ -82,7 +96,7 @@ func (t *trojanGoApi) listUsers(ip string) ([]*service.UserStatus, error) {
 }
 
 // 查询节点上的用户
-func (t *trojanGoApi) getUsers(ip string, hash string) (*service.UserStatus, error) {
+func (t *trojanGoApi) GetUser(ip string, hash string) (*service.UserStatus, error) {
 	client, conn, err := apiClient(ip)
 	if err != nil {
 		return nil, err
@@ -115,7 +129,7 @@ func (t *trojanGoApi) getUsers(ip string, hash string) (*service.UserStatus, err
 }
 
 // 节点上设置用户
-func (t *trojanGoApi) setUsers(ip string, setUsersRequest *service.SetUsersRequest) error {
+func (t *trojanGoApi) setUser(ip string, setUsersRequest *service.SetUsersRequest) error {
 	client, conn, err := apiClient(ip)
 	if err != nil {
 		return err
@@ -148,7 +162,7 @@ func (t *trojanGoApi) setUsers(ip string, setUsersRequest *service.SetUsersReque
 }
 
 // 节点上设置用户设备数
-func (t *trojanGoApi) setUsersIpList(ip string, hash string, ipLimit int) error {
+func (t *trojanGoApi) SetUserIpLimit(ip string, hash string, ipLimit int) error {
 	req := &service.SetUsersRequest{
 		Status: &service.UserStatus{
 			User: &service.User{
@@ -158,11 +172,11 @@ func (t *trojanGoApi) setUsersIpList(ip string, hash string, ipLimit int) error 
 		},
 		Operation: service.SetUsersRequest_Modify,
 	}
-	return t.setUsers(ip, req)
+	return t.setUser(ip, req)
 }
 
 // 节点上设置用户限速
-func (t *trojanGoApi) setUsersSpeedLimit(ip string, hash string, uploadSpeedLimit int, downloadSpeedLimit int) error {
+func (t *trojanGoApi) SetUserSpeedLimit(ip string, hash string, uploadSpeedLimit int, downloadSpeedLimit int) error {
 	req := &service.SetUsersRequest{
 		Status: &service.UserStatus{
 			User: &service.User{
@@ -175,11 +189,11 @@ func (t *trojanGoApi) setUsersSpeedLimit(ip string, hash string, uploadSpeedLimi
 		},
 		Operation: service.SetUsersRequest_Modify,
 	}
-	return t.setUsers(ip, req)
+	return t.setUser(ip, req)
 }
 
 // 节点上删除用户
-func (t *trojanGoApi) deleteUsers(ip string, hash string) error {
+func (t *trojanGoApi) DeleteUser(ip string, hash string) error {
 	req := &service.SetUsersRequest{
 		Status: &service.UserStatus{
 			User: &service.User{
@@ -188,11 +202,11 @@ func (t *trojanGoApi) deleteUsers(ip string, hash string) error {
 		},
 		Operation: service.SetUsersRequest_Delete,
 	}
-	return t.setUsers(ip, req)
+	return t.setUser(ip, req)
 }
 
 // 节点上添加用户
-func (t *trojanGoApi) addUsers(ip string, hash string, ipLimit int, uploadSpeedLimit int, downloadSpeedLimit int) error {
+func (t *trojanGoApi) AddUser(ip string, hash string, ipLimit int, uploadSpeedLimit int, downloadSpeedLimit int) error {
 	req := &service.SetUsersRequest{
 		Status: &service.UserStatus{
 			User: &service.User{
@@ -206,5 +220,5 @@ func (t *trojanGoApi) addUsers(ip string, hash string, ipLimit int, uploadSpeedL
 		},
 		Operation: service.SetUsersRequest_Add,
 	}
-	return t.setUsers(ip, req)
+	return t.setUser(ip, req)
 }

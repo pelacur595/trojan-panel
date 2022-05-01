@@ -14,6 +14,8 @@ type NodeVo struct {
 	SsMethod        string    `json:"ssMethod"`
 	SsPassword      string    `json:"ssPassword"`
 	CreateTime      time.Time `json:"createTime"`
+
+	OnLine int `json:"onLine"`
 }
 
 type NodePageVo struct {
