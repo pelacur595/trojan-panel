@@ -377,7 +377,7 @@ func SelectEncryPasswordByUsername(username *string) (string, error) {
 // 查询禁用或者过期的用户名
 func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	var usernames []string
-	buildSelect, values, err := builder.NamedQuery("select username from users where deleted = {{deleted}} or expire_time <= {{expire_time}}",
+	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and password != ''",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
 		logrus.Errorln(err.Error())
