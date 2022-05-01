@@ -50,16 +50,8 @@ func Login(c *gin.Context) {
 	vo.Fail(constant.UsernameOrPassError, c)
 }
 
-func LoginOut(c *gin.Context) {
-	var userLoginOutDto dto.UserLoginOutDto
-	_ = c.ShouldBindJSON(&userLoginOutDto)
-	if _, err := redis.RedisClient.Key.
-		Del(fmt.Sprintf("trojanpanel:token:%s", *userLoginOutDto.Username)).
-		Result(); err != nil {
-		vo.Fail(constant.LogOutError, c)
-		return
-	}
-	vo.Success(nil, c)
+func GenerateCaptcha(c *gin.Context) {
+	return
 }
 
 func Register(c *gin.Context) {
@@ -71,6 +63,18 @@ func Register(c *gin.Context) {
 	}
 	if err := service.Register(userRegisterDto); err != nil {
 		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nil, c)
+}
+
+func LoginOut(c *gin.Context) {
+	var userLoginOutDto dto.UserLoginOutDto
+	_ = c.ShouldBindJSON(&userLoginOutDto)
+	if _, err := redis.RedisClient.Key.
+		Del(fmt.Sprintf("trojanpanel:token:%s", *userLoginOutDto.Username)).
+		Result(); err != nil {
+		vo.Fail(constant.LogOutError, c)
 		return
 	}
 	vo.Success(nil, c)
