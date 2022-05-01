@@ -41,6 +41,10 @@ type UserLoginDto struct {
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
 }
 
+type UserLoginOutDto struct {
+	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
+}
+
 type UserRegisterDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr,excludes=admin"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`

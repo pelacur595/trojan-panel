@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"trojan/dao/redis"
 	"trojan/module/constant"
 	"trojan/module/vo"
 	"trojan/util"
@@ -26,8 +28,14 @@ func JWTHandler() gin.HandlerFunc {
 			return
 		}
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
-		_, err := util.ParseToken(parts[1])
+		myClaims, err := util.ParseToken(parts[1])
 		if err != nil {
+			vo.Fail(err.Error(), c)
+			c.Abort()
+			return
+		}
+		if _, err := redis.RedisClient.String.
+			Get(fmt.Sprintf("trojanpanel:token:%s", myClaims.UserVo.Username)).Result(); err != nil {
 			vo.Fail(err.Error(), c)
 			c.Abort()
 			return

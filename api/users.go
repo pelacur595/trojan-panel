@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"trojan/dao/redis"
 	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
@@ -32,14 +34,32 @@ func Login(c *gin.Context) {
 		if err != nil {
 			vo.Fail(constant.SysError, c)
 		} else {
-			userLoginVo := vo.UsersLoginVo{
-				Token: tokenStr,
+			if _, err := redis.RedisClient.String.
+				Set(fmt.Sprintf("trojanpanel:token:%s", *userLoginDto.Username), tokenStr).
+				Result(); err != nil {
+				vo.Fail(constant.SysError, c)
+			} else {
+				userLoginVo := vo.UsersLoginVo{
+					Token: tokenStr,
+				}
+				vo.Success(userLoginVo, c)
 			}
-			vo.Success(userLoginVo, c)
 		}
 		return
 	}
 	vo.Fail(constant.UsernameOrPassError, c)
+}
+
+func LoginOut(c *gin.Context) {
+	var userLoginOutDto dto.UserLoginOutDto
+	_ = c.ShouldBindJSON(&userLoginOutDto)
+	if _, err := redis.RedisClient.Key.
+		Del(fmt.Sprintf("trojanpanel:token:%s", *userLoginOutDto.Username)).
+		Result(); err != nil {
+		vo.Fail(constant.LogOutError, c)
+		return
+	}
+	vo.Success(nil, c)
 }
 
 func Register(c *gin.Context) {

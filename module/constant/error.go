@@ -37,4 +37,6 @@ const (
 	LoadKeyPairError string = "加载本机密钥和证书失败"
 
 	SendEmailError string = "邮件发送失败"
+
+	LogOutError string = "你还没有登录"
 )
