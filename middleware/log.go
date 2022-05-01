@@ -20,7 +20,7 @@ func InitLog() {
 		Compress:   logConfig.Compress,
 		LocalTime:  true,
 	})
-	logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: "2006-01-02 15:04:05"})
+	logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: "2006-01-02 15:04:05"})
 	// 设置日志记录级别
 	logrus.SetLevel(logrus.DebugLevel)
 }
