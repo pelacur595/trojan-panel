@@ -130,7 +130,7 @@ func UpdateUserById(users *module.Users) error {
 
 func Register(userRegisterDto dto.UserRegisterDto) error {
 	name := constant.SystemName
-	systemVo, err := dao.SelectSystemByName(&name)
+	systemVo, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
 	}

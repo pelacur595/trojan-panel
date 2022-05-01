@@ -35,4 +35,6 @@ const (
 
 	GrpcError        string = "远程服务连接失败"
 	LoadKeyPairError string = "加载本机密钥和证书失败"
+
+	SendEmailError string = "邮件发送失败"
 )
