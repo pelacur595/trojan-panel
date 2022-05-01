@@ -106,7 +106,7 @@ func Exists(path string) bool {
 }
 
 // 初始化文件/文件夹
-func init() {
+func InitFile() {
 	logPath := constant.LogPath
 	if !Exists(logPath) {
 		if err := os.Mkdir(logPath, os.ModePerm); err != nil {

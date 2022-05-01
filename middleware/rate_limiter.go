@@ -24,6 +24,6 @@ func RateLimiterHandler() gin.HandlerFunc {
 }
 
 // 限流初始化
-func init() {
+func InitRateLimiter() {
 	limit = tollbooth.NewLimiter(5, nil)
 }

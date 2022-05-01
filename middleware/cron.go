@@ -7,7 +7,7 @@ import (
 )
 
 // 初始化定时任务
-func init() {
+func InitCron() {
 	location, _ := time.LoadLocation("Asia/Shanghai")
 	c := cron.New(cron.WithLocation(location))
 	_, _ = c.AddFunc("@every 5m", service.ScanUsers)

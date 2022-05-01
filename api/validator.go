@@ -8,7 +8,7 @@ import (
 
 var validate *validator.Validate
 
-func init() {
+func InitValidator() {
 	// Validate为单例对象
 	validate = validator.New()
 	// 注册校验对象
