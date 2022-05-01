@@ -37,7 +37,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 
 				if err := gomail.Send(s, m); err != nil {
 					logrus.Errorf("mail send err: %v\n", err)
-					return
+					continue
 				}
 
 			// 30秒没有发送消息则关闭SMTP server连接
@@ -45,7 +45,6 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 				if open {
 					if err := s.Close(); err != nil {
 						logrus.Errorf("mail close err: %v\n", err)
-						return
 					}
 					open = false
 				}
