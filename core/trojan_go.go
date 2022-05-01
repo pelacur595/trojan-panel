@@ -39,7 +39,7 @@ func apiClient(addr string) (service.TrojanServerServiceClient, *grpc.ClientConn
 		return nil, nil, errors.New(constant.LoadKeyPairError)
 	}
 	creds := credentials.NewTLS(&tls.Config{
-		ServerName:   "localhost",
+		ServerName:   addr,
 		RootCAs:      pool,
 		Certificates: []tls.Certificate{certificate},
 	})
