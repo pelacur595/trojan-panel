@@ -2,12 +2,16 @@ package core
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"github.com/p4gefau1t/trojan-go/api/service"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"io"
+	"os"
 	"trojan/module/constant"
 )
 
@@ -22,10 +26,26 @@ func TrojanGoApi() *trojanGoApi {
 }
 
 func apiClient(addr string) (service.TrojanServerServiceClient, *grpc.ClientConn, error) {
-	var err error
-	conn, err := grpc.Dial(fmt.Sprintf("%s:10010", addr), grpc.WithInsecure())
+	pool := x509.NewCertPool()
+	certBytes, err := os.ReadFile(fmt.Sprintf("%s%s.crt", constant.TrojanPanelTrojanGoCertDate, addr))
 	if err != nil {
-		logrus.Errorf("grpc连接化失败 err: %v\n", err)
+		return nil, nil, err
+	}
+	pool.AppendCertsFromPEM(certBytes)
+
+	certificate, err := tls.LoadX509KeyPair(constant.TrojanPanelCrtFile, constant.TrojanPanelKeyFile)
+	if err != nil {
+		logrus.Errorf("%s 加载本机密钥和证书失败 err: %v\n", addr, err)
+		return nil, nil, errors.New(constant.LoadKeyPairError)
+	}
+	creds := credentials.NewTLS(&tls.Config{
+		ServerName:   "localhost",
+		RootCAs:      pool,
+		Certificates: []tls.Certificate{certificate},
+	})
+	conn, err := grpc.Dial(fmt.Sprintf("%s:10010", addr), grpc.WithTransportCredentials(creds))
+	if err != nil {
+		logrus.Errorf("%s grpc连接化失败 err: %v\n", addr, err)
 		return nil, nil, errors.New(constant.GrpcError)
 	}
 	return service.NewTrojanServerServiceClient(conn), conn, nil

@@ -33,5 +33,6 @@ const (
 
 	RateLimiterError string = "点的太快啦"
 
-	GrpcError string = "远程服务连接失败"
+	GrpcError        string = "远程服务连接失败"
+	LoadKeyPairError string = "加载本机密钥和证书失败"
 )

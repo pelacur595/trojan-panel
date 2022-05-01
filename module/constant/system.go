@@ -16,4 +16,8 @@ const (
 	ConfigFilePath string = "config/config.ini"
 	// rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
+
+	TrojanPanelTrojanGoCertDate string = "/tpdata/trojan-panel/trojango-cert/"
+	TrojanPanelCrtFile          string = "trojan-panel.crt"
+	TrojanPanelKeyFile          string = "trojan-panel.key"
 )
