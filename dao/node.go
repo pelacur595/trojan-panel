@@ -52,19 +52,30 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 }
 
 func CreateNode(node *module.Node) error {
-	var data []map[string]interface{}
-	data = append(data, map[string]interface{}{
-		"name":             *node.Name,
-		"ip":               *node.Ip,
-		"port":             *node.Port,
-		"type":             *node.Type,
-		"websocket_enable": *node.WebsocketEnable,
-		"websocket_path":   *node.WebsocketPath,
-		"ss_enable":        *node.SsEnable,
-		"ss_method":        *node.SsMethod,
-		"ss_password":      *node.SsPassword,
-	})
+	nodeEntity := map[string]interface{}{
+		"name": *node.Name,
+		"ip":   *node.Ip,
+		"port": *node.Port,
+		"type": *node.Type,
+	}
+	if node.WebsocketEnable != nil {
+		nodeEntity["websocket_enable"] = *node.WebsocketEnable
+	}
+	if node.WebsocketPath != nil {
+		nodeEntity["websocket_path"] = *node.WebsocketPath
+	}
+	if node.SsEnable != nil {
+		nodeEntity["ss_enable"] = *node.SsEnable
+	}
+	if node.SsEnable != nil {
+		nodeEntity["ss_method"] = *node.SsMethod
+	}
+	if node.SsPassword != nil {
+		nodeEntity["ss_password"] = *node.SsPassword
+	}
 
+	var data []map[string]interface{}
+	data = append(data, nodeEntity)
 	buildInsert, values, err := builder.BuildInsert("node", data)
 	if err != nil {
 		logrus.Errorln(err.Error())

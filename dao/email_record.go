@@ -90,13 +90,15 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 	return &emailRecordPageVo, nil
 }
 
-func CreateEmailRecord(emailRecord *module.EmailRecord) error {
+func CreateEmailRecord(emailRecords []module.EmailRecord) error {
 	var data []map[string]interface{}
-	data = append(data, map[string]interface{}{
-		"to_email": *emailRecord.ToEmail,
-		"subject":  *emailRecord.Subject,
-		"content":  *emailRecord.Content,
-	})
+	for _, emailRecord := range emailRecords {
+		data = append(data, map[string]interface{}{
+			"to_email": *emailRecord.ToEmail,
+			"subject":  *emailRecord.Subject,
+			"content":  *emailRecord.Content,
+		})
+	}
 
 	buildInsert, values, err := builder.BuildInsert("email_record", data)
 	if err != nil {

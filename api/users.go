@@ -69,10 +69,9 @@ func Register(c *gin.Context) {
 }
 
 func LoginOut(c *gin.Context) {
-	var userLoginOutDto dto.UserLoginOutDto
-	_ = c.ShouldBindJSON(&userLoginOutDto)
+	user := util.GetCurrentUser(c)
 	if _, err := redis.RedisClient.Key.
-		Del(fmt.Sprintf("trojanpanel:token:%s", *userLoginOutDto.Username)).
+		Del(fmt.Sprintf("trojanpanel:token:%s", user.Username)).
 		Result(); err != nil {
 		vo.Fail(constant.LogOutError, c)
 		return

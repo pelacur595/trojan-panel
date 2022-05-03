@@ -14,8 +14,8 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 	return emailRecordPageVo, nil
 }
 
-func CreateEmailRecord(emailRecord *module.EmailRecord) error {
-	if err := dao.CreateEmailRecord(emailRecord); err != nil {
+func CreateEmailRecord(emailRecords []module.EmailRecord) error {
+	if err := dao.CreateEmailRecord(emailRecords); err != nil {
 		return err
 	}
 	return nil

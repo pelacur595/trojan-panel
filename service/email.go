@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 	"time"
+	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
 )
@@ -51,6 +52,21 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			}
 		}
 	}()
+
+	// 插入发送记录
+	toEmails := sendEmailDto.ToEmails
+	var emailRecords []module.EmailRecord
+	for _, toEmail := range toEmails {
+		emailRecord := module.EmailRecord{
+			ToEmail: &toEmail,
+			Subject: &sendEmailDto.Subject,
+			Content: &sendEmailDto.Content,
+		}
+		emailRecords = append(emailRecords, emailRecord)
+	}
+	if err = CreateEmailRecord(emailRecords); err != nil {
+		return err
+	}
 
 	// 发送消息
 	m := gomail.NewMessage()
