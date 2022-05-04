@@ -112,24 +112,19 @@ func CreateEmailRecord(emailRecords []module.EmailRecord) error {
 	return nil
 }
 
-func UpdateEmailRecordById(emailRecord *module.EmailRecord) error {
-	where := map[string]interface{}{"id": *emailRecord.Id}
-	update := map[string]interface{}{}
-	if emailRecord.State != nil {
-		update["`state`"] = *emailRecord.State
+func UpdateEmailRecordSateById(id *uint, state *int) error {
+	where := map[string]interface{}{"id": *id}
+	update := map[string]interface{}{"`state`": *state}
+
+	buildUpdate, values, err := builder.BuildUpdate("email_record", where, update)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
 	}
 
-	if len(update) > 0 {
-		buildUpdate, values, err := builder.BuildUpdate("email_record", where, update)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
-
-		if _, err := db.Exec(buildUpdate, values...); err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
+	if _, err := db.Exec(buildUpdate, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
 	}
 	return nil
 }

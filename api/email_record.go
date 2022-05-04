@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
 	"trojan/module/vo"
@@ -24,22 +23,4 @@ func SelectEmailRecordPage(c *gin.Context) {
 		return
 	}
 	vo.Success(emailRecordPageVo, c)
-}
-
-func UpdateEmailRecordById(c *gin.Context) {
-	var emailRecordUpdateDto dto.EmailRecordUpdateDto
-	_ = c.ShouldBindQuery(&emailRecordUpdateDto)
-	if err := validate.Struct(&emailRecordUpdateDto); err != nil {
-		vo.Fail(constant.ValidateFailed, c)
-		return
-	}
-	emailRecord := module.EmailRecord{
-		Id:    emailRecordUpdateDto.Id,
-		State: emailRecordUpdateDto.State,
-	}
-	if err := service.UpdateEmailRecordById(&emailRecord); err != nil {
-		vo.Fail(err.Error(), c)
-		return
-	}
-	vo.Success(nil, c)
 }

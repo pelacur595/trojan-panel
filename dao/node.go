@@ -43,6 +43,7 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 		Port:            *node.Port,
 		Type:            *node.Type,
 		WebsocketEnable: *node.WebsocketEnable,
+		WebsocketPath:   *node.WebsocketPath,
 		SsEnable:        *node.SsEnable,
 		SsMethod:        *node.SsMethod,
 		SsPassword:      *node.SsPassword,

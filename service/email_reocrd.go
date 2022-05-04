@@ -20,10 +20,3 @@ func CreateEmailRecord(emailRecords []module.EmailRecord) error {
 	}
 	return nil
 }
-
-func UpdateEmailRecordById(emailRecord *module.EmailRecord) error {
-	if err := dao.UpdateEmailRecordById(emailRecord); err != nil {
-		return err
-	}
-	return nil
-}
