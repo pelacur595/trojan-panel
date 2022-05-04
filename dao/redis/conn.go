@@ -1,8 +1,8 @@
 package redis
 
-var RedisClient = new(redisClient)
+var Client = new(client)
 
-type redisClient struct {
+type client struct {
 	String stringRds
 	List   listRds
 	Hash   hashRds

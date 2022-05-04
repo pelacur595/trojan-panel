@@ -259,9 +259,6 @@ func UpdateUserById(users *module.Users) error {
 		update["`pass`"] = encryPass
 		update["`password`"] = fmt.Sprintf("%x", encryPassword)
 	}
-	if users.Email != nil {
-		update["email"] = *users.Email
-	}
 	if users.Quota != nil {
 		update["quota"] = *users.Quota
 	}
@@ -273,6 +270,9 @@ func UpdateUserById(users *module.Users) error {
 	}
 	if users.ExpireTime != nil {
 		update["expire_time"] = *users.ExpireTime
+	}
+	if users.Email != nil {
+		update["email"] = *users.Email
 	}
 
 	if len(update) > 0 {

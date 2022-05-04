@@ -11,9 +11,9 @@ type Users struct {
 	Upload     *uint      `ddb:"upload"`
 	Username   *string    `ddb:"username"`
 	Pass       *string    `ddb:"pass"`
-	Email      *string    `ddb:"email"`
 	RoleId     *uint      `ddb:"role_id"`
 	Deleted    *uint      `ddb:"deleted"`
+	Email      *string    `ddb:"email"`
 	ExpireTime *uint      `ddb:"expire_time"`
 	CreateTime *time.Time `ddb:"create_time"`
 	UpdateTime *time.Time `ddb:"update_time"`

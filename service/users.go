@@ -25,10 +25,10 @@ func CreateUser(userCreateDto dto.UserCreateDto) error {
 		Quota:      &toByte,
 		Username:   userCreateDto.Username,
 		Pass:       userCreateDto.Pass,
-		Email:      userCreateDto.Email,
 		RoleId:     userCreateDto.RoleId,
 		Deleted:    userCreateDto.Deleted,
 		ExpireTime: userCreateDto.ExpireTime,
+		Email:      userCreateDto.Email,
 	}
 	if err := dao.CreateUser(&user); err != nil {
 		return err
