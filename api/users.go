@@ -35,7 +35,7 @@ func Login(c *gin.Context) {
 			vo.Fail(constant.SysError, c)
 		} else {
 			if _, err := redis.Client.String.
-				Set(fmt.Sprintf("trojanpanel:token:%s", *userLoginDto.Username), tokenStr).
+				Set(fmt.Sprintf("trojan-panel:token:%s", *userLoginDto.Username), tokenStr).
 				Result(); err != nil {
 				vo.Fail(constant.SysError, c)
 			} else {
@@ -71,7 +71,7 @@ func Register(c *gin.Context) {
 func LoginOut(c *gin.Context) {
 	user := util.GetCurrentUser(c)
 	if _, err := redis.Client.Key.
-		Del(fmt.Sprintf("trojanpanel:token:%s", user.Username)).
+		Del(fmt.Sprintf("trojan-panel:token:%s", user.Username)).
 		Result(); err != nil {
 		vo.Fail(constant.LogOutError, c)
 		return
