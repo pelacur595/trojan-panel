@@ -34,9 +34,14 @@ func JWTHandler() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if _, err := redis.Client.String.
-			Get(fmt.Sprintf("trojan-panel:token:%s", myClaims.UserVo.Username)).Result(); err != nil {
+		reply, err := redis.Client.String.
+			Get(fmt.Sprintf("trojan-panel:token:%s", myClaims.UserVo.Username)).Result()
+		if err != nil {
 			vo.Fail(err.Error(), c)
+			c.Abort()
+			return
+		}
+		if reply == nil {
 			c.Abort()
 			return
 		}
