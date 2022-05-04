@@ -1,25 +1,34 @@
 package service
 
 import (
-	"time"
+	"errors"
 	"trojan/dao"
 	"trojan/dao/redis"
 	"trojan/module"
+	"trojan/module/constant"
 	"trojan/module/vo"
 )
 
 func SelectSystemByName(name *string) (*vo.SystemVo, error) {
-	get := redis.Client.String.Get("trojan-panel:system")
-	systemVo := new(vo.SystemVo)
-	if err := get.ScanStruct(systemVo); err != nil {
+	get := redis.Client.Hash.HGetAll("trojan-panel:system")
+	values, err := get.Values()
+	if err != nil {
+		return nil, errors.New(constant.SysError)
+	}
+	if len(values) == 0 {
 		systemVo, err := dao.SelectSystemByName(name)
 		if err != nil {
 			return nil, err
 		}
-		redis.Client.String.Set("trojan-panel:system", systemVo, time.Hour.Milliseconds()*2/1000)
+		redis.Client.Hash.HMSetFromStruct("trojan-panel:system", systemVo)
 		return systemVo, nil
+	} else {
+		systemVo := vo.SystemVo{}
+		if err := get.ScanStruct(&systemVo); err != nil {
+			return nil, errors.New(constant.SysError)
+		}
+		return &systemVo, nil
 	}
-	return systemVo, nil
 }
 
 func UpdateSystemById(system *module.System) error {
