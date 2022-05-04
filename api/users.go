@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"time"
 	"trojan/dao/redis"
 	"trojan/module"
 	"trojan/module/constant"
@@ -35,7 +36,7 @@ func Login(c *gin.Context) {
 			vo.Fail(constant.SysError, c)
 		} else {
 			if _, err := redis.Client.String.
-				Set(fmt.Sprintf("trojan-panel:token:%s", *userLoginDto.Username), tokenStr).
+				Set(fmt.Sprintf("trojan-panel:token:%s", *userLoginDto.Username), tokenStr, time.Hour.Milliseconds()*2/1000).
 				Result(); err != nil {
 				vo.Fail(constant.SysError, c)
 			} else {

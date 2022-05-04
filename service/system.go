@@ -16,7 +16,7 @@ func SelectSystemByName(name *string) (*vo.SystemVo, error) {
 		if err != nil {
 			return nil, err
 		}
-		redis.Client.String.Set("trojan-panel:system", systemVo, time.Hour.Milliseconds()*2)
+		redis.Client.String.Set("trojan-panel:system", systemVo, time.Hour.Milliseconds()*2/1000)
 		return systemVo, nil
 	}
 	return systemVo, nil
