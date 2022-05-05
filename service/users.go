@@ -173,7 +173,7 @@ func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 	return nil
 }
 
-// 禁用用户连接节点
+// 清空流量/禁用用户连接节点
 func DisableUsers(usernames []string) error {
 	if len(usernames) > 0 {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
