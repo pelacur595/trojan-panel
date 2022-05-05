@@ -360,7 +360,6 @@ func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, q
 
 // 查询禁用或者过期的用户名
 func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
-	var usernames []string
 	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
@@ -374,14 +373,10 @@ func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	}
 	defer rows.Close()
 
-	scanMap, err := scanner.ScanMap(rows)
-	if err != nil {
+	var usernames []string
+	if err = scanner.Scan(rows, &usernames); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	for _, record := range scanMap {
-		usernames = append(usernames, fmt.Sprintf("%s", record["username"]))
-	}
-
 	return usernames, nil
 }
