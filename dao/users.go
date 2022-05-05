@@ -353,32 +353,10 @@ func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, q
 	return nil
 }
 
-// 通过用户名查询连接密码
-func SelectEncryPasswordByUsername(username *string) (string, error) {
-	var pass *string
-	where := map[string]interface{}{"username": *username}
-	selectFields := []string{"`pass`"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-
-	if err = db.QueryRow(buildSelect, values...).Scan(&pass); err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	if pass == nil || *pass == "" {
-		return "", errors.New(constant.UnauthorizedError)
-	}
-
-	return fmt.Sprintf("%x", sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *username, *pass)))), nil
-}
-
 // 查询禁用或者过期的用户名
 func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	var usernames []string
-	buildSelect, values, err := builder.NamedQuery("select username from users where deleted = {{deleted}} or expire_time <= {{expire_time}}",
+	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
 		logrus.Errorln(err.Error())

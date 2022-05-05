@@ -141,7 +141,6 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 		return errors.New(constant.UsernameExist)
 	}
 	u := constant.USER
-	var deleted uint = 0
 	milli := util.DayToMilli(systemVo.RegisterExpireDays)
 	registerQuota := util.ToByte(systemVo.RegisterQuota)
 	user := module.Users{
@@ -149,7 +148,7 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 		Username:   userRegisterDto.Username,
 		Pass:       userRegisterDto.Pass,
 		RoleId:     &u,
-		Deleted:    &deleted,
+		Deleted:    new(uint),
 		ExpireTime: &milli,
 	}
 	if err := dao.CreateUser(&user); err != nil {
