@@ -380,3 +380,25 @@ func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	}
 	return usernames, nil
 }
+
+func SelectUsersEmailByExpireTime(day uint) ([]module.Users, error) {
+	buildSelect, values, err := builder.NamedQuery("select username,email from users where expire_time <= {{expire_time}} and quota != 0",
+		map[string]interface{}{"expire_time": day})
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	var users []module.Users
+	if err = scanner.Scan(rows, &users); err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	return users, nil
+}

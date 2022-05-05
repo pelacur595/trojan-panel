@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"trojan/dao"
@@ -185,7 +186,7 @@ func DisableUsers(usernames []string) error {
 	return nil
 }
 
-// 扫描无效用户
+// 定时任务：扫描无效用户
 func ScanUsers() {
 	usernames, err := dao.SelectUsernameByDeletedOrExpireTime()
 	if err != nil {
@@ -198,5 +199,40 @@ func ScanUsers() {
 			logrus.Errorf("定时扫描用户任务禁用用户异常 usernames: %s error: %v\n", usernames, err)
 		}
 		logrus.Infof("定时扫描用户任务禁用用户 usernames: %s\n", usernames)
+	}
+}
+
+// 定时任务：到期警告
+func ScanUserExpireWarn() {
+	systemName := constant.SystemName
+	systemVo, err := SelectSystemByName(&systemName)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return
+	}
+	if systemVo.EmailEnable == 0 || systemVo.ExpireWarnEnable == 0 {
+		return
+	}
+	expireWarnDay := systemVo.ExpireWarnDay
+	users, err := dao.SelectUsersEmailByExpireTime(util.DayToMilli(expireWarnDay))
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return
+	}
+	if len(users) > 0 {
+		for _, user := range users {
+			if user.Email != nil && *user.Email != "" {
+				// 发送到期邮件
+				emailDto := dto.SendEmailDto{
+					FromEmailName: "Trojan Panel",
+					ToEmails:      []string{*user.Email},
+					Subject:       "账号到期提醒",
+					Content:       fmt.Sprintf("您的账户: %s,还有%d天到期,请及时续期", *user.Username, expireWarnDay),
+				}
+				if err := SendEmail(&emailDto); err != nil {
+					logrus.Errorln(fmt.Sprintf("到期警告邮件发送失败 err: %v", err))
+				}
+			}
+		}
 	}
 }

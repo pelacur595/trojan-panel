@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 	"time"
@@ -14,6 +15,9 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 	systemVo, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
+	}
+	if systemVo.EmailEnable == 0 {
+		return errors.New(constant.SystemEmailError)
 	}
 	ch := make(chan *gomail.Message)
 	d := gomail.NewDialer(systemVo.EmailHost, int(systemVo.EmailPort), systemVo.EmailUsername, systemVo.EmailPassword)

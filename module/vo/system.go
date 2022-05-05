@@ -5,6 +5,9 @@ type SystemVo struct {
 	OpenRegister       uint   `json:"openRegister" redis:"openRegister"`
 	RegisterQuota      int    `json:"registerQuota" redis:"registerQuota"`
 	RegisterExpireDays uint   `json:"registerExpireDays" redis:"registerExpireDays"`
+	ExpireWarnEnable   uint   `json:"expireWarnEnable" redis:"expireWarnEnable"`
+	ExpireWarnDay      uint   `json:"expireWarnDay" redis:"expireWarnDay"`
+	EmailEnable        uint   `json:"emailEnable"`
 	EmailHost          string `json:"emailHost" redis:"emailHost"`
 	EmailPort          uint   `json:"emailPort" redis:"emailPort"`
 	EmailUsername      string `json:"emailUsername" redis:"emailUsername"`
