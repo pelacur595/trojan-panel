@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
-	"time"
-	"trojan/dao"
 	"trojan/dao/redis"
 	"trojan/module/constant"
 	"trojan/module/vo"
@@ -43,35 +41,6 @@ func JWTHandler() gin.HandlerFunc {
 			vo.Fail(constant.IllegalTokenError, c)
 			c.Abort()
 			return
-		}
-
-		// IP黑名单
-		ip := c.ClientIP()
-		get = redis.Client.String.Get(ip)
-		result, err = get.String()
-		if err != nil {
-			vo.Fail(constant.IllegalTokenError, c)
-			c.Abort()
-			return
-		}
-		if result != "" {
-			redis.Client.String.Set(fmt.Sprintf("trojan-panel:black-list:%s", ip), "in-black-list", time.Hour.Milliseconds()/1000)
-			vo.Fail(constant.BlackListError, c)
-			c.Abort()
-			return
-		} else {
-			ipCount, err := dao.CountBlackListByIp(&ip)
-			if err != nil {
-				vo.Fail(err.Error(), c)
-				c.Abort()
-				return
-			}
-			if ipCount > 0 {
-				redis.Client.String.Set(fmt.Sprintf("trojan-panel:black-list:%s", ip), "in-black-list", time.Hour.Milliseconds()/1000)
-				vo.Fail(constant.BlackListError, c)
-				c.Abort()
-				return
-			}
 		}
 		c.Next()
 	}
