@@ -326,12 +326,18 @@ func UserQRCode(id *uint) (string, error) {
 	return fmt.Sprintf("%s&%s", *user.Username, string(decodePass)), nil
 }
 
-func UpdateUserPasswordOrDeletedByUsernames(usernames []string, password *string, deleted *uint) error {
+func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {
 	where := map[string]interface{}{"username in": usernames}
 
 	update := map[string]interface{}{}
-	if password != nil {
-		update["password"] = password
+	if quota != nil {
+		update["quota"] = quota
+	}
+	if download != nil {
+		update["download"] = download
+	}
+	if upload != nil {
+		update["upload"] = upload
 	}
 	if deleted != nil {
 		update["deleted"] = deleted
@@ -352,31 +358,10 @@ func UpdateUserPasswordOrDeletedByUsernames(usernames []string, password *string
 	return nil
 }
 
-// 通过用户名查询连接密码
-func SelectEncryPasswordByUsername(username *string) (string, error) {
-	var pass *string
-	where := map[string]interface{}{"username": *username}
-	selectFields := []string{"`pass`"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-
-	if err = db.QueryRow(buildSelect, values...).Scan(&pass); err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	if pass == nil || *pass == "" {
-		return "", errors.New(constant.UnauthorizedError)
-	}
-
-	return fmt.Sprintf("%x", sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *username, *pass)))), nil
-}
-
 // 查询禁用或者过期的用户名
 func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
-	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and password != ''",
+	var usernames []string
+	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -389,10 +374,14 @@ func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	}
 	defer rows.Close()
 
-	var usernames []string
-	if err = scanner.Scan(rows, &usernames); err != nil {
+	scanMap, err := scanner.ScanMap(rows)
+	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
+	for _, record := range scanMap {
+		usernames = append(usernames, fmt.Sprintf("%s", record["username"]))
+	}
+
 	return usernames, nil
 }
