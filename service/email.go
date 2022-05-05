@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/tls"
 	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
@@ -21,6 +22,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 	}
 	ch := make(chan *gomail.Message)
 	d := gomail.NewDialer(systemVo.EmailHost, int(systemVo.EmailPort), systemVo.EmailUsername, systemVo.EmailPassword)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	go func() {
 		var s gomail.SendCloser
