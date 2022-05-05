@@ -158,7 +158,7 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 	return nil
 }
 
-// 拉白或者拉黑用户
+// 拉白或者拉黑用户 此操作会清空用户流量
 func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 	if len(usernames) > 0 {
 		var deleted uint
@@ -170,7 +170,6 @@ func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
 			return err
 		}
-		return nil
 	}
 	return nil
 }
