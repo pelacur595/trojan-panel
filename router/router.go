@@ -80,6 +80,15 @@ func Router(router *gin.Engine) {
 			// 上传静态网站文件
 			system.POST("/uploadWebFile", api.UploadWebFile)
 		}
+		blackList := trojan.Group("/blackList")
+		{
+			// 查询
+			blackList.GET("/selectBlackListPage", api.SelectBlackListPage)
+			// 删除
+			blackList.POST("/deleteBlackListByIp", api.DeleteBlackListByIp)
+			// 创建
+			blackList.POST("/createBlackList", api.CreateBlackList)
+		}
 		trojanGFW := trojan.Group("/trojan-gfw")
 		{
 			// 查看状态

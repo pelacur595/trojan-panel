@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"time"
 	"trojan/dao/redis"
 	"trojan/module"
@@ -84,7 +83,6 @@ func CreateUser(c *gin.Context) {
 	var userCreateDto dto.UserCreateDto
 	_ = c.ShouldBindJSON(&userCreateDto)
 	if err := validate.Struct(&userCreateDto); err != nil {
-		log.Println(err.Error())
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
@@ -114,7 +112,6 @@ func SelectUserPage(c *gin.Context) {
 	var userPageDto dto.UsersPageDto
 	_ = c.ShouldBindQuery(&userPageDto)
 	if err := validate.Struct(&userPageDto); err != nil {
-		log.Println(err)
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
@@ -176,7 +173,6 @@ func UpdateUserById(c *gin.Context) {
 	var userUpdateDto dto.UserUpdateDto
 	_ = c.ShouldBindJSON(&userUpdateDto)
 	if err := validate.Struct(&userUpdateDto); err != nil {
-		log.Println(err)
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
