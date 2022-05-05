@@ -321,12 +321,18 @@ func UserQRCode(id *uint) (string, error) {
 	return fmt.Sprintf("%s&%s", *user.Username, string(decodePass)), nil
 }
 
-func UpdateUserPasswordOrDeletedByUsernames(usernames []string, password *string, deleted *uint) error {
+func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {
 	where := map[string]interface{}{"username in": usernames}
 
 	update := map[string]interface{}{}
-	if password != nil {
-		update["password"] = password
+	if quota != nil {
+		update["quota"] = quota
+	}
+	if download != nil {
+		update["download"] = download
+	}
+	if upload != nil {
+		update["upload"] = upload
 	}
 	if deleted != nil {
 		update["deleted"] = deleted

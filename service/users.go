@@ -119,10 +119,6 @@ func UpdateUserById(users *module.Users) error {
 		if err := DisableUsers([]string{*users.Username}); err != nil {
 			return err
 		}
-	} else {
-		if err := EnableUser(users.Username); err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -165,48 +161,24 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 // 拉白或者拉黑用户
 func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 	if len(usernames) > 0 {
+		var deleted uint
 		if isBlack {
-			// 拉黑
-			password := ""
-			var black uint = 1
-			if err := dao.UpdateUserPasswordOrDeletedByUsernames(usernames, &password, &black); err != nil {
-				return err
-			}
+			deleted = 1
 		} else {
-			// 拉白
-			var white uint = 0
-			if err := dao.UpdateUserPasswordOrDeletedByUsernames(usernames, nil, &white); err != nil {
-				return err
-			}
-			for _, username := range usernames {
-				if err := EnableUser(&username); err != nil {
-					return err
-				}
-			}
+			deleted = 0
 		}
+		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
+			return err
+		}
+		return nil
 	}
 	return nil
 }
 
-// 启用用户服务链接
-func EnableUser(username *string) error {
-	if username != nil && *username != "" {
-		encryPassword, err := dao.SelectEncryPasswordByUsername(username)
-		if err != nil {
-			return err
-		}
-		if err := dao.UpdateUserPasswordOrDeletedByUsernames([]string{*username}, &encryPassword, nil); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// 禁用用户服务链接
+// 禁用用户连接节点
 func DisableUsers(usernames []string) error {
 	if len(usernames) > 0 {
-		password := ""
-		if err := dao.UpdateUserPasswordOrDeletedByUsernames(usernames, &password, nil); err != nil {
+		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
 			return err
 		}
 	}
