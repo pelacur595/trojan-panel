@@ -5,6 +5,7 @@ import (
 	"github.com/didi/gendry/manager"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
+	"net/url"
 	"strings"
 	"time"
 	"trojan/core"
@@ -24,7 +25,8 @@ func InitMySQL() {
 			manager.SetAllowCleartextPasswords(true),
 			manager.SetInterpolateParams(true),
 			manager.SetTimeout(1*time.Second),
-			manager.SetReadTimeout(1*time.Second)).
+			manager.SetReadTimeout(1*time.Second),
+			manager.SetLoc(url.QueryEscape("Asia/Shanghai"))).
 		Port(mySQLConfig.Port).Open(true)
 
 	if err != nil {
