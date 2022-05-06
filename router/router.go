@@ -82,30 +82,17 @@ func Router(router *gin.Engine) {
 		}
 		blackList := trojan.Group("/blackList")
 		{
-			// 查询
+			// 分页查询黑名单
 			blackList.GET("/selectBlackListPage", api.SelectBlackListPage)
-			// 删除
+			// 删除黑名单
 			blackList.POST("/deleteBlackListByIp", api.DeleteBlackListByIp)
-			// 创建
+			// 创建黑名单
 			blackList.POST("/createBlackList", api.CreateBlackList)
 		}
-		trojanGFW := trojan.Group("/trojan-gfw")
+		emailRecord := trojan.Group("/emailRecord")
 		{
-			// 查看状态
-			trojanGFW.GET("/status", api.TrojanGFWStatus)
-			// 重启
-			trojanGFW.POST("/restart", api.TrojanGFWRestart)
-			// 停止
-			trojanGFW.POST("/stop", api.TrojanGFWStop)
-		}
-		trojanGO := trojan.Group("/trojan-go")
-		{
-			// 查看状态
-			trojanGO.GET("/status", api.TrojanGOStatus)
-			// 重启
-			trojanGO.POST("/restart", api.TrojanGORestart)
-			// 停止
-			trojanGO.POST("/stop", api.TrojanGOStop)
+			// 查询邮件发送记录
+			emailRecord.GET("/selectEmailRecordPage", api.SelectEmailRecordPage)
 		}
 	}
 }
