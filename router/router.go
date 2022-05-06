@@ -28,7 +28,7 @@ func Router(router *gin.Engine) {
 		user := trojan.Group("/users")
 		{
 			// 注销
-			user.GET("/logout", api.LoginOut)
+			user.POST("/logout", api.Logout)
 			// 查询单个账户
 			user.GET("/selectUserById", api.SelectUserById)
 			// 创建账户

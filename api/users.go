@@ -68,7 +68,7 @@ func Register(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
-func LoginOut(c *gin.Context) {
+func Logout(c *gin.Context) {
 	user := util.GetCurrentUser(c)
 	if _, err := redis.Client.Key.
 		Del(fmt.Sprintf("trojan-panel:token:%s", user.Username)).

@@ -96,15 +96,15 @@ func GetUserInfo(c *gin.Context) (*vo.UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	roleNames, err := dao.SelectRoleNameByParentId(&userVo.RoleId, true)
+	roles, err := dao.SelectRoleNameByParentId(&userVo.RoleId, true)
 	if err != nil {
 		return nil, err
 	}
 	userInfo := vo.UserInfo{
-		Id:        userVo.Id,
-		Username:  userVo.Username,
-		RoleNames: roleNames,
-		MenuList:  menuList,
+		Id:       userVo.Id,
+		Username: userVo.Username,
+		Roles:    roles,
+		MenuList: menuList,
 	}
 	return &userInfo, nil
 }
