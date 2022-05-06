@@ -29,7 +29,7 @@ func PanelGroup(c *gin.Context) {
 		NodeCount:    nodeCount,
 		ExpireTime:   userVo.ExpireTime,
 	}
-	if util.IsAdmin(userInfo.RoleNames) {
+	if util.IsAdmin(userInfo.Roles) {
 		userCount, err := service.CountUserByUsername(nil)
 		if err != nil {
 			vo.Fail(err.Error(), c)
