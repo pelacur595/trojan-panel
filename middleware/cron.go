@@ -11,6 +11,6 @@ func InitCron() {
 	location, _ := time.LoadLocation("Asia/Shanghai")
 	c := cron.New(cron.WithLocation(location))
 	_, _ = c.AddFunc("@every 1m", service.ScanUsers)
-	_, _ = c.AddFunc("@every 1h", service.ScanUsers)
+	_, _ = c.AddFunc("@every 1h", service.ScanUserExpireWarn)
 	c.Start()
 }

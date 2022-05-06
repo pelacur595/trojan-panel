@@ -41,7 +41,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			// 发送消息
 			m := gomail.NewMessage()
 			m.SetHeaders(map[string][]string{
-				"From":    {m.FormatAddress(sendEmailDto.EmailUsername, sendEmailDto.FromEmailName)},
+				"From":    {m.FormatAddress(systemVo.EmailUsername, sendEmailDto.FromEmailName)},
 				"To":      {toEmail},
 				"Subject": {sendEmailDto.Subject},
 			})
