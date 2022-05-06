@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.35, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: trojan
+-- Host: 127.0.0.1    Database: trojan_panel_db
 -- ------------------------------------------------------
 -- Server version	5.7.35
 
@@ -14,6 +14,31 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `black_list`
+--
+
+DROP TABLE IF EXISTS `black_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `black_list` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `ip` varchar(64) NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='黑名单';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `black_list`
+--
+
+LOCK TABLES `black_list` WRITE;
+/*!40000 ALTER TABLE `black_list` DISABLE KEYS */;
+/*!40000 ALTER TABLE `black_list` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `casbin_rule`
@@ -42,6 +67,34 @@ LOCK TABLES `casbin_rule` WRITE;
 /*!40000 ALTER TABLE `casbin_rule` DISABLE KEYS */;
 INSERT INTO `casbin_rule` VALUES ('p','sysadmin','/api/users/selectUserById','GET','','',''),('p','sysadmin','/api/users/createUser','POST','','',''),('p','sysadmin','/api/users/getUserInfo','GET','','',''),('p','sysadmin','/api/users/selectUserPage','GET','','',''),('p','sysadmin','/api/users/deleteUserById','POST','','',''),('p','sysadmin','/api/users/updateUserPassByUsername','POST','','',''),('p','sysadmin','/api/users/updateUserById','POST','','',''),('p','sysadmin','/api/role/selectRoleList','GET','','',''),('p','sysadmin','/api/node/selectNodeById','GET','','',''),('p','sysadmin','/api/node/createNode','POST','','',''),('p','sysadmin','/api/node/selectNodePage','GET','','',''),('p','sysadmin','/api/node/deleteNodeById','POST','','',''),('p','sysadmin','/api/node/updateNodeById','POST','','',''),('p','sysadmin','/api/node/nodeQRCode','GET','','',''),('p','sysadmin','/api/node/nodeURL','GET','','',''),('p','sysadmin','/api/nodeType/selectNodeTypeList','GET','','',''),('p','sysadmin','/api/trojan-gfw/status','GET','','',''),('p','sysadmin','/api/trojan-gfw/restart','POST','','',''),('p','sysadmin','/api/trojan-gfw/stop','POST','','',''),('p','sysadmin','/api/trojan-go/status','GET','','',''),('p','sysadmin','/api/trojan-go/restart','POST','','',''),('p','sysadmin','/api/trojan-go/stop','POST','','',''),('p','sysadmin','/api/dashboard/panelGroup','GET','','',''),('p','sysadmin','/api/system/selectSystemByName','GET','','',''),('p','sysadmin','/api/system/updateSystemById','POST','','',''),('p','sysadmin','/api/system/uploadWebFile','POST','','',''),('p','user','/api/users/getUserInfo','GET','','',''),('p','user','/api/users/updateUserPassByUsername','POST','','',''),('p','user','/api/node/selectNodePage','GET','','',''),('p','user','/api/node/nodeQRCode','GET','','',''),('p','user','/api/node/nodeURL','GET','','',''),('p','user','/api/nodeType/selectNodeTypeList','GET','','',''),('p','user','/api/dashboard/panelGroup','GET','','','');
 /*!40000 ALTER TABLE `casbin_rule` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `email_record`
+--
+
+DROP TABLE IF EXISTS `email_record`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `email_record` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `to_email` varchar(64) NOT NULL DEFAULT '' COMMENT '收件人邮箱',
+  `subject` varchar(64) NOT NULL DEFAULT '' COMMENT '主题',
+  `content` varchar(255) NOT NULL DEFAULT '' COMMENT '内容',
+  `state` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态 0/未发送 1/发送成功 -1/发送失败',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='邮件发送记录';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `email_record`
+--
+
+LOCK TABLES `email_record` WRITE;
+/*!40000 ALTER TABLE `email_record` DISABLE KEYS */;
+/*!40000 ALTER TABLE `email_record` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -90,6 +143,11 @@ CREATE TABLE `node` (
   `ip` varchar(64) NOT NULL DEFAULT '' COMMENT 'IP地址',
   `port` int(10) unsigned NOT NULL DEFAULT '443' COMMENT '端口',
   `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '类型 1/trojan-go 2/trojan-gfw',
+  `websocket_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启websocket 0/否 1/是',
+  `websocket_path` varchar(64) NOT NULL DEFAULT 'trojan-panel-websocket-path' COMMENT 'websocket路径',
+  `ss_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启ss加密 0/否 1/是',
+  `ss_method` varchar(32) NOT NULL DEFAULT 'AES-128-GCM' COMMENT 'ss加密方式',
+  `ss_password` varchar(64) NOT NULL DEFAULT '' COMMENT 'ss密码',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -199,10 +257,17 @@ DROP TABLE IF EXISTS `system`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '系统名称',
-  `open_register` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT '开放注册 0/否 1/是',
+  `name` varchar(16) NOT NULL DEFAULT '' COMMENT '系统名称',
+  `open_register` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '开放注册 0/否 1/是',
   `register_quota` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '新默认流量 单位/byte',
   `register_expire_days` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '新用户默认过期天数 单位/天',
+  `expire_warn_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启到期警告 0/否 1/是',
+  `expire_warn_day` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '到期警告 单位/天',
+  `email_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启邮箱功能 0/否 1/是',
+  `email_host` varchar(64) NOT NULL DEFAULT '' COMMENT '系统邮箱设置-host',
+  `email_port` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '系统邮箱设置-port',
+  `email_username` varchar(32) NOT NULL DEFAULT '' COMMENT '系统邮箱设置-username',
+  `email_password` varchar(32) NOT NULL DEFAULT '' COMMENT '系统邮箱设置-password',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -215,7 +280,7 @@ CREATE TABLE `system` (
 
 LOCK TABLES `system` WRITE;
 /*!40000 ALTER TABLE `system` DISABLE KEYS */;
-INSERT INTO `system` VALUES (2,'trojan-panel',1,0,0,'2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `system` VALUES (2,'trojan-panel',1,0,0,0,0,0,'',0,'','','2022-04-01 00:00:00','2022-05-04 23:50:25');
 /*!40000 ALTER TABLE `system` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,8 +300,9 @@ CREATE TABLE `users` (
   `username` varchar(64) NOT NULL DEFAULT '' COMMENT '用户名',
   `pass` varchar(64) NOT NULL DEFAULT '' COMMENT '用户密码',
   `role_id` bigint(20) unsigned NOT NULL DEFAULT '3' COMMENT '角色id 1/系统管理员 3/普通用户',
-  `deleted` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '是否禁用 0/正常 1/禁用',
+  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否禁用 0/正常 1/禁用',
   `expire_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '过期时间',
+  `email` varchar(64) NOT NULL DEFAULT '' COMMENT '邮箱',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
@@ -250,7 +316,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'b4fc1369dd766eca295fb495b0938843becbac59fc5cb273b320aaa5',-1,0,0,'sysadmin','MTIzNDU2',1,0,32472115200000,'2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `users` VALUES (1,'b4fc1369dd766eca295fb495b0938843becbac59fc5cb273b320aaa5',-1,0,0,'sysadmin','MTIzNDU2',1,0,32472115200000,'','2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -263,4 +329,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-05  0:33:53
+-- Dump completed on 2022-05-07  1:11:12
