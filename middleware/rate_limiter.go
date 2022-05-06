@@ -5,6 +5,7 @@ import (
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 	"github.com/gin-gonic/gin"
+	redisgo "github.com/gomodule/redigo/redis"
 	"time"
 	"trojan/dao"
 	"trojan/dao/redis"
@@ -42,7 +43,7 @@ func blackListIp(c *gin.Context) bool {
 	ip := c.ClientIP()
 	get := redis.Client.String.Get(fmt.Sprintf("trojan-panel:black-list:%s", ip))
 	result, err := get.String()
-	if err != nil {
+	if err != nil && err != redisgo.ErrNil {
 		vo.Fail(constant.IllegalTokenError, c)
 		c.Abort()
 		return true
