@@ -253,3 +253,24 @@ func CountNodeByName(queryName *string) (int, error) {
 	}
 	return count, nil
 }
+
+func SelectNodeIps() ([]string, error) {
+	var ips []string
+
+	selectFields := []string{"ip"}
+	buildSelect, values, err := builder.BuildSelect("node", nil, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	if err = rows.Scan(&ips); err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	return ips, nil
+}

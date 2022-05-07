@@ -404,3 +404,24 @@ func SelectUsersEmailByExpireTime(day uint) ([]module.Users, error) {
 	}
 	return users, nil
 }
+
+func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error) {
+	where := map[string]interface{}{}
+	if id != nil {
+		where["id"] = *id
+	}
+	if username != nil && *username != "" {
+		where["username"] = *username
+	}
+	selectFileds := []string{"username"}
+	buildSelect, values, err := builder.BuildSelect("`users`", where, selectFileds)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return "", errors.New(constant.SysError)
+	}
+	var password string
+	if err = db.QueryRow(buildSelect, values...).Scan(&password); err != nil {
+		return "", errors.New(constant.SysError)
+	}
+	return password, err
+}

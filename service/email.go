@@ -57,7 +57,6 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			state = 1
 			if err = dao.UpdateEmailRecordSateById(&id, &state); err != nil {
 				logrus.Errorf("update email record err: %v\n", err)
-				return
 			}
 		}
 	}()

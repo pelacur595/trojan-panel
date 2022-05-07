@@ -3,10 +3,12 @@ package service
 import (
 	"errors"
 	"fmt"
+	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/skip2/go-qrcode"
 	"net/url"
 	"strings"
 	"trojan/dao"
+	"trojan/dao/redis"
 	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
@@ -32,6 +34,7 @@ func CreateNode(node *module.Node) error {
 	if err := dao.CreateNode(node); err != nil {
 		return err
 	}
+	redis.Client.Key.Del("trojan-panel:nodeIps")
 	return nil
 }
 
@@ -47,6 +50,7 @@ func DeleteNodeById(id *uint) error {
 	if err := dao.DeleteNodeById(id); err != nil {
 		return err
 	}
+	redis.Client.Key.Del("trojan-panel:nodeIps")
 	return nil
 }
 
@@ -54,6 +58,7 @@ func UpdateNodeById(node *module.Node) error {
 	if err := dao.UpdateNodeById(node); err != nil {
 		return err
 	}
+	redis.Client.Key.Del("trojan-panel:nodeIps")
 	return nil
 }
 
@@ -111,4 +116,25 @@ func CountNode() (int, error) {
 		return 0, err
 	}
 	return nodeCount, nil
+}
+
+func SelectNodeIps() ([]string, error) {
+	ips, err := redis.Client.Set.SMembers("trojan-panel:nodeIps").Strings()
+	if err != nil && err != redisgo.ErrNil {
+		return nil, errors.New(constant.SysError)
+	}
+	if len(ips) > 0 {
+		return ips, nil
+	} else {
+		nodeIps, err := dao.SelectNodeIps()
+		if err != nil {
+			return nil, err
+		}
+		var redisIps []interface{}
+		for _, ip := range nodeIps {
+			redisIps = append(redisIps, ip)
+		}
+		redis.Client.Set.SAdd("trojan-panel:nodeIps", redisIps)
+		return nodeIps, nil
+	}
 }

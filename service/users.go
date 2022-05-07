@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"trojan/core"
 	"trojan/dao"
 	"trojan/module"
 	"trojan/module/constant"
@@ -68,6 +69,11 @@ func SelectUserPage(username *string, pageNum *uint, pageSize *uint) (*vo.UsersP
 	return page, err
 }
 func DeleteUserById(id *uint) error {
+	user, err := dao.SelectUserById(id)
+	if err != nil {
+		return err
+	}
+	TrojanGODelUsers([]string{user.Username})
 	if err := dao.DeleteUserById(id); err != nil {
 		return err
 	}
@@ -86,6 +92,7 @@ func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string
 	if err := dao.UpdateUserPassByUsername(oldPass, newPass, username); err != nil {
 		return err
 	}
+	TrojanGODelUsers([]string{*username})
 	return nil
 }
 
@@ -110,6 +117,17 @@ func GetUserInfo(c *gin.Context) (*vo.UserInfo, error) {
 }
 
 func UpdateUserById(users *module.Users) error {
+	if users.Pass != nil && *users.Pass != "" {
+		if users.Username != nil && *users.Username != "" {
+			TrojanGODelUsers([]string{*users.Username})
+		} else {
+			user, err := dao.SelectUserById(users.Id)
+			if err != nil {
+				return err
+			}
+			TrojanGODelUsers([]string{user.Username})
+		}
+	}
 	if err := dao.UpdateUserById(users); err != nil {
 		return err
 	}
@@ -172,6 +190,9 @@ func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
 			return err
 		}
+		if isBlack {
+			TrojanGODelUsers(usernames)
+		}
 	}
 	return nil
 }
@@ -182,6 +203,7 @@ func DisableUsers(usernames []string) error {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
 			return err
 		}
+		TrojanGODelUsers(usernames)
 	}
 	return nil
 }
@@ -235,4 +257,17 @@ func ScanUserExpireWarn() {
 			}
 		}
 	}
+}
+
+func TrojanGODelUsers(usernames []string) {
+	go func() {
+		ips, err := dao.SelectNodeIps()
+		if err != nil {
+			return
+		}
+		api := core.TrojanGoApi()
+		if err = api.DeleteUsers(ips, usernames); err != nil {
+			return
+		}
+	}()
 }
