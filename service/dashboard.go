@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"time"
+	"trojan/core"
 	"trojan/dao"
 	"trojan/dao/redis"
 	"trojan/module/vo"
+	"trojan/util"
 )
 
 // 流量排行榜 一小时更新一次
@@ -26,4 +29,49 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	}
 	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Microseconds()*2/1000)
 	return trafficRank, nil
+}
+
+func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
+	userInfo, err := GetUserInfo(c)
+	if err != nil {
+		return nil, err
+	}
+	userVo, err := SelectUserById(&userInfo.Id)
+	if err != nil {
+		return nil, err
+	}
+	nodeCount, err := CountNode()
+	if err != nil {
+		return nil, err
+	}
+	panelGroupVo := vo.PanelGroupVo{
+		TotalFlow:    userVo.Quota,
+		ResidualFlow: userVo.Quota - int(userVo.Upload) - int(userVo.Download),
+		NodeCount:    nodeCount,
+		ExpireTime:   userVo.ExpireTime,
+	}
+	if util.IsAdmin(userInfo.Roles) {
+		userCount, err := CountUserByUsername(nil)
+		if err != nil {
+			return nil, err
+		}
+		panelGroupVo.UserCount = userCount
+
+		// 在线用户
+		api := core.TrojanGoApi()
+		ips, err := SelectNodeIps()
+		if err != nil {
+			return nil, err
+		}
+		var online = 0
+		for _, ip := range ips {
+			num, err := api.OnLine(ip)
+			if err != nil {
+				continue
+			}
+			online += num
+		}
+		panelGroupVo.OnLine = online
+	}
+	return &panelGroupVo, nil
 }
