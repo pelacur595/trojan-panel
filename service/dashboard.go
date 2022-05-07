@@ -10,6 +10,7 @@ import (
 	"trojan/module/vo"
 )
 
+// 流量排行榜 一小时更新一次
 func TrafficRankJob() {
 	_, _ = TrafficRank()
 }
