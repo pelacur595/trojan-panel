@@ -163,7 +163,7 @@ func (t *trojanGoApi) setUser(ip string, setUsersRequest *service.SetUsersReques
 }
 
 // 节点上设置用户设备数
-func (t *trojanGoApi) SetUserIpLimit(ip string, hash string, ipLimit int) error {
+func (t *trojanGoApi) SetUserIpLimit(ip string, hash string, ipLimit uint) error {
 	req := &service.SetUsersRequest{
 		Status: &service.UserStatus{
 			User: &service.User{
@@ -232,7 +232,10 @@ func (t *trojanGoApi) DeleteUsers(ips []string, usernames []string) error {
 			if err != nil {
 				continue
 			}
-			_ = t.DeleteUser(ip, hash)
+			if err = t.DeleteUser(ip, hash); err != nil {
+				logrus.Errorf("节点上删除用户失败 username: %s ip: %s", username, ip)
+				continue
+			}
 		}
 	}
 	return nil

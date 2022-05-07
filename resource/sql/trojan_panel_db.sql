@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.35, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.29, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: trojan_panel_db
 -- ------------------------------------------------------
--- Server version	5.7.35
+-- Server version	5.7.29
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -294,15 +294,18 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `password` char(56) NOT NULL COMMENT '密码',
-  `quota` bigint(20) NOT NULL DEFAULT '0' COMMENT '配额',
-  `download` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '下载',
-  `upload` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '上传',
-  `username` varchar(64) NOT NULL DEFAULT '' COMMENT '用户名',
-  `pass` varchar(64) NOT NULL DEFAULT '' COMMENT '用户密码',
+  `quota` bigint(20) NOT NULL DEFAULT '0' COMMENT '配额 单位/byte',
+  `download` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '下载 单位/byte',
+  `upload` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '上传 单位/byte',
+  `username` varchar(64) NOT NULL DEFAULT '' COMMENT '登录用户名',
+  `pass` varchar(64) NOT NULL DEFAULT '' COMMENT '登录密码',
   `role_id` bigint(20) unsigned NOT NULL DEFAULT '3' COMMENT '角色id 1/系统管理员 3/普通用户',
   `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否禁用 0/正常 1/禁用',
   `expire_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '过期时间',
   `email` varchar(64) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `ip_limit` tinyint(2) unsigned NOT NULL DEFAULT '3' COMMENT '限制IP设备数',
+  `upload_speed_limit` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '上传限速 单位/byte',
+  `download_speed_limit` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '下载限速 单位/byte',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
@@ -316,7 +319,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'b4fc1369dd766eca295fb495b0938843becbac59fc5cb273b320aaa5',-1,0,0,'sysadmin','MTIzNDU2',1,0,32472115200000,'','2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `users` VALUES (1,'b4fc1369dd766eca295fb495b0938843becbac59fc5cb273b320aaa5',-1,0,0,'sysadmin','MTIzNDU2',1,0,32472115200000,'',3,0,0,'2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -329,4 +332,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-07  1:11:12
+-- Dump completed on 2022-05-07 17:13:29

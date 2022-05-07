@@ -61,16 +61,36 @@ func CreateUser(users *module.Users) error {
 	encryPassword := fmt.Sprintf("%x", sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *users.Username, *users.Pass))))
 
 	var data []map[string]interface{}
-	data = append(data, map[string]interface{}{
-		"`password`":  encryPassword,
-		"`quota`":     *users.Quota,
-		"username":    *users.Username,
-		"`pass`":      encryPass,
-		"email":       users.Email,
-		"`role_id`":   *users.RoleId,
-		"deleted":     *users.Deleted,
-		"expire_time": *users.ExpireTime,
-	})
+	user := map[string]interface{}{
+		"`password`": encryPassword,
+		"username":   *users.Username,
+		"`pass`":     encryPass,
+	}
+	if users.Quota != nil {
+		user["`quota`"] = *users.Quota
+	}
+	if users.Email != nil && *users.Email != "" {
+		user["`email`"] = *users.Email
+	}
+	if users.RoleId != nil {
+		user["`role_id`"] = *users.RoleId
+	}
+	if users.Deleted != nil {
+		user["deleted"] = *users.Deleted
+	}
+	if users.ExpireTime != nil {
+		user["expire_time"] = *users.ExpireTime
+	}
+	if users.IpLimit != nil {
+		user["ip_limit"] = *users.IpLimit
+	}
+	if users.UploadSpeedLimit != nil {
+		user["upload_speed_limit"] = *users.UploadSpeedLimit
+	}
+	if users.DownloadSpeedLimit != nil {
+		user["download_speed_limit"] = *users.DownloadSpeedLimit
+	}
+	data = append(data, user)
 
 	buildInsert, values, err := builder.BuildInsert("users", data)
 	if err != nil {
@@ -264,6 +284,9 @@ func UpdateUserById(users *module.Users) error {
 	if users.Quota != nil {
 		update["quota"] = *users.Quota
 	}
+	if users.Email != nil && *users.Email != "" {
+		update["email"] = *users.Email
+	}
 	if users.RoleId != nil {
 		update["role_id"] = *users.RoleId
 	}
@@ -273,8 +296,14 @@ func UpdateUserById(users *module.Users) error {
 	if users.ExpireTime != nil {
 		update["expire_time"] = *users.ExpireTime
 	}
-	if users.Email != nil && *users.Email != "" {
-		update["email"] = *users.Email
+	if users.IpLimit != nil {
+		update["ip_limit"] = *users.IpLimit
+	}
+	if users.UploadSpeedLimit != nil {
+		update["upload_speed_limit"] = *users.UploadSpeedLimit
+	}
+	if users.DownloadSpeedLimit != nil {
+		update["download_speed_limit"] = *users.DownloadSpeedLimit
 	}
 
 	if len(update) > 0 {

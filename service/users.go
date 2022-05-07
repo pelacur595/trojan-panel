@@ -24,13 +24,16 @@ func CreateUser(userCreateDto dto.UserCreateDto) error {
 	}
 	toByte := util.ToByte(*userCreateDto.Quota)
 	user := module.Users{
-		Quota:      &toByte,
-		Username:   userCreateDto.Username,
-		Pass:       userCreateDto.Pass,
-		RoleId:     userCreateDto.RoleId,
-		Deleted:    userCreateDto.Deleted,
-		ExpireTime: userCreateDto.ExpireTime,
-		Email:      userCreateDto.Email,
+		Quota:              &toByte,
+		Username:           userCreateDto.Username,
+		Pass:               userCreateDto.Pass,
+		RoleId:             userCreateDto.RoleId,
+		Deleted:            userCreateDto.Deleted,
+		ExpireTime:         userCreateDto.ExpireTime,
+		Email:              userCreateDto.Email,
+		IpLimit:            userCreateDto.IpLimit,
+		UploadSpeedLimit:   userCreateDto.UploadSpeedLimit,
+		DownloadSpeedLimit: userCreateDto.DownloadSpeedLimit,
 	}
 	if err := dao.CreateUser(&user); err != nil {
 		return err
@@ -270,4 +273,23 @@ func TrojanGODelUsers(usernames []string) {
 			return
 		}
 	}()
+}
+
+func UserIpLimit(username string, limit uint) error {
+	ips, err := SelectNodeIps()
+	if err != nil {
+		return err
+	}
+	hash, err := dao.SelectUserPasswordByUsernameOrId(nil, &username)
+	if err != nil {
+		return err
+	}
+	api := core.TrojanGoApi()
+	for _, ip := range ips {
+		if err := api.SetUserIpLimit(ip, hash, limit); err != nil {
+			logrus.Errorf("用户限制ip设备数失败 username: %s ip: %s", username, ip)
+			continue
+		}
+	}
+	return nil
 }
