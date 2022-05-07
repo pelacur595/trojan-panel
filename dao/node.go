@@ -240,7 +240,7 @@ func CountNodeByName(queryName *string) (int, error) {
 		whereCount["name"] = *queryName
 	}
 
-	selectFields := []string{"count(1) count"}
+	selectFields := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("node", whereCount, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())

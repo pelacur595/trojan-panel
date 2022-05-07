@@ -26,7 +26,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 		whereCount["state"] = queryState
 	}
 
-	selectFieldsCount := []string{"count(1) total"}
+	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("email_record", whereCount, selectFieldsCount)
 	if err != nil {
 		logrus.Errorln(err.Error())

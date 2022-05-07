@@ -72,16 +72,16 @@ func UpdateSystemById(system *module.System) error {
 	if system.EmailEnable != nil {
 		update["email_enable"] = *system.EmailEnable
 	}
-	if system.EmailHost != nil {
+	if system.EmailHost != nil && *system.EmailHost != "" {
 		update["email_host"] = *system.EmailHost
 	}
 	if system.EmailPort != nil {
 		update["email_port"] = *system.EmailPort
 	}
-	if system.EmailUsername != nil {
+	if system.EmailUsername != nil && *system.EmailUsername != "" {
 		update["email_username"] = *system.EmailUsername
 	}
-	if system.EmailPassword != nil {
+	if system.EmailPassword != nil && *system.EmailPassword != "" {
 		update["email_password"] = *system.EmailPassword
 	}
 	if len(update) > 0 {

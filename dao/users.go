@@ -15,8 +15,8 @@ import (
 )
 
 func SelectUserById(id *uint) (*vo.UsersVo, error) {
-
 	var user module.Users
+
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "role_id", "username", "email", "FLOOR(quota/1024/1024) quota", "FLOOR(upload/1024/1024) upload", "FLOOR(download/1024/1024) download,deleted,expire_time"}
 	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
@@ -86,11 +86,12 @@ func CreateUser(users *module.Users) error {
 
 func CountUserByUsername(username *string) (int, error) {
 	var count int
+
 	where := map[string]interface{}{}
 	if username != nil {
 		where["username"] = *username
 	}
-	selectFields := []string{"count(1) count"}
+	selectFields := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -192,6 +193,7 @@ func DeleteUserById(id *uint) error {
 
 func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, error) {
 	var user module.Users
+
 	encryPass := base64.StdEncoding.EncodeToString([]byte(*pass))
 	where := map[string]interface{}{"username": *username, "pass": encryPass}
 	selectFileds := []string{"id", "role_id", "username", "deleted"}
@@ -271,7 +273,7 @@ func UpdateUserById(users *module.Users) error {
 	if users.ExpireTime != nil {
 		update["expire_time"] = *users.ExpireTime
 	}
-	if users.Email != nil {
+	if users.Email != nil && *users.Email != "" {
 		update["email"] = *users.Email
 	}
 

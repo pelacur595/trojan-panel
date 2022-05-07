@@ -15,7 +15,7 @@ func CountBlackListByIp(ip *string) (int, error) {
 	var count int
 
 	var where = map[string]interface{}{"ip": *ip}
-	selectFields := []string{"count(1) count"}
+	selectFields := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("black_list", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -78,7 +78,7 @@ func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackLi
 	if ip != nil && *ip != "" {
 		whereCount["ip like"] = fmt.Sprintf("%%%s%%", *ip)
 	}
-	selectFieldsCount := []string{"count(1) total"}
+	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("black_list", whereCount, selectFieldsCount)
 	if err := db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
