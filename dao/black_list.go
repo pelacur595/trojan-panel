@@ -14,13 +14,9 @@ import (
 func CountBlackListByIp(ip *string) (int, error) {
 	var count int
 
-	var whereCount = map[string]interface{}{}
-	if ip != nil && *ip != "" {
-		whereCount["ip"] = *ip
-	}
-
+	var where = map[string]interface{}{"ip": *ip}
 	selectFields := []string{"count(1) count"}
-	buildSelect, values, err := builder.BuildSelect("black_list", whereCount, selectFields)
+	buildSelect, values, err := builder.BuildSelect("black_list", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return 0, errors.New(constant.SysError)
@@ -34,26 +30,22 @@ func CountBlackListByIp(ip *string) (int, error) {
 }
 
 func DeleteBlackListByIp(ip *string) error {
-	var where = map[string]interface{}{}
-	if ip != nil && *ip != "" {
-		where["ip"] = *ip
+	var where = map[string]interface{}{"ip": *ip}
+
+	buildDelete, values, err := builder.BuildDelete("black_list", where)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
 	}
 
-	if len(where) > 0 {
-		buildDelete, values, err := builder.BuildDelete("black_list", where)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
-
-		if _, err := db.Exec(buildDelete, values...); err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
+	if _, err := db.Exec(buildDelete, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
 	}
 	return nil
 }
 
+// 批量添加至黑名单
 func CreateBlackList(ips []string) error {
 	var data []map[string]interface{}
 	for _, ip := range ips {
@@ -67,6 +59,7 @@ func CreateBlackList(ips []string) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
+
 	if _, err = db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -85,7 +78,7 @@ func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackLi
 	if ip != nil && *ip != "" {
 		whereCount["ip like"] = fmt.Sprintf("%%%s%%", *ip)
 	}
-	selectFieldsCount := []string{"count(1)"}
+	selectFieldsCount := []string{"count(1) total"}
 	buildSelect, values, err := builder.BuildSelect("black_list", whereCount, selectFieldsCount)
 	if err := db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
