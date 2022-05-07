@@ -26,7 +26,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 		whereCount["state"] = queryState
 	}
 
-	selectFieldsCount := []string{"count(1)"}
+	selectFieldsCount := []string{"count(1) total"}
 	buildSelect, values, err := builder.BuildSelect("email_record", whereCount, selectFieldsCount)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -46,7 +46,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 		where["to_email like"] = fmt.Sprintf("%%%s%%", *queryToEmail)
 	}
 	if queryState != nil {
-		whereCount["state"] = queryState
+		where["state"] = queryState
 	}
 	selectFields := []string{"id", "`to_email`", "subject", "content",
 		"state", "create_time"}
@@ -90,6 +90,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 	return &emailRecordPageVo, nil
 }
 
+// 创建邮件记录并返回主键
 func CreateEmailRecord(emailRecord module.EmailRecord) (uint, error) {
 	var data []map[string]interface{}
 	data = append(data, map[string]interface{}{
