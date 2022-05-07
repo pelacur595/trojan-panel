@@ -82,7 +82,7 @@ func CreateNode(node *module.Node) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if _, err = db.Exec(buildInsert, values...); err != nil {
+	if _, err := db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -134,7 +134,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &nodes); err != nil {
+	if err := scanner.Scan(rows, &nodes); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -268,7 +268,8 @@ func SelectNodeIps() ([]string, error) {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	if err = rows.Scan(&ips); err != nil {
+
+	if err := scanner.Scan(rows, &ips); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}

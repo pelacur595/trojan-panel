@@ -50,12 +50,12 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			// m.Attach("/home/Alex/lolcat.jpg")
 
 			var state int
-			if err = d.DialAndSend(m); err != nil {
+			if err := d.DialAndSend(m); err != nil {
 				logrus.Errorf("email dial and send err: %v\n", err)
 				state = -1
 			}
 			state = 1
-			if err = dao.UpdateEmailRecordSateById(&id, &state); err != nil {
+			if err := dao.UpdateEmailRecordSateById(&id, &state); err != nil {
 				logrus.Errorf("update email record err: %v\n", err)
 			}
 		}

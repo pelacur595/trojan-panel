@@ -28,7 +28,7 @@ func SelectMenuListByRoleId(roleId *uint) ([]vo.MenuListVo, error) {
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &menuLists); err != nil {
+	if err := scanner.Scan(rows, &menuLists); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -70,7 +70,7 @@ func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &roles); err != nil {
+	if err := scanner.Scan(rows, &roles); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -116,7 +116,7 @@ func SelectRoleNameByParentId(id *uint, includeSelf bool) ([]string, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	for _, record := range result {
-		roleNames = append(roleNames, record["name"].(string))
+		roleNames = append(roleNames, fmt.Sprintf("%s", record["name"]))
 	}
 	return roleNames, nil
 }

@@ -26,7 +26,7 @@ func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &nodeTypes); err != nil {
+	if err := scanner.Scan(rows, &nodeTypes); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}

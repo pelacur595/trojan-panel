@@ -35,5 +35,5 @@ type UserInfo struct {
 
 type UsersTrafficRankVo struct {
 	Username    string `json:"username"`
-	TrafficUsed int    `json:"trafficUsed"`
+	TrafficUsed string `json:"trafficUsed"`
 }

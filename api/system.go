@@ -72,18 +72,18 @@ func UploadWebFile(c *gin.Context) {
 		return
 	}
 	// 删除webfile文件夹内的所有文件
-	if err = util.RemoveSubFile(constant.WebFilePath); err != nil {
+	if err := util.RemoveSubFile(constant.WebFilePath); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}
 	// 保存文件
 	webFile := fmt.Sprintf("%s/%s", constant.WebFilePath, constant.WebFileName)
-	if err = c.SaveUploadedFile(file, webFile); err != nil {
+	if err := c.SaveUploadedFile(file, webFile); err != nil {
 		vo.Fail(constant.FileUploadError, c)
 		return
 	}
 	// 解压webfile
-	if err = util.Unzip(webFile, constant.WebFilePath); err != nil {
+	if err := util.Unzip(webFile, constant.WebFilePath); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}

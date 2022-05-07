@@ -60,7 +60,7 @@ func CreateBlackList(ips []string) error {
 		return errors.New(constant.SysError)
 	}
 
-	if _, err = db.Exec(buildInsert, values...); err != nil {
+	if _, err := db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -107,7 +107,7 @@ func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackLi
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &blackLists); err != nil {
+	if err := scanner.Scan(rows, &blackLists); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}

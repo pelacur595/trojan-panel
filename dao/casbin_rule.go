@@ -22,7 +22,7 @@ func Casbin() (*casbin.Enforcer, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	// 加载规则
-	if err = e.LoadPolicy(); err != nil {
+	if err := e.LoadPolicy(); err != nil {
 		logrus.Errorf("加载规则失败 error: %v\n", err)
 		return nil, errors.New(constant.SysError)
 	}

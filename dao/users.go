@@ -97,7 +97,7 @@ func CreateUser(users *module.Users) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if _, err = db.Exec(buildInsert, values...); err != nil {
+	if _, err := db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -166,7 +166,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &users); err != nil {
+	if err := scanner.Scan(rows, &users); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -405,7 +405,7 @@ func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	defer rows.Close()
 
 	var usernames []string
-	if err = scanner.Scan(rows, &usernames); err != nil {
+	if err := scanner.Scan(rows, &usernames); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -427,7 +427,7 @@ func SelectUsersEmailByExpireTime(day uint) ([]module.Users, error) {
 	defer rows.Close()
 
 	var users []module.Users
-	if err = scanner.Scan(rows, &users); err != nil {
+	if err := scanner.Scan(rows, &users); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -449,7 +449,7 @@ func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error
 		return "", errors.New(constant.SysError)
 	}
 	var password string
-	if err = db.QueryRow(buildSelect, values...).Scan(&password); err != nil {
+	if err := db.QueryRow(buildSelect, values...).Scan(&password); err != nil {
 		return "", errors.New(constant.SysError)
 	}
 	return password, err
@@ -479,8 +479,8 @@ order by traffic_used desc`, nil)
 	}
 	for _, record := range result {
 		usersTrafficRankVos = append(usersTrafficRankVos, vo.UsersTrafficRankVo{
-			Username:    record["username"].(string),
-			TrafficUsed: record["traffic_used"].(int),
+			Username:    fmt.Sprintf("%s", record["username"]),
+			TrafficUsed: fmt.Sprintf("%s", record["traffic_used"]),
 		})
 	}
 	return usersTrafficRankVos, nil

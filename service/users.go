@@ -268,7 +268,7 @@ func TrojanGODelUsers(usernames []string) {
 		if err != nil {
 			return
 		}
-		if err = TrojanGODeleteUsers(ips, usernames); err != nil {
+		if err := TrojanGODeleteUsers(ips, usernames); err != nil {
 			return
 		}
 	}()
@@ -302,7 +302,7 @@ func TrojanGODeleteUsers(ips []string, usernames []string) error {
 			if err != nil {
 				continue
 			}
-			if err = api.DeleteUser(ip, hash); err != nil {
+			if err := api.DeleteUser(ip, hash); err != nil {
 				logrus.Errorf("节点上删除用户失败 username: %s ip: %s", username, ip)
 				continue
 			}
