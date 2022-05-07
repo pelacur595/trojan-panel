@@ -12,5 +12,6 @@ func InitCron() {
 	c := cron.New(cron.WithLocation(location))
 	_, _ = c.AddFunc("@every 1m", service.ScanUsers)
 	_, _ = c.AddFunc("@every 1h", service.ScanUserExpireWarn)
+	_, _ = c.AddFunc("@every 1h", service.TrafficRankJob)
 	c.Start()
 }

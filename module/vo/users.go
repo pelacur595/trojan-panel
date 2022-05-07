@@ -32,3 +32,8 @@ type UserInfo struct {
 	Roles    []string   `json:"roles"`
 	MenuList []TreeNode `json:"menuList"`
 }
+
+type UsersTrafficRankVo struct {
+	Username    string `json:"username"`
+	TrafficUsed int    `json:"trafficUsed"`
+}

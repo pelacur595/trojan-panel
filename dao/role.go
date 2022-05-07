@@ -116,7 +116,7 @@ func SelectRoleNameByParentId(id *uint, includeSelf bool) ([]string, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	for _, record := range result {
-		roleNames = append(roleNames, fmt.Sprintf("%s", record["name"]))
+		roleNames = append(roleNames, record["name"].(string))
 	}
 	return roleNames, nil
 }

@@ -425,3 +425,34 @@ func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error
 	}
 	return password, err
 }
+
+func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
+	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as traffic_used
+from users
+where quota != 0
+order by traffic_used desc`, nil)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	var usersTrafficRankVos []vo.UsersTrafficRankVo
+	result, err := scanner.ScanMap(rows)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	for _, record := range result {
+		usersTrafficRankVos = append(usersTrafficRankVos, vo.UsersTrafficRankVo{
+			Username:    record["username"].(string),
+			TrafficUsed: record["traffic_used"].(int),
+		})
+	}
+	return usersTrafficRankVos, nil
+}
