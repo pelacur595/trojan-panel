@@ -12,7 +12,6 @@ import (
 	"google.golang.org/grpc/credentials"
 	"io"
 	"os"
-	"trojan/dao"
 	"trojan/module/constant"
 )
 
@@ -222,21 +221,4 @@ func (t *trojanGoApi) AddUser(ip string, hash string, ipLimit int, uploadSpeedLi
 		Operation: service.SetUsersRequest_Add,
 	}
 	return t.setUser(ip, req)
-}
-
-// 批量节点上删除用户
-func (t *trojanGoApi) DeleteUsers(ips []string, usernames []string) error {
-	for _, ip := range ips {
-		for _, username := range usernames {
-			hash, err := dao.SelectUserPasswordByUsernameOrId(nil, &username)
-			if err != nil {
-				continue
-			}
-			if err = t.DeleteUser(ip, hash); err != nil {
-				logrus.Errorf("节点上删除用户失败 username: %s ip: %s", username, ip)
-				continue
-			}
-		}
-	}
-	return nil
 }

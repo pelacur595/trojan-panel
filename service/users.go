@@ -268,8 +268,7 @@ func TrojanGODelUsers(usernames []string) {
 		if err != nil {
 			return
 		}
-		api := core.TrojanGoApi()
-		if err = api.DeleteUsers(ips, usernames); err != nil {
+		if err = TrojanGODeleteUsers(ips, usernames); err != nil {
 			return
 		}
 	}()
@@ -289,6 +288,24 @@ func UserIpLimit(username string, limit uint) error {
 		if err := api.SetUserIpLimit(ip, hash, limit); err != nil {
 			logrus.Errorf("用户限制ip设备数失败 username: %s ip: %s", username, ip)
 			continue
+		}
+	}
+	return nil
+}
+
+// 批量节点上删除用户
+func TrojanGODeleteUsers(ips []string, usernames []string) error {
+	api := core.TrojanGoApi()
+	for _, ip := range ips {
+		for _, username := range usernames {
+			hash, err := dao.SelectUserPasswordByUsernameOrId(nil, &username)
+			if err != nil {
+				continue
+			}
+			if err = api.DeleteUser(ip, hash); err != nil {
+				logrus.Errorf("节点上删除用户失败 username: %s ip: %s", username, ip)
+				continue
+			}
 		}
 	}
 	return nil
