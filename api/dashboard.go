@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"trojan/core"
 	"trojan/module/vo"
 	"trojan/service"
 	"trojan/util"
@@ -36,6 +37,22 @@ func PanelGroup(c *gin.Context) {
 			return
 		}
 		panelGroupVo.UserCount = userCount
+
+		// 在线用户
+		api := core.TrojanGoApi()
+		ips, err := service.SelectNodeIps()
+		if err != nil {
+			return
+		}
+		var online = 0
+		for _, ip := range ips {
+			num, err := api.OnLine(ip)
+			if err != nil {
+				return
+			}
+			online += num
+		}
+		panelGroupVo.OnLine = online
 	}
 	vo.Success(panelGroupVo, c)
 }
