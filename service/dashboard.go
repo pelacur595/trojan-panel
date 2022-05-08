@@ -50,7 +50,7 @@ func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
 		return nil, err
 	}
 	panelGroupVo := vo.PanelGroupVo{
-		TotalFlow:    userVo.Quota,
+		Quota:        userVo.Quota,
 		ResidualFlow: userVo.Quota - int(userVo.Upload) - int(userVo.Download),
 		NodeCount:    nodeCount,
 		ExpireTime:   userVo.ExpireTime,
