@@ -27,10 +27,9 @@ type UsersLoginVo struct {
 }
 
 type UserInfo struct {
-	Id       uint       `json:"id"`
-	Username string     `json:"username"`
-	Roles    []string   `json:"roles"`
-	MenuList []TreeNode `json:"menuList"`
+	Id       uint     `json:"id"`
+	Username string   `json:"username"`
+	Roles    []string `json:"roles"`
 }
 
 type UsersTrafficRankVo struct {

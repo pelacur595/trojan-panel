@@ -102,10 +102,6 @@ func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string
 // 获取当前请求账户信息
 func GetUserInfo(c *gin.Context) (*vo.UserInfo, error) {
 	userVo := util.GetCurrentUser(c)
-	menuList, err := SelectMenuListByRoleId(&userVo.RoleId)
-	if err != nil {
-		return nil, err
-	}
 	roles, err := dao.SelectRoleNameByParentId(&userVo.RoleId, true)
 	if err != nil {
 		return nil, err
@@ -114,7 +110,6 @@ func GetUserInfo(c *gin.Context) (*vo.UserInfo, error) {
 		Id:       userVo.Id,
 		Username: userVo.Username,
 		Roles:    roles,
-		MenuList: menuList,
 	}
 	return &userInfo, nil
 }
