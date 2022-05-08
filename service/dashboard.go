@@ -20,6 +20,11 @@ func TrafficRankJob() {
 
 func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	trafficRank, err := dao.TrafficRank()
+	for _, item := range trafficRank {
+		prefix := item.Username[0:2]
+		suffix := item.Username[:3]
+		item.Username = fmt.Sprintf("%s****%s", prefix, suffix)
+	}
 	if err != nil {
 		return nil, err
 	}
