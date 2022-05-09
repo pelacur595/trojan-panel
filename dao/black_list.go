@@ -93,7 +93,7 @@ func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackLi
 	if ip != nil && *ip != "" {
 		where["ip like"] = fmt.Sprintf("%%%s%%", *ip)
 	}
-	selectFields := []string{"id", "ip", "username", "create_time"}
+	selectFields := []string{"id", "ip", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("black_list", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
