@@ -10,5 +10,5 @@ type BlackListVo struct {
 
 type BlackListPageVo struct {
 	BaseVoPage
-	BlackLists []BlackListVo `json:"blackListVos"`
+	BlackLists []BlackListVo `json:"blackLists"`
 }
