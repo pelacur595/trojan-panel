@@ -15,7 +15,9 @@ import (
 func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "`name`", "ip", "port", "type", "create_time"}
+	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
+		"websocket_path", "ss_enable", "ss_method", "ss_password",
+		"create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -119,7 +121,8 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
-	selectFields := []string{"id", "`name`", "ip", "type", "websocket_enable", "ss_enable",
+	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
+		"websocket_path", "ss_enable", "ss_method", "ss_password",
 		"create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
@@ -150,6 +153,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			Id:              *item.Id,
 			Name:            *item.Name,
 			Ip:              *item.Ip,
+			Port:            *item.Port,
 			Type:            *item.Type,
 			WebsocketEnable: *item.WebsocketEnable,
 			SsEnable:        *item.SsEnable,
