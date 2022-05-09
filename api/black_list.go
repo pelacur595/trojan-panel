@@ -47,7 +47,7 @@ func CreateBlackList(c *gin.Context) {
 		return
 	}
 
-	if err := service.CreateBlackList(blackListCreateDto.Ips); err != nil {
+	if err := service.CreateBlackList([]string{*blackListCreateDto.Ip}); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
