@@ -6,11 +6,6 @@ type EmailRecordPageDto struct {
 }
 
 type EmailRecordDto struct {
-	ToEmail *string `json:"toEmail" form:"toEmail" validate:"omitempty,validateEmail"`
+	ToEmail *string `json:"toEmail" form:"toEmail" validate:"omitempty,min=0,max=64"`
 	State   *int    `json:"state" form:"state" validate:"omitempty,oneof=-1 0 1"`
-}
-
-type EmailRecordUpdateDto struct {
-	RequiredIdDto
-	State *int `json:"state" form:"state" validate:"required,oneof=-1 0 1"`
 }
