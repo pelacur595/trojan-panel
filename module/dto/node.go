@@ -37,8 +37,8 @@ type NodeUpdateDto struct {
 	RequiredIdDto
 	Name            *string `json:"name" form:"name" validate:"omitempty,min=3,max=20"`
 	Ip              *string `json:"ip" form:"ip" validate:"omitempty,hostname|fqdn,min=3,max=64"`
-	Port            *uint   `json:"port" form:"port" validate:"required,gt=0,lte=65535"`
-	Type            *uint   `json:"type" form:"type" validate:"required,validatePositiveInt"`
+	Port            *uint   `json:"port" form:"port" validate:"omitempty,gt=0,lte=65535"`
+	Type            *uint   `json:"type" form:"type" validate:"omitempty,validatePositiveInt"`
 	WebsocketEnable *uint   `json:"websocketEnable" validate:"omitempty,oneof=0 1"`
 	WebsocketPath   *string `json:"websocketPath" validate:"omitempty,min=0,max=32"`
 	SsEnable        *uint   `json:"ssEnable" validate:"omitempty,oneof=0 1"`

@@ -24,6 +24,7 @@ func Router(router *gin.Engine) {
 		{
 			// 仪表板
 			dashboard.GET("/panelGroup", api.PanelGroup)
+			// 流量排行榜
 			dashboard.GET("/trafficRank", api.TrafficRank)
 		}
 		user := trojan.Group("/users")

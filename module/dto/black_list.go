@@ -1,7 +1,7 @@
 package dto
 
 type BlackListDto struct {
-	Ip *string `json:"ip" form:"ip" validate:"required,hostname,min=3,max=64"`
+	Ip *string `json:"ip" form:"ip" validate:"omitempty,hostname,min=0,max=64"`
 }
 
 type BlackListPageDto struct {

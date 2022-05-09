@@ -7,7 +7,7 @@ type EmailRecordPageDto struct {
 
 type EmailRecordDto struct {
 	ToEmail *string `json:"toEmail" form:"toEmail" validate:"omitempty,validateEmail"`
-	State   *int    `json:"state" form:"state" validate:"required,oneof=-1 0 1"`
+	State   *int    `json:"state" form:"state" validate:"omitempty,oneof=-1 0 1"`
 }
 
 type EmailRecordUpdateDto struct {
