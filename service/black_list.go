@@ -16,11 +16,22 @@ func DeleteBlackListByIp(ip *string) error {
 }
 
 func CreateBlackList(ips []string) error {
-	if err := dao.CreateBlackList(ips); err != nil {
+	var ipSet []string
+	for _, ip := range ips {
+		// 判断库中是否已经存在
+		countIp, err := dao.CountBlackListByIp(&ip)
+		if err != nil {
+			return err
+		}
+		if countIp == 0 {
+			ipSet = append(ipSet, ip)
+		}
+	}
+	if err := dao.CreateBlackList(ipSet); err != nil {
 		return err
 	}
 	kv := map[string]interface{}{}
-	for _, ip := range ips {
+	for _, ip := range ipSet {
 		kv[fmt.Sprintf("trojan-panel:black-list:%s", ip)] = "in-black-list"
 	}
 	redis.Client.String.MSet(kv)
