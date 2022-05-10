@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"trojan/module"
 	"trojan/module/constant"
@@ -106,7 +107,7 @@ func UpdateNodeById(c *gin.Context) {
 
 func NodeQRCode(c *gin.Context) {
 	var nodeQRCodeDto dto.NodeQRCodeDto
-	_ = c.ShouldBindQuery(&nodeQRCodeDto)
+	_ = c.ShouldBindJSON(&nodeQRCodeDto)
 	if err := validate.Struct(&nodeQRCodeDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
@@ -126,9 +127,10 @@ func NodeQRCode(c *gin.Context) {
 
 func NodeURL(c *gin.Context) {
 	var nodeQRCodeDto dto.NodeQRCodeDto
-	_ = c.ShouldBindQuery(&nodeQRCodeDto)
+	_ = c.ShouldBindJSON(&nodeQRCodeDto)
 	if err := validate.Struct(&nodeQRCodeDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
+		fmt.Println(err.Error())
 		return
 	}
 	userInfo, err := service.GetUserInfo(c)

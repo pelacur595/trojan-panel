@@ -64,9 +64,9 @@ func Router(router *gin.Engine) {
 			// 更新节点
 			node.POST("/updateNodeById", api.UpdateNodeById)
 			// 获取节点二维码
-			node.GET("/nodeQRCode", api.NodeQRCode)
+			node.POST("/nodeQRCode", api.NodeQRCode)
 			// 复制URL
-			node.GET("/nodeURL", api.NodeURL)
+			node.POST("/nodeURL", api.NodeURL)
 		}
 		nodeType := trojan.Group("/nodeType")
 		{

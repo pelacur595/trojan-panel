@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
-	"trojan/core"
 	"trojan/dao"
 	"trojan/dao/redis"
 	"trojan/module/vo"
@@ -62,21 +61,21 @@ func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
 		}
 		panelGroupVo.UserCount = userCount
 
-		// 在线用户
-		api := core.TrojanGoApi()
-		ips, err := SelectNodeIps()
-		if err != nil {
-			return nil, err
-		}
-		var online = 0
-		for _, ip := range ips {
-			num, err := api.OnLine(ip)
-			if err != nil {
-				continue
-			}
-			online += num
-		}
-		panelGroupVo.OnLine = online
+		//// 在线用户
+		//api := core.TrojanGoApi()
+		//ips, err := SelectNodeIps()
+		//if err != nil {
+		//	return nil, err
+		//}
+		//var online = 0
+		//for _, ip := range ips {
+		//	num, err := api.OnLine(ip)
+		//	if err != nil {
+		//		continue
+		//	}
+		//	online += num
+		//}
+		//panelGroupVo.OnLine = online
 	}
 	return &panelGroupVo, nil
 }

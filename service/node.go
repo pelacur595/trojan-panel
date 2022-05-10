@@ -90,24 +90,37 @@ func NodeURL(userId *uint, nodeQRCodeDto dto.NodeQRCodeDto) (string, error) {
 		nodeQRCodeDto.Port == nil || *nodeQRCodeDto.Port == 0 {
 		return "", errors.New(constant.NodeURLError)
 	}
-	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("%s://%s@%s:%d", nodeTypeVo.Prefix, password, *nodeQRCodeDto.Ip, *nodeQRCodeDto.Port))
+
+	// 构建URL
+	var headBuilder strings.Builder
 	if nodeTypeVo.Prefix == constant.TrojanGoPrefix {
+		headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?", nodeTypeVo.Prefix, url.PathEscape(password),
+			*nodeQRCodeDto.Ip, *nodeQRCodeDto.Port))
 		if nodeQRCodeDto.WebsocketEnable != nil && *nodeQRCodeDto.WebsocketEnable != 0 &&
 			nodeQRCodeDto.WebsocketPath != nil && *nodeQRCodeDto.WebsocketPath != "" {
-			builder.WriteString("&type=ws")
-			builder.WriteString(fmt.Sprintf("&path=%s", *nodeQRCodeDto.WebsocketPath))
+			headBuilder.WriteString(fmt.Sprintf("&type=%s", url.PathEscape("ws")))
+			headBuilder.WriteString(fmt.Sprintf("&path=%s",
+				url.PathEscape(fmt.Sprintf("/%s", *nodeQRCodeDto.WebsocketPath))))
+			if nodeQRCodeDto.SsEnable != nil && *nodeQRCodeDto.SsEnable != 0 ||
+				nodeQRCodeDto.SsMethod != nil && *nodeQRCodeDto.SsMethod != "" ||
+				nodeQRCodeDto.SsPassword != nil && *nodeQRCodeDto.SsPassword != "" {
+				headBuilder.WriteString(fmt.Sprintf("&encryption=%s", url.PathEscape(
+					fmt.Sprintf("ss;%s:%s", *nodeQRCodeDto.SsMethod, *nodeQRCodeDto.SsPassword))))
+			}
 		}
-		if nodeQRCodeDto.SsEnable != nil && *nodeQRCodeDto.SsEnable != 0 ||
-			nodeQRCodeDto.SsMethod != nil && *nodeQRCodeDto.SsMethod != "" ||
-			nodeQRCodeDto.SsPassword != nil && *nodeQRCodeDto.SsPassword != "" {
-			builder.WriteString(fmt.Sprintf("encryption=ss;%s:%s", *nodeQRCodeDto.SsMethod, *nodeQRCodeDto.SsPassword))
-		}
+	}
+
+	if nodeTypeVo.Prefix == constant.HysteriaPrefix {
+		headBuilder.WriteString(fmt.Sprintf("%s://%s:%d?auth=%s&upmbps=100&downmbps=100",
+			nodeTypeVo.Prefix,
+			*nodeQRCodeDto.Ip,
+			*nodeQRCodeDto.Port,
+			password))
 	}
 	if nodeQRCodeDto.Name != nil && *nodeQRCodeDto.Name != "" {
-		builder.WriteString(fmt.Sprintf("#%s", *nodeQRCodeDto.Name))
+		headBuilder.WriteString(fmt.Sprintf("#%s", url.PathEscape(*nodeQRCodeDto.Name)))
 	}
-	return url.PathEscape(builder.String()), nil
+	return headBuilder.String(), nil
 }
 
 func CountNode() (int, error) {
