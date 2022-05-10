@@ -246,7 +246,7 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 	return &usersVo, nil
 }
 
-func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string) error {
+func UpdateUserProfile(oldPass *string, newPass *string, username *string, email *string) error {
 	_, err := SelectUserByUsernameAndPass(username, oldPass)
 	if err != nil {
 		return errors.New(constant.OriPassError)
@@ -258,6 +258,9 @@ func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string
 	update := map[string]interface{}{
 		"`pass`":   encryPass,
 		"password": fmt.Sprintf("%x", encryPassword),
+	}
+	if email != nil && *email != "" {
+		update["email"] = email
 	}
 	buildUpdate, values, err := builder.BuildUpdate("users", where, update)
 	if err != nil {

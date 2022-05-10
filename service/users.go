@@ -91,8 +91,8 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 	return userVo, nil
 }
 
-func UpdateUserPassByUsername(oldPass *string, newPass *string, username *string) error {
-	if err := dao.UpdateUserPassByUsername(oldPass, newPass, username); err != nil {
+func UpdateUserProfile(oldPass *string, newPass *string, username *string, email *string) error {
+	if err := dao.UpdateUserProfile(oldPass, newPass, username, email); err != nil {
 		return err
 	}
 	TrojanGODelUsers([]string{*username})
@@ -165,7 +165,6 @@ func Register(userRegisterDto dto.UserRegisterDto) error {
 		Quota:      &registerQuota,
 		Username:   userRegisterDto.Username,
 		Pass:       userRegisterDto.Pass,
-		Email:      userRegisterDto.Email,
 		RoleId:     &u,
 		Deleted:    new(uint),
 		ExpireTime: &milli,

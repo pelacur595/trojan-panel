@@ -9,10 +9,11 @@ type UsersDto struct {
 	Username *string `json:"username" form:"username" validate:"omitempty,min=0,max=20"`
 }
 
-type UserUpdatePassDto struct {
+type UserUpdateProfileDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
 	NewPass  *string `json:"newPass" form:"newPass" validate:"required,min=6,max=20,validateStr"`
 	OldPass  *string `json:"oldPass" form:"oldPass" validate:"required,min=6,max=20,validateStr"`
+	Email    *string `json:"email" form:"email" validate:"validateEmail"`
 }
 
 type UserCreateDto struct {
@@ -54,5 +55,4 @@ type UserLoginOutDto struct {
 type UserRegisterDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr,excludes=admin"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
-	Email    *string `json:"email" form:"email" validate:"required,validateEmail"`
 }
