@@ -31,6 +31,7 @@ func Setting(c *gin.Context) {
 	}
 	settingVo := vo.SettingVo{
 		OpenRegister: systemVo.OpenRegister,
+		EmailEnable:  systemVo.EmailEnable,
 	}
 	vo.Success(settingVo, c)
 }
