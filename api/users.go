@@ -50,6 +50,7 @@ func Login(c *gin.Context) {
 	vo.Fail(constant.UsernameOrPassError, c)
 }
 
+// 验证码
 func GenerateCaptcha(c *gin.Context) {
 	return
 }

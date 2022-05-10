@@ -14,6 +14,7 @@ func InitValidator() {
 	// 注册校验对象
 	_ = validate.RegisterValidation("validateStr", validateStr)
 	_ = validate.RegisterValidation("validatePositiveInt", validatePositiveInt)
+	_ = validate.RegisterValidation("validateEmail", validateEmail)
 }
 
 // 字符串必须是字母和数字的组合
