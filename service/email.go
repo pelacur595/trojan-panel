@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
-	"trojan/dao"
 	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
@@ -27,17 +26,6 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 		// 插入发送记录
 		toEmails := sendEmailDto.ToEmails
 		for _, toEmail := range toEmails {
-			emailRecord := module.EmailRecord{
-				ToEmail: &toEmail,
-				Subject: &sendEmailDto.Subject,
-				Content: &sendEmailDto.Content,
-			}
-			id, err := CreateEmailRecord(emailRecord)
-			if err != nil {
-				logrus.Errorf("create email record err: %v\n", err)
-				return
-			}
-
 			// 发送消息
 			m := gomail.NewMessage()
 			m.SetHeaders(map[string][]string{
@@ -55,8 +43,16 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 				state = -1
 			}
 			state = 1
-			if err := dao.UpdateEmailRecordSateById(&id, &state); err != nil {
-				logrus.Errorf("update email record err: %v\n", err)
+			emailRecord := module.EmailRecord{
+				ToEmail: &toEmail,
+				Subject: &sendEmailDto.Subject,
+				Content: &sendEmailDto.Content,
+				State:   &state,
+			}
+			_, err := CreateEmailRecord(emailRecord)
+			if err != nil {
+				logrus.Errorf("create email record err: %v\n", err)
+				return
 			}
 		}
 	}()

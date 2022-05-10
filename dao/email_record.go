@@ -97,6 +97,7 @@ func CreateEmailRecord(emailRecord module.EmailRecord) (uint, error) {
 		"to_email": *emailRecord.ToEmail,
 		"subject":  *emailRecord.Subject,
 		"content":  *emailRecord.Content,
+		"state":    *emailRecord.State,
 	})
 
 	buildInsert, values, err := builder.BuildInsert("email_record", data)
