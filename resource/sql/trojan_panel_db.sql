@@ -109,7 +109,7 @@ CREATE TABLE `node` (
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
   `ip` varchar(64) NOT NULL DEFAULT '' COMMENT 'IP地址',
   `port` int(10) unsigned NOT NULL DEFAULT '443' COMMENT '端口',
-  `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '类型 1/trojan-go 2/trojan-gfw',
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '类型 1/trojan-go 2/hysteria',
   `websocket_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启websocket 0/否 1/是',
   `websocket_path` varchar(64) NOT NULL DEFAULT 'trojan-panel-websocket-path' COMMENT 'websocket路径',
   `ss_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启ss加密 0/否 1/是',
@@ -153,7 +153,7 @@ CREATE TABLE `node_type` (
 
 LOCK TABLES `node_type` WRITE;
 /*!40000 ALTER TABLE `node_type` DISABLE KEYS */;
-INSERT INTO `node_type` VALUES (1,'trojan-go','trojan-go','2022-04-01 00:00:00','2022-04-01 00:00:00'),(2,'trojan-gfw','trojan','2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `node_type` VALUES (1,'trojan-go','trojan-go','2022-04-01 00:00:00','2022-04-01 00:00:00'),(2,'hysteria','hysteria','2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `node_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
