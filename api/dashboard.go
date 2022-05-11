@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	redisgo "github.com/gomodule/redigo/redis"
 	"trojan/dao/redis"
@@ -27,8 +28,9 @@ func TrafficRank(c *gin.Context) {
 		return
 	}
 	if len(bytes) > 0 {
-		usersTrafficRankVo := vo.UsersTrafficRankVo{}
+		var usersTrafficRankVo []vo.UsersTrafficRankVo
 		if err := json.Unmarshal(bytes, &usersTrafficRankVo); err != nil {
+			fmt.Println(err.Error())
 			vo.Fail(constant.SysError, c)
 			return
 		}

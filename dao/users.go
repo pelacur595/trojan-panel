@@ -461,7 +461,7 @@ func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error
 func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as traffic_used
 from users
-where quota != 0
+where quota != 0 and username not like '%admin%'
 order by traffic_used desc`, nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
