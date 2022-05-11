@@ -18,7 +18,7 @@ func SelectUserById(id *uint) (*vo.UsersVo, error) {
 	var user module.Users
 
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "role_id", "username", "email", "FLOOR(quota/1024/1024) quota", "FLOOR(upload/1024/1024) upload", "FLOOR(download/1024/1024) download,deleted,expire_time"}
+	selectFields := []string{"id", "role_id", "username", "email", "quota", "FLOOR(upload/1024/1024) upload", "download,deleted,expire_time"}
 	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -151,8 +151,8 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 	if queryUsername != nil && *queryUsername != "" {
 		where["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
 	}
-	selectFields := []string{"id", "role_id", "username", "FLOOR(quota/1024/1024) quota",
-		"FLOOR(upload/1024/1024) upload", "FLOOR(download/1024/1024) download", "deleted", "expire_time", "create_time"}
+	selectFields := []string{"id", "role_id", "username", "quota",
+		"upload", "download", "deleted", "expire_time", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -462,7 +462,7 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as traffic_used
 from users
 where quota != 0 and username not like '%admin%'
-order by traffic_used desc`, nil)
+order by traffic_used desc limit 15`, nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
