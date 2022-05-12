@@ -39,6 +39,10 @@ func Setting(c *gin.Context) {
 func UpdateSystemById(c *gin.Context) {
 	var systemUpdateDto dto.SystemUpdateDto
 	_ = c.ShouldBindJSON(&systemUpdateDto)
+	if err := validate.Struct(&systemUpdateDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
 	system := module.System{
 		Id:                 systemUpdateDto.Id,
 		OpenRegister:       systemUpdateDto.OpenRegister,
