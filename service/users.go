@@ -24,16 +24,16 @@ func CreateUser(userCreateDto dto.UserCreateDto) error {
 	}
 	toByte := util.ToByte(*userCreateDto.Quota)
 	user := module.Users{
-		Quota:              &toByte,
-		Username:           userCreateDto.Username,
-		Pass:               userCreateDto.Pass,
-		RoleId:             userCreateDto.RoleId,
-		Deleted:            userCreateDto.Deleted,
-		ExpireTime:         userCreateDto.ExpireTime,
-		Email:              userCreateDto.Email,
-		IpLimit:            userCreateDto.IpLimit,
-		UploadSpeedLimit:   userCreateDto.UploadSpeedLimit,
-		DownloadSpeedLimit: userCreateDto.DownloadSpeedLimit,
+		Quota:      &toByte,
+		Username:   userCreateDto.Username,
+		Pass:       userCreateDto.Pass,
+		RoleId:     userCreateDto.RoleId,
+		Deleted:    userCreateDto.Deleted,
+		ExpireTime: userCreateDto.ExpireTime,
+		Email:      userCreateDto.Email,
+		//IpLimit:            userCreateDto.IpLimit,
+		//UploadSpeedLimit:   userCreateDto.UploadSpeedLimit,
+		//DownloadSpeedLimit: userCreateDto.DownloadSpeedLimit,
 	}
 	if err := dao.CreateUser(&user); err != nil {
 		return err
@@ -72,11 +72,11 @@ func SelectUserPage(username *string, pageNum *uint, pageSize *uint) (*vo.UsersP
 	return page, err
 }
 func DeleteUserById(id *uint) error {
-	user, err := dao.SelectUserById(id)
-	if err != nil {
-		return err
-	}
-	TrojanGODelUsers([]string{user.Username})
+	//user, err := dao.SelectUserById(id)
+	//if err != nil {
+	//	return err
+	//}
+	//TrojanGODelUsers([]string{user.Username})
 	if err := dao.DeleteUserById(id); err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func UpdateUserProfile(oldPass *string, newPass *string, username *string, email
 	if err := dao.UpdateUserProfile(oldPass, newPass, username, email); err != nil {
 		return err
 	}
-	TrojanGODelUsers([]string{*username})
+	//TrojanGODelUsers([]string{*username})
 	return nil
 }
 
@@ -115,17 +115,17 @@ func GetUserInfo(c *gin.Context) (*vo.UserInfo, error) {
 }
 
 func UpdateUserById(users *module.Users) error {
-	if users.Pass != nil && *users.Pass != "" {
-		if users.Username != nil && *users.Username != "" {
-			TrojanGODelUsers([]string{*users.Username})
-		} else {
-			user, err := dao.SelectUserById(users.Id)
-			if err != nil {
-				return err
-			}
-			TrojanGODelUsers([]string{user.Username})
-		}
-	}
+	//if users.Pass != nil && *users.Pass != "" {
+	//	if users.Username != nil && *users.Username != "" {
+	//		TrojanGODelUsers([]string{*users.Username})
+	//	} else {
+	//		user, err := dao.SelectUserById(users.Id)
+	//		if err != nil {
+	//			return err
+	//		}
+	//		TrojanGODelUsers([]string{user.Username})
+	//	}
+	//}
 	if err := dao.UpdateUserById(users); err != nil {
 		return err
 	}
@@ -187,9 +187,9 @@ func PullUserWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
 			return err
 		}
-		if isBlack {
-			TrojanGODelUsers(usernames)
-		}
+		//if isBlack {
+		//	TrojanGODelUsers(usernames)
+		//}
 	}
 	return nil
 }
@@ -200,7 +200,7 @@ func DisableUsers(usernames []string) error {
 		if err := dao.UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
 			return err
 		}
-		TrojanGODelUsers(usernames)
+		//TrojanGODelUsers(usernames)
 	}
 	return nil
 }

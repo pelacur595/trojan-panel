@@ -180,17 +180,17 @@ func UpdateUserById(c *gin.Context) {
 	}
 	toByte := util.ToByte(*userUpdateDto.Quota)
 	users := module.Users{
-		Id:                 userUpdateDto.Id,
-		Quota:              &toByte,
-		Username:           userUpdateDto.Username,
-		Pass:               userUpdateDto.Pass,
-		Email:              userUpdateDto.Email,
-		RoleId:             userUpdateDto.RoleId,
-		Deleted:            userUpdateDto.Deleted,
-		ExpireTime:         userUpdateDto.ExpireTime,
-		IpLimit:            userUpdateDto.IpLimit,
-		UploadSpeedLimit:   userUpdateDto.UploadSpeedLimit,
-		DownloadSpeedLimit: userUpdateDto.DownloadSpeedLimit,
+		Id:         userUpdateDto.Id,
+		Quota:      &toByte,
+		Username:   userUpdateDto.Username,
+		Pass:       userUpdateDto.Pass,
+		Email:      userUpdateDto.Email,
+		RoleId:     userUpdateDto.RoleId,
+		Deleted:    userUpdateDto.Deleted,
+		ExpireTime: userUpdateDto.ExpireTime,
+		//IpLimit:            userUpdateDto.IpLimit,
+		//UploadSpeedLimit:   userUpdateDto.UploadSpeedLimit,
+		//DownloadSpeedLimit: userUpdateDto.DownloadSpeedLimit,
 	}
 	if err := service.UpdateUserById(&users); err != nil {
 		vo.Fail(err.Error(), c)
