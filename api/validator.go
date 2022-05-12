@@ -15,6 +15,7 @@ func InitValidator() {
 	_ = validate.RegisterValidation("validateStr", validateStr)
 	_ = validate.RegisterValidation("validatePositiveInt", validatePositiveInt)
 	_ = validate.RegisterValidation("validateEmail", validateEmail)
+	_ = validate.RegisterValidation("validatePort", validatePort)
 }
 
 // 字符串必须是字母和数字的组合
@@ -37,6 +38,14 @@ func validatePositiveInt(f validator.FieldLevel) bool {
 func validateEmail(f validator.FieldLevel) bool {
 	str := strconv.FormatUint(f.Field().Uint(), 10)
 	reg := "^([A-Za-z0-9_\\-\\.])+\\@(163.com|126.com|qq.com|gmail.com)$"
+	compile := regexp.MustCompile(reg)
+	return compile.MatchString(str)
+}
+
+// 端口
+func validatePort(f validator.FieldLevel) bool {
+	str := strconv.FormatUint(f.Field().Uint(), 10)
+	reg := "^([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-4]\\d{4}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$"
 	compile := regexp.MustCompile(reg)
 	return compile.MatchString(str)
 }
