@@ -13,7 +13,6 @@ func InitValidator() {
 	validate = validator.New()
 	// 注册校验对象
 	_ = validate.RegisterValidation("validateStr", validateStr)
-	_ = validate.RegisterValidation("validatePositiveInt", validatePositiveInt)
 	_ = validate.RegisterValidation("validateEmail", validateEmail)
 	_ = validate.RegisterValidation("validatePort", validatePort)
 }
@@ -28,6 +27,9 @@ func validateStr(f validator.FieldLevel) bool {
 
 // 邮箱 只支持163 126 qq gmail
 func validateEmail(f validator.FieldLevel) bool {
+	if f.Field().Len() == 0 {
+		return true
+	}
 	field := f.Field().String()
 	reg := "^([A-Za-z0-9_\\-\\.])+\\@(163.com|126.com|qq.com|gmail.com)$"
 	compile := regexp.MustCompile(reg)
