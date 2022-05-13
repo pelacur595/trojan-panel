@@ -8,7 +8,7 @@ type SystemUpdateDto struct {
 	ExpireWarnEnable   *uint   `json:"expireWarnEnable" redis:"expireWarnEnable" validate:"required,oneof=0 1"`
 	ExpireWarnDay      *uint   `json:"expireWarnDay" redis:"expireWarnDay" validate:"required,gte=0,lte=365"`
 	EmailEnable        *uint   `json:"emailEnable" redis:"emailEnable" validate:"required,oneof=0 1"`
-	EmailHost          *string `json:"emailHost" form:"emailHost" validate:"omitempty,ip|fqdn,min=0,max=64"`
+	EmailHost          *string `json:"emailHost" form:"emailHost" validate:"omitempty,min=0,max=64"`
 	EmailPort          *uint   `json:"emailPort" form:"emailPort" validate:"required,validatePort"`
 	EmailUsername      *string `json:"emailUsername" form:"emailUsername" validate:"omitempty,min=0,max=32"`
 	EmailPassword      *string `json:"emailPassword" form:"emailPassword" validate:"omitempty,min=0,max=32"`

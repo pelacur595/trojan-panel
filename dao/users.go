@@ -152,7 +152,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 		where["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
 	}
 	selectFields := []string{"id", "role_id", "username", "quota",
-		"upload", "download", "deleted", "expire_time", "create_time"}
+		"upload", "download", "deleted", "expire_time", "email", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -183,6 +183,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 			CreateTime: *item.CreateTime,
 			Deleted:    *item.Deleted,
 			ExpireTime: *item.ExpireTime,
+			Email:      *item.Email,
 		})
 	}
 
