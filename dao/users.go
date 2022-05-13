@@ -288,7 +288,7 @@ func UpdateUserById(users *module.Users) error {
 	if users.Quota != nil {
 		update["quota"] = *users.Quota
 	}
-	if users.Email != nil && *users.Email != "" {
+	if users.Email != nil {
 		update["email"] = *users.Email
 	}
 	if users.RoleId != nil {
