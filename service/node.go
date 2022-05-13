@@ -13,6 +13,7 @@ import (
 	"trojan/module/constant"
 	"trojan/module/dto"
 	"trojan/module/vo"
+	"trojan/util"
 )
 
 func SelectNodeById(id *uint) (*vo.NodeVo, error) {
@@ -42,6 +43,13 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	nodePagVo, err := dao.SelectNodePage(queryName, pageNum, pageSize)
 	if err != nil {
 		return nil, err
+	}
+	for index, node := range nodePagVo.Nodes {
+		ttl, err := util.Ping(node.Ip)
+		if err != nil {
+			nodePagVo.Nodes[index].Ping = -1
+		}
+		nodePagVo.Nodes[index].Ping = ttl
 	}
 	return nodePagVo, nil
 }

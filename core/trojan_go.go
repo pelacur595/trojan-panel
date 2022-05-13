@@ -51,12 +51,12 @@ func apiClient(addr string) (service.TrojanServerServiceClient, *grpc.ClientConn
 	return service.NewTrojanServerServiceClient(conn), conn, nil
 }
 
-func (t *trojanGoApi) OnLine(ip string) (int, error) {
+func (t *trojanGoApi) OnLine(ip string) (uint, error) {
 	users, err := t.ListUsers(ip)
 	if err != nil {
 		return 0, err
 	}
-	var num = 0
+	var num uint = 0
 	for _, user := range users {
 		if user.SpeedCurrent != nil {
 			num++

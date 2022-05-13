@@ -143,11 +143,6 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 
 	var nodeVos []vo.NodeVo
 	for _, item := range nodes {
-		//api := core.TrojanGoApi()
-		//onLine, err := api.OnLine(*item.Ip)
-		//if err != nil {
-		//	return nil, err
-		//}
 		nodeVos = append(nodeVos, vo.NodeVo{
 			Id:              *item.Id,
 			Name:            *item.Name,
@@ -160,7 +155,6 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			SsMethod:        *item.SsMethod,
 			SsPassword:      *item.SsPassword,
 			CreateTime:      *item.CreateTime,
-			//OnLine:          onLine,
 		})
 	}
 

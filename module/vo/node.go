@@ -15,6 +15,7 @@ type NodeVo struct {
 	SsPassword      string    `json:"ssPassword"`
 	CreateTime      time.Time `json:"createTime"`
 
+	Ping   int `json:"ping"`
 	OnLine int `json:"onLine"`
 }
 
