@@ -54,5 +54,5 @@ type UserRegisterDto struct {
 }
 
 type HysteriaAutoDto struct {
-	Payload *string `json:"payload" validate:"required,min=12,max=40,contains=&"`
+	Payload *string `json:"payload" validate:"required"`
 }

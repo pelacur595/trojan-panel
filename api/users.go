@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -56,10 +57,15 @@ func HysteriaApi(c *gin.Context) {
 	var hysteriaAutoDto dto.HysteriaAutoDto
 	_ = c.ShouldBindJSON(&hysteriaAutoDto)
 	if err := validate.Struct(&hysteriaAutoDto); err != nil {
-		vo.Fail(constant.ValidateFailed, c)
+		vo.HysteriaApiFail(constant.ValidateFailed, c)
 		return
 	}
-	usernameAndPass := strings.Split(*hysteriaAutoDto.Payload, "&")
+	decodeString, err := base64.StdEncoding.DecodeString(*hysteriaAutoDto.Payload)
+	if err != nil {
+		vo.HysteriaApiFail(constant.ValidateFailed, c)
+		return
+	}
+	usernameAndPass := strings.Split(string(decodeString), "&")
 	usersVo, err := service.SelectUserByUsernameAndPass(&usernameAndPass[0], &usernameAndPass[1])
 	if err != nil {
 		vo.HysteriaApiFail(err.Error(), c)
