@@ -16,6 +16,8 @@ func Router(router *gin.Engine) {
 		trojanAuth.POST("/register", api.Register)
 		// 系统默认设置
 		trojanAuth.GET("/setting", api.Setting)
+		// Hysteria api
+		trojanAuth.POST("/hysteria", api.HysteriaApi)
 	}
 	router.Use(middleware.JWTHandler(), middleware.CasbinHandler())
 	trojan := router.Group("/api")

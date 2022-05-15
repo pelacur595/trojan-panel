@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strings"
 	"time"
 	"trojan/dao/redis"
 	"trojan/module"
@@ -48,6 +49,31 @@ func Login(c *gin.Context) {
 		return
 	}
 	vo.Fail(constant.UsernameOrPassError, c)
+}
+
+// hysteria api
+func HysteriaApi(c *gin.Context) {
+	var hysteriaAutoDto dto.HysteriaAutoDto
+	_ = c.ShouldBindJSON(&hysteriaAutoDto)
+	if err := validate.Struct(&hysteriaAutoDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	usernameAndPass := strings.Split(*hysteriaAutoDto.Payload, "&")
+	usersVo, err := service.SelectUserByUsernameAndPass(&usernameAndPass[0], &usernameAndPass[1])
+	if err != nil {
+		vo.HysteriaApiFail(err.Error(), c)
+		return
+	}
+	if usersVo.Deleted == 1 {
+		vo.HysteriaApiFail(constant.UserDisabled, c)
+		return
+	}
+	if usersVo != nil {
+		vo.HysteriaApiSuccess(usersVo.Username, c)
+		return
+	}
+	vo.HysteriaApiFail(constant.UsernameOrPassError, c)
 }
 
 // 验证码

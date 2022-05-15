@@ -52,3 +52,7 @@ type UserRegisterDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr,excludes=admin"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
 }
+
+type HysteriaAutoDto struct {
+	Payload *string `json:"payload" validate:"required,min=12,max=40,contains=&"`
+}
