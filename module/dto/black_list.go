@@ -10,7 +10,7 @@ type BlackListPageDto struct {
 }
 
 type BlackListCreateDto struct {
-	Ip *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
+	Ip *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64,ne=127.0.0.1"`
 }
 
 type BlackListDeleteDto struct {
