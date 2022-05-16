@@ -115,6 +115,7 @@ CREATE TABLE `node` (
   `ss_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启ss加密 0/否 1/是',
   `ss_method` varchar(32) NOT NULL DEFAULT 'AES-128-GCM' COMMENT 'ss加密方式',
   `ss_password` varchar(64) NOT NULL DEFAULT '' COMMENT 'ss密码',
+  `hysteria_protocol` varchar(16) NOT NULL DEFAULT '' COMMENT 'hysteria协议 udp/faketcp',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
