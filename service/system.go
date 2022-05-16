@@ -36,7 +36,7 @@ func SelectSystemByName(name *string) (*vo.SystemVo, error) {
 			logrus.Errorln(fmt.Sprintf("SystemVo JSON转换失败 err: %v", err))
 			return nil, errors.New(constant.SysError)
 		}
-		redis.Client.String.Set("trojan-panel:system", systemVoJson, time.Minute.Microseconds()*30)
+		redis.Client.String.Set("trojan-panel:system", systemVoJson, time.Minute.Microseconds()*30/1000)
 		return systemVo, nil
 	}
 }
