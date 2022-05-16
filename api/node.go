@@ -33,15 +33,16 @@ func CreateNode(c *gin.Context) {
 		return
 	}
 	node := module.Node{
-		Name:            nodeCreateDto.Name,
-		Ip:              nodeCreateDto.Ip,
-		Port:            nodeCreateDto.Port,
-		Type:            nodeCreateDto.Type,
-		WebsocketEnable: nodeCreateDto.WebsocketEnable,
-		WebsocketPath:   nodeCreateDto.WebsocketPath,
-		SsEnable:        nodeCreateDto.SsEnable,
-		SsMethod:        nodeCreateDto.SsMethod,
-		SsPassword:      nodeCreateDto.SsPassword,
+		Name:             nodeCreateDto.Name,
+		Ip:               nodeCreateDto.Ip,
+		Port:             nodeCreateDto.Port,
+		Type:             nodeCreateDto.Type,
+		WebsocketEnable:  nodeCreateDto.WebsocketEnable,
+		WebsocketPath:    nodeCreateDto.WebsocketPath,
+		SsEnable:         nodeCreateDto.SsEnable,
+		SsMethod:         nodeCreateDto.SsMethod,
+		SsPassword:       nodeCreateDto.SsPassword,
+		HysteriaProtocol: nodeCreateDto.HysteriaProtocol,
 	}
 	if err := service.CreateNode(&node); err != nil {
 		vo.Fail(err.Error(), c)
@@ -87,16 +88,17 @@ func UpdateNodeById(c *gin.Context) {
 		return
 	}
 	node := module.Node{
-		Id:              nodeUpdateDto.Id,
-		Name:            nodeUpdateDto.Name,
-		Ip:              nodeUpdateDto.Ip,
-		Port:            nodeUpdateDto.Port,
-		Type:            nodeUpdateDto.Type,
-		WebsocketEnable: nodeUpdateDto.WebsocketEnable,
-		WebsocketPath:   nodeUpdateDto.WebsocketPath,
-		SsEnable:        nodeUpdateDto.SsEnable,
-		SsMethod:        nodeUpdateDto.SsMethod,
-		SsPassword:      nodeUpdateDto.SsPassword,
+		Id:               nodeUpdateDto.Id,
+		Name:             nodeUpdateDto.Name,
+		Ip:               nodeUpdateDto.Ip,
+		Port:             nodeUpdateDto.Port,
+		Type:             nodeUpdateDto.Type,
+		WebsocketEnable:  nodeUpdateDto.WebsocketEnable,
+		WebsocketPath:    nodeUpdateDto.WebsocketPath,
+		SsEnable:         nodeUpdateDto.SsEnable,
+		SsMethod:         nodeUpdateDto.SsMethod,
+		SsPassword:       nodeUpdateDto.SsPassword,
+		HysteriaProtocol: nodeUpdateDto.HysteriaProtocol,
 	}
 	if err := service.UpdateNodeById(&node); err != nil {
 		vo.Fail(err.Error(), c)
