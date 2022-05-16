@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	redisgo "github.com/gomodule/redigo/redis"
+	"github.com/sirupsen/logrus"
 	"trojan/dao/redis"
 	"trojan/module/constant"
 	"trojan/module/vo"
@@ -24,13 +25,13 @@ func PanelGroup(c *gin.Context) {
 func TrafficRank(c *gin.Context) {
 	bytes, err := redis.Client.String.Get("trojan-panel:trafficRank").Bytes()
 	if err != nil && err != redisgo.ErrNil {
-		vo.Fail(err.Error(), c)
+		vo.Fail(constant.SysError, c)
 		return
 	}
 	if len(bytes) > 0 {
 		var usersTrafficRankVo []vo.UsersTrafficRankVo
 		if err := json.Unmarshal(bytes, &usersTrafficRankVo); err != nil {
-			fmt.Println(err.Error())
+			logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON反转失败 err: %v", err))
 			vo.Fail(constant.SysError, c)
 			return
 		}

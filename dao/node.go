@@ -15,7 +15,7 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
-		"websocket_path", "ss_enable", "ss_method", "ss_password",
+		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
 		"create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
@@ -38,17 +38,18 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	nodeVo := vo.NodeVo{
-		Id:              *node.Id,
-		Name:            *node.Name,
-		Ip:              *node.Ip,
-		Port:            *node.Port,
-		Type:            *node.Type,
-		WebsocketEnable: *node.WebsocketEnable,
-		WebsocketPath:   *node.WebsocketPath,
-		SsEnable:        *node.SsEnable,
-		SsMethod:        *node.SsMethod,
-		SsPassword:      *node.SsPassword,
-		CreateTime:      *node.CreateTime,
+		Id:               *node.Id,
+		Name:             *node.Name,
+		Ip:               *node.Ip,
+		Port:             *node.Port,
+		Type:             *node.Type,
+		WebsocketEnable:  *node.WebsocketEnable,
+		WebsocketPath:    *node.WebsocketPath,
+		SsEnable:         *node.SsEnable,
+		SsMethod:         *node.SsMethod,
+		SsPassword:       *node.SsPassword,
+		HysteriaProtocol: *node.HysteriaProtocol,
+		CreateTime:       *node.CreateTime,
 	}
 	return &nodeVo, nil
 }
@@ -74,6 +75,9 @@ func CreateNode(node *module.Node) error {
 	}
 	if node.SsPassword != nil {
 		nodeEntity["ss_password"] = *node.SsPassword
+	}
+	if node.HysteriaProtocol != nil {
+		nodeEntity["hysteria_protocol"] = *node.HysteriaProtocol
 	}
 
 	var data []map[string]interface{}
@@ -121,7 +125,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
 	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
-		"websocket_path", "ss_enable", "ss_method", "ss_password",
+		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
 		"create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
@@ -144,17 +148,18 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	var nodeVos []vo.NodeVo
 	for _, item := range nodes {
 		nodeVos = append(nodeVos, vo.NodeVo{
-			Id:              *item.Id,
-			Name:            *item.Name,
-			Ip:              *item.Ip,
-			Port:            *item.Port,
-			Type:            *item.Type,
-			WebsocketEnable: *item.WebsocketEnable,
-			WebsocketPath:   *item.WebsocketPath,
-			SsEnable:        *item.SsEnable,
-			SsMethod:        *item.SsMethod,
-			SsPassword:      *item.SsPassword,
-			CreateTime:      *item.CreateTime,
+			Id:               *item.Id,
+			Name:             *item.Name,
+			Ip:               *item.Ip,
+			Port:             *item.Port,
+			Type:             *item.Type,
+			WebsocketEnable:  *item.WebsocketEnable,
+			WebsocketPath:    *item.WebsocketPath,
+			SsEnable:         *item.SsEnable,
+			SsMethod:         *item.SsMethod,
+			SsPassword:       *item.SsPassword,
+			HysteriaProtocol: *item.HysteriaProtocol,
+			CreateTime:       *item.CreateTime,
 		})
 	}
 
@@ -212,6 +217,9 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.SsPassword != nil && *node.SsPassword != "" {
 		update["ss_password"] = *node.SsPassword
+	}
+	if node.HysteriaProtocol != nil && *node.HysteriaProtocol != "" {
+		update["hysteria_protocol"] = *node.HysteriaProtocol
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node", where, update)

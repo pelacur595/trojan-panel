@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"time"
 	"trojan/dao"
 	"trojan/dao/redis"
+	"trojan/module/constant"
 	"trojan/module/vo"
 	"trojan/util"
 )
@@ -30,7 +32,8 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	}
 	trafficRankJson, err := json.Marshal(trafficRank)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("json转换失败 err: %v", err))
+		logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON转换失败 err: %v", err))
+		return nil, errors.New(constant.SysError)
 	}
 	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Microseconds()*2/1000)
 	return trafficRank, nil

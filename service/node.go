@@ -119,10 +119,11 @@ func NodeURL(userId *uint, nodeQRCodeDto dto.NodeQRCodeDto) (string, error) {
 	}
 
 	if nodeTypeVo.Prefix == constant.HysteriaPrefix {
-		headBuilder.WriteString(fmt.Sprintf("%s://%s:%d?auth=%s&upmbps=100&downmbps=100",
+		headBuilder.WriteString(fmt.Sprintf("%s://%s:%d?protocol=%s&auth=%s&upmbps=100&downmbps=100",
 			nodeTypeVo.Prefix,
 			*nodeQRCodeDto.Ip,
 			*nodeQRCodeDto.Port,
+			*nodeQRCodeDto.HysteriaProtocol,
 			password))
 	}
 	if nodeQRCodeDto.Name != nil && *nodeQRCodeDto.Name != "" {
