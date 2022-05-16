@@ -19,7 +19,7 @@ type NodeQRCodeDto struct {
 	SsEnable         *uint   `json:"ssEnable" validate:"required,oneof=0 1"`
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
-	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"omitempty,min=0,max=16"`
+	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
 }
 
 type NodeCreateDto struct {
@@ -32,7 +32,7 @@ type NodeCreateDto struct {
 	SsEnable         *uint   `json:"ssEnable" validate:"required,oneof=0 1"`
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
-	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"omitempty,min=0,max=16"`
+	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
 }
 
 type NodeUpdateDto struct {
@@ -46,5 +46,5 @@ type NodeUpdateDto struct {
 	SsEnable         *uint   `json:"ssEnable" validate:"required,oneof=0 1"`
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
-	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"omitempty,min=0,max=16"`
+	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
 }
