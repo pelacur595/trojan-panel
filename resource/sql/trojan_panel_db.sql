@@ -116,6 +116,8 @@ CREATE TABLE `node` (
   `ss_method` varchar(32) NOT NULL DEFAULT 'AES-128-GCM' COMMENT 'ss加密方式',
   `ss_password` varchar(64) NOT NULL DEFAULT '' COMMENT 'ss密码',
   `hysteria_protocol` varchar(16) NOT NULL DEFAULT 'udp' COMMENT 'hysteria协议 udp/faketcp',
+  `hysteria_up_mbps` int(3) NOT NULL DEFAULT '100' COMMENT '单客户端最大上传速度 单位:Mbps',
+  `hysteria_down_mbps` int(3) NOT NULL DEFAULT '100' COMMENT '单客户端最大下载速度 单位:Mbps',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
