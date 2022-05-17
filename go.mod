@@ -8,6 +8,7 @@ require (
 	github.com/didi/gendry v1.7.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-ping/ping v1.0.0
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang-jwt/jwt v3.2.1+incompatible
@@ -26,7 +27,6 @@ require (
 	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-ping/ping v1.0.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
@@ -39,7 +39,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
-	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/ugorji/go/codec v1.2.4 // indirect
 	github.com/xtaci/smux v1.5.15 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
