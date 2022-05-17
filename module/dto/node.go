@@ -20,6 +20,8 @@ type NodeQRCodeDto struct {
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
 	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
 }
 
 type NodeCreateDto struct {
@@ -33,6 +35,8 @@ type NodeCreateDto struct {
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
 	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
 }
 
 type NodeUpdateDto struct {
@@ -47,4 +51,6 @@ type NodeUpdateDto struct {
 	SsMethod         *string `json:"ssMethod" validate:"omitempty,min=0,max=16"`
 	SsPassword       *string `json:"ssPassword" validate:"omitempty,min=0,max=32"`
 	HysteriaProtocol *string `json:"hysteriaProtocol" validate:"required,min=0,max=16"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
 }

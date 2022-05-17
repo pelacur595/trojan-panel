@@ -43,6 +43,8 @@ func CreateNode(c *gin.Context) {
 		SsMethod:         nodeCreateDto.SsMethod,
 		SsPassword:       nodeCreateDto.SsPassword,
 		HysteriaProtocol: nodeCreateDto.HysteriaProtocol,
+		HysteriaUpMbps:   nodeCreateDto.HysteriaUpMbps,
+		HysteriaDownMbps: nodeCreateDto.HysteriaDownMbps,
 	}
 	if err := service.CreateNode(&node); err != nil {
 		vo.Fail(err.Error(), c)
@@ -99,6 +101,8 @@ func UpdateNodeById(c *gin.Context) {
 		SsMethod:         nodeUpdateDto.SsMethod,
 		SsPassword:       nodeUpdateDto.SsPassword,
 		HysteriaProtocol: nodeUpdateDto.HysteriaProtocol,
+		HysteriaUpMbps:   nodeUpdateDto.HysteriaUpMbps,
+		HysteriaDownMbps: nodeUpdateDto.HysteriaDownMbps,
 	}
 	if err := service.UpdateNodeById(&node); err != nil {
 		vo.Fail(err.Error(), c)

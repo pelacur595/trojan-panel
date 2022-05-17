@@ -14,6 +14,8 @@ type NodeVo struct {
 	SsMethod         string    `json:"ssMethod"`
 	SsPassword       string    `json:"ssPassword"`
 	HysteriaProtocol string    `json:"hysteriaProtocol"`
+	HysteriaUpMbps   int       `json:"hysteriaUpMbps"`
+	HysteriaDownMbps int       `json:"hysteriaDownMbps"`
 	CreateTime       time.Time `json:"createTime"`
 
 	Ping   int `json:"ping"`

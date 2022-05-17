@@ -16,7 +16,7 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
 		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
-		"create_time"}
+		"hysteria_up_mbps", "hysteria_down_mbps", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -49,6 +49,8 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 		SsMethod:         *node.SsMethod,
 		SsPassword:       *node.SsPassword,
 		HysteriaProtocol: *node.HysteriaProtocol,
+		HysteriaUpMbps:   *node.HysteriaUpMbps,
+		HysteriaDownMbps: *node.HysteriaDownMbps,
 		CreateTime:       *node.CreateTime,
 	}
 	return &nodeVo, nil
@@ -78,6 +80,12 @@ func CreateNode(node *module.Node) error {
 	}
 	if node.HysteriaProtocol != nil {
 		nodeEntity["hysteria_protocol"] = *node.HysteriaProtocol
+	}
+	if node.HysteriaUpMbps != nil {
+		nodeEntity["hysteria_up_mbps"] = *node.HysteriaUpMbps
+	}
+	if node.HysteriaDownMbps != nil {
+		nodeEntity["hysteria_down_mbps"] = *node.HysteriaDownMbps
 	}
 
 	var data []map[string]interface{}
@@ -126,7 +134,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	}
 	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
 		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
-		"create_time"}
+		"hysteria_up_mbps", "hysteria_down_mbps", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -159,6 +167,8 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			SsMethod:         *item.SsMethod,
 			SsPassword:       *item.SsPassword,
 			HysteriaProtocol: *item.HysteriaProtocol,
+			HysteriaUpMbps:   *item.HysteriaUpMbps,
+			HysteriaDownMbps: *item.HysteriaDownMbps,
 			CreateTime:       *item.CreateTime,
 		})
 	}
@@ -220,6 +230,12 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.HysteriaProtocol != nil && *node.HysteriaProtocol != "" {
 		update["hysteria_protocol"] = *node.HysteriaProtocol
+	}
+	if node.HysteriaUpMbps != nil {
+		update["hysteria_up_mbps"] = *node.HysteriaUpMbps
+	}
+	if node.HysteriaDownMbps != nil {
+		update["hysteria_down_mbps"] = *node.HysteriaDownMbps
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node", where, update)
