@@ -67,7 +67,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 		return nil, errors.New(constant.SysError)
 	}
 
-	var emailRecordVos []vo.EmailRecordVo
+	var emailRecordVos = make([]vo.EmailRecordVo, 0)
 	for _, item := range emailRecords {
 		emailRecordVos = append(emailRecordVos, vo.EmailRecordVo{
 			Id:         *item.Id,

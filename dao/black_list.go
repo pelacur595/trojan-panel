@@ -112,7 +112,7 @@ func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackLi
 		return nil, errors.New(constant.SysError)
 	}
 
-	var blackListVos []vo.BlackListVo
+	var blackListVos = make([]vo.BlackListVo, 0)
 	for _, item := range blackLists {
 		blackListVos = append(blackListVos, vo.BlackListVo{
 			Id:         *item.Id,

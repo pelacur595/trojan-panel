@@ -153,7 +153,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		return nil, errors.New(constant.SysError)
 	}
 
-	var nodeVos []vo.NodeVo
+	var nodeVos = make([]vo.NodeVo, 0)
 	for _, item := range nodes {
 		nodeVos = append(nodeVos, vo.NodeVo{
 			Id:               *item.Id,

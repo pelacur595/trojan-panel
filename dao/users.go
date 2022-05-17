@@ -171,7 +171,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 		return nil, errors.New(constant.SysError)
 	}
 
-	var userVos []vo.UsersVo
+	var userVos = make([]vo.UsersVo, 0)
 	for _, item := range users {
 		userVos = append(userVos, vo.UsersVo{
 			Id:         *item.Id,
