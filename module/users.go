@@ -7,8 +7,8 @@ type Users struct {
 	Id                 *uint      `ddb:"id"`
 	Password           *string    `ddb:"password"`
 	Quota              *int       `ddb:"quota"`
-	Download           *uint      `ddb:"download"`
-	Upload             *uint      `ddb:"upload"`
+	Download           *int       `ddb:"download"`
+	Upload             *int       `ddb:"upload"`
 	Username           *string    `ddb:"username"`
 	Pass               *string    `ddb:"pass"`
 	RoleId             *uint      `ddb:"role_id"`

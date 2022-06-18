@@ -7,8 +7,8 @@ import (
 type UsersVo struct {
 	Id         uint      `json:"id"`
 	Quota      int       `json:"quota"`
-	Download   uint      `json:"download"`
-	Upload     uint      `json:"upload"`
+	Download   int       `json:"download"`
+	Upload     int       `json:"upload"`
 	Username   string    `json:"username"`
 	Email      string    `json:"email"`
 	RoleId     uint      `json:"roleId"`

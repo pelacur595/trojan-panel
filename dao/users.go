@@ -176,8 +176,8 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 		userVos = append(userVos, vo.UsersVo{
 			Id:         *item.Id,
 			Quota:      util.ToMB(*item.Quota),
-			Download:   *item.Download,
-			Upload:     *item.Upload,
+			Download:   util.ToMB(*item.Download),
+			Upload:     util.ToMB(*item.Upload),
 			Username:   *item.Username,
 			RoleId:     *item.RoleId,
 			CreateTime: *item.CreateTime,
