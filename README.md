@@ -5,6 +5,7 @@ Trojan Panel后端
 # 编译命令
 
 ```
+go install mvdan.cc/garble@latest
 # Windows amd64
 SET CGO_ENABLED=0
 SET GOOS=windows
@@ -18,7 +19,6 @@ SET GOARCH=amd64
 go build -ldflags "-s -w" -o build/trojan-panel-mac
 
 # Linux amd64
-go install mvdan.cc/garble@latest
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
