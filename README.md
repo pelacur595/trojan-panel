@@ -5,13 +5,13 @@ Trojan Panel后端
 # 编译命令
 
 ```
-# Windows
+# Windows amd64
 SET CGO_ENABLED=0
 SET GOOS=windows
 SET GOARCH=amd64
 go build -ldflags="-H windowsgui -s -w" -o build/trojan-panel-win.exe
 
-# Mac
+# Mac amd64
 SET CGO_ENABLED=0
 SET GOOS=darwin
 SET GOARCH=amd64
