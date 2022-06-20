@@ -9,7 +9,7 @@ ENV mariadb_ip=trojan-panel-mariadb \
     redis_host=my-redis \
     redis_port=6379 \
     redis_pass=123456
-COPY build/trojan-panel .
+COPY build/trojan-panel-linux-amd64 trojan-panel
 RUN apk add bash tzdata ca-certificates && \
     rm -rf /var/cache/apk/*
 ENTRYPOINT ./trojan-panel \
