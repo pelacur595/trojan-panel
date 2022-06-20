@@ -221,6 +221,13 @@ func ScanUsers() {
 	}
 }
 
+// 设置角色为普通用户流量为0
+func ScanUsersResetTraffic() {
+	if err := dao.UpdateUsersQuota(); err != nil {
+		logrus.Errorf("定时重设用户总流量异常 error: %v\n", err)
+	}
+}
+
 // 定时任务：到期警告
 func ScanUserExpireWarn() {
 	systemName := constant.SystemName

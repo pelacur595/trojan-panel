@@ -489,3 +489,21 @@ order by traffic_used desc limit 15`, nil)
 	}
 	return usersTrafficRankVos, nil
 }
+
+// 设置角色为普通用户流量为0
+func UpdateUsersQuota() error {
+	where := map[string]interface{}{"role_id": 3}
+	update := map[string]interface{}{"quota": 0}
+	buildUpdate, values, err := builder.BuildUpdate("users", where, update)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+
+	_, err = db.Exec(buildUpdate, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	return nil
+}
