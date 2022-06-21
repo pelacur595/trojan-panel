@@ -6,7 +6,7 @@ ENV mariadb_ip=trojan-panel-mariadb \
     mariadb_port=3306 \
     mariadb_user=root \
     mariadb_pas=123456 \
-    redis_host=my-redis \
+    redis_host=trojan-panel-redis \
     redis_port=6379 \
     redis_pass=123456
 COPY build/trojan-panel-linux-amd64 trojan-panel
