@@ -1,7 +1,7 @@
 FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
-RUN mkdir -p /tpdata/trojan-panel/app/
-WORKDIR /tpdata/trojan-panel/app/
+RUN mkdir -p /tpdata/trojan-panel/
+WORKDIR /tpdata/trojan-panel/
 ENV mariadb_ip=trojan-panel-mariadb \
     mariadb_port=3306 \
     mariadb_user=root \
