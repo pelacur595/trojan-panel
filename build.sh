@@ -41,7 +41,7 @@ main() {
     if [[ ! -f build/trojan-panel-linux-${get_arch} ]]; then
       continue
     fi
-    echo_content blue "开始构建trojan-panel-linux-${get_arch}"
+    echo_content skyBlue "开始构建trojan-panel-linux-${get_arch}"
 
     cat >Dockerfile <<EOF
 FROM alpine:3.15
@@ -73,7 +73,7 @@ EOF
     docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel-linux-"${get_arch}" .
     if [[ "$?" == "0" ]]; then
       echo_content green "trojan-panel-linux-${get_arch}构建成功"
-      echo_content blue "开始推送trojan-panel-linux-${get_arch}"
+      echo_content skyBlue "开始推送trojan-panel-linux-${get_arch}"
       docker image tag jonssonyan/trojan-panel-linux-"${get_arch}":latest jonssonyan/trojan-panel:latest && \
       docker image push jonssonyan/trojan-panel:latest && \
       docker rmi -f jonssonyan/trojan-panel:latest
