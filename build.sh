@@ -36,7 +36,7 @@ init_var() {
 
 main() {
   for get_arch in ${arch_arr[*]}; do
-    echo_content blue "开始构建Trojan Panel"
+    echo_content blue "开始构建Trojan Panel ${get_arch}"
 
     cat >Dockerfile <<EOF
 FROM alpine:3.15
@@ -65,7 +65,7 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel .
+    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel-"${get_arch}" .
     if [[ "$?" == "0" ]]; then
       echo_content green "Trojan Panel ${get_arch}构建成功"
     else
