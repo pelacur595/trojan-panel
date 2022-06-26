@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+echo_content() {
+  case $1 in
+  "red")
+    ${ECHO_TYPE} "\033[31m$2\033[0m"
+    ;;
+  "green")
+    ${ECHO_TYPE} "\033[32m$2\033[0m"
+    ;;
+  "yellow")
+    ${ECHO_TYPE} "\033[33m$2\033[0m"
+    ;;
+  "blue")
+    ${ECHO_TYPE} "\033[34m$2\033[0m"
+    ;;
+  "purple")
+    ${ECHO_TYPE} "\033[35m$2\033[0m"
+    ;;
+  "skyBlue")
+    ${ECHO_TYPE} "\033[36m$2\033[0m"
+    ;;
+  "white")
+    ${ECHO_TYPE} "\033[37m$2\033[0m"
+    ;;
+  esac
+}
+
+init_var() {
+  arch_arr=('amd64' 'arm64')
+
+  touch Dockerfile
+}
+
+main() {
+  for get_arch in ${arch_arr[*]}; do
+    echo_content blue "开始构建Trojan Panel"
+
+    cat >DockerfileTrojanPanel <<EOF
+FROM alpine:3.15
+LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
+RUN mkdir -p /tpdata/trojan-panel/
+WORKDIR /tpdata/trojan-panel/
+ENV mariadb_ip=trojan-panel-mariadb \
+    mariadb_port=3306 \
+    mariadb_user=root \
+    mariadb_pas=123456 \
+    redis_host=trojan-panel-redis \
+    redis_port=6379 \
+    redis_pass=123456
+COPY build/trojan-panel-linux-${get_arch} trojan-panel
+# 国内环境开启以下注释 设置apk国内镜像
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add bash tzdata ca-certificates && \
+    rm -rf /var/cache/apk/*
+ENTRYPOINT ./trojan-panel \
+    -host=\${mariadb_ip} \
+    -port=\${mariadb_port} \
+    -user=\${mariadb_user} \
+    -password=\${mariadb_pas} \
+    -redisHost=\${redis_host} \
+    -redisPort=\${redis_port} \
+    -redisPassword=\${redis_pass}
+EOF
+
+    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel -f DockerfileTrojanPanel .
+    if [[ "$?" == "0" ]]; then
+      echo_content green "Trojan Panel ${get_arch}构建成功"
+    else
+      echo_content red "Trojan Panel ${get_arch}构建失败"
+    fi
+  done
+}
+
+init_var
+main
