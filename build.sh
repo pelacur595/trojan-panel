@@ -38,7 +38,7 @@ main() {
   for get_arch in ${arch_arr[*]}; do
     echo_content blue "开始构建Trojan Panel"
 
-    cat >DockerfileTrojanPanel <<EOF
+    cat >Dockerfile <<EOF
 FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
@@ -65,7 +65,7 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel -f DockerfileTrojanPanel .
+    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel .
     if [[ "$?" == "0" ]]; then
       echo_content green "Trojan Panel ${get_arch}构建成功"
     else
