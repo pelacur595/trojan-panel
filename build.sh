@@ -83,7 +83,7 @@ EOF
         echo_content red "镜像名称：jonssonyan/trojan-panel:latest 架构：${get_arch}推送失败"
       fi
 
-      if [[ ${trojan_panel_version != "latest"} ]]; then
+      if [[ ${trojan_panel_version} != "latest" ]]; then
         docker image tag jonssonyan/trojan-panel-linux-"${get_arch}":latest jonssonyan/trojan-panel:${trojan_panel_version} && \
         docker image push jonssonyan/trojan-panel:${trojan_panel_version} && \
         docker rmi -f jonssonyan/trojan-panel:${trojan_panel_version}
