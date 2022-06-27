@@ -72,7 +72,7 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel-linux-"${get_arch}" .
+    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel-linux-"${get_arch}" . --load
     if [[ "$?" == "0" ]]; then
       echo_content green "trojan-panel-linux-${get_arch}构建成功"
       echo_content skyBlue "开始推送trojan-panel-linux-${get_arch}"
