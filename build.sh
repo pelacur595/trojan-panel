@@ -2,6 +2,16 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
+init_var() {
+  ECHO_TYPE="echo -e"
+
+  trojan_panel_version=1.1.3
+
+  arch_arr=('amd64' 'arm64')
+
+  touch Dockerfile
+}
+
 echo_content() {
   case $1 in
   "red")
@@ -26,14 +36,6 @@ echo_content() {
     ${ECHO_TYPE} "\033[37m$2\033[0m"
     ;;
   esac
-}
-
-init_var() {
-  trojan_panel_version=latest
-
-  arch_arr=('amd64' 'arm64')
-
-  touch Dockerfile
 }
 
 main() {
