@@ -5,7 +5,7 @@ export PATH
 init_var() {
   ECHO_TYPE="echo -e"
 
-  trojan_panel_version=1.1.3
+  trojan_panel_version=latest
 
   arch_arr=('amd64' 'arm64')
 
