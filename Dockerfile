@@ -2,7 +2,6 @@ FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
 WORKDIR /tpdata/trojan-panel/
-ARG TARGETARCH
 ENV mariadb_ip=trojan-panel-mariadb \
     mariadb_port=3306 \
     mariadb_user=root \
@@ -10,7 +9,7 @@ ENV mariadb_ip=trojan-panel-mariadb \
     redis_host=trojan-panel-redis \
     redis_port=6379 \
     redis_pass=123456
-COPY build/trojan-panel-linux-${TARGETARCH} trojan-panel
+COPY build/trojan-panel-linux-amd64 trojan-panel
 # 国内环境开启以下注释 设置apk国内镜像
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add bash tzdata ca-certificates && \
