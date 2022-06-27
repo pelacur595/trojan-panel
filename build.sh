@@ -41,7 +41,7 @@ echo_content() {
 main() {
   echo_content skyBlue "开始构建trojan-panel-linux CPU架构：${arch_arr}"
 
-  cat >Dockerfile <<-EOF
+  cat >Dockerfile <<EOF
 FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
@@ -69,29 +69,29 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-  docker buildx build -t jonssonyan/trojan-panel-linux --platform "${arch_arr}" --load .
+  docker buildx build -t jonssonyan/trojan-panel --platform "${arch_arr}" --push .
   if [[ "$?" == "0" ]]; then
     echo_content green "trojan-panel-linux CPU架构：${arch_arr}构建成功"
-    echo_content skyBlue "开始推送trojan-panel-linux CPU架构：${arch_arr}"
-    docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:latest && \
-    docker image push jonssonyan/trojan-panel:latest && \
-    docker rmi -f jonssonyan/trojan-panel:latest
-    if [[ "$?" == "0" ]]; then
-      echo_content green "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送成功"
-    else
-      echo_content red "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送失败"
-    fi
-
-    if [[ ${trojan_panel_version} != "latest" ]]; then
-      docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:${trojan_panel_version} && \
-      docker image push jonssonyan/trojan-panel:${trojan_panel_version} && \
-      docker rmi -f jonssonyan/trojan-panel:${trojan_panel_version}
-      if [[ "$?" == "0" ]]; then
-        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
-      else
-        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
-      fi
-    fi
+#    echo_content skyBlue "开始推送trojan-panel-linux CPU架构：${arch_arr}"
+#    docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:latest && \
+#    docker image push jonssonyan/trojan-panel:latest && \
+#    docker rmi -f jonssonyan/trojan-panel:latest
+#    if [[ "$?" == "0" ]]; then
+#      echo_content green "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送成功"
+#    else
+#      echo_content red "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送失败"
+#    fi
+#
+#    if [[ ${trojan_panel_version} != "latest" ]]; then
+#      docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:${trojan_panel_version} && \
+#      docker image push jonssonyan/trojan-panel:${trojan_panel_version} && \
+#      docker rmi -f jonssonyan/trojan-panel:${trojan_panel_version}
+#      if [[ "$?" == "0" ]]; then
+#        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
+#      else
+#        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
+#      fi
+#    fi
   else
     echo_content red "trojan-panel-linux CPU架构：${arch_arr}构建失败"
   fi
