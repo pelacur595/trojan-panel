@@ -45,7 +45,7 @@ main() {
     fi
     echo_content skyBlue "开始构建trojan-panel-linux-${get_arch}"
 
-    cat >Dockerfile <<EOF
+    cat >Dockerfile <<-EOF
 FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
