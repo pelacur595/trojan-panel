@@ -7,7 +7,7 @@ init_var() {
 
   trojan_panel_version=latest
 
-  arch_arr=('amd64' 'arm64')
+  arch_arr="linux/amd64,linux/arm64"
 
   touch Dockerfile
 }
@@ -39,17 +39,14 @@ echo_content() {
 }
 
 main() {
-  for get_arch in ${arch_arr[*]}; do
-    if [[ ! -f build/trojan-panel-linux-${get_arch} ]]; then
-      continue
-    fi
-    echo_content skyBlue "开始构建trojan-panel-linux-${get_arch}"
+  echo_content skyBlue "开始构建trojan-panel-linux CPU架构：${arch_arr}"
 
-    cat >Dockerfile <<-EOF
+  cat >Dockerfile <<-EOF
 FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
 WORKDIR /tpdata/trojan-panel/
+ARG TARGETARCH
 ENV mariadb_ip=trojan-panel-mariadb \
     mariadb_port=3306 \
     mariadb_user=root \
@@ -57,7 +54,7 @@ ENV mariadb_ip=trojan-panel-mariadb \
     redis_host=trojan-panel-redis \
     redis_port=6379 \
     redis_pass=123456
-COPY build/trojan-panel-linux-${get_arch} trojan-panel
+COPY build/trojan-panel-linux-${TARGETARCH} trojan-panel
 # 国内环境开启以下注释 设置apk国内镜像
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add bash tzdata ca-certificates && \
@@ -72,33 +69,32 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-    docker buildx build --platform linux/"${get_arch}" -t jonssonyan/trojan-panel-linux-"${get_arch}" . --load
+  docker buildx build --platform "${arch_arr}" -t jonssonyan/trojan-panel-linux . --load
+  if [[ "$?" == "0" ]]; then
+    echo_content green "trojan-panel-linux CPU架构：${arch_arr}构建成功"
+    echo_content skyBlue "开始推送trojan-panel-linux CPU架构：${arch_arr}"
+    docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:latest && \
+    docker image push jonssonyan/trojan-panel:latest && \
+    docker rmi -f jonssonyan/trojan-panel:latest
     if [[ "$?" == "0" ]]; then
-      echo_content green "trojan-panel-linux-${get_arch}构建成功"
-      echo_content skyBlue "开始推送trojan-panel-linux-${get_arch}"
-      docker image tag jonssonyan/trojan-panel-linux-"${get_arch}":latest jonssonyan/trojan-panel:latest && \
-      docker image push jonssonyan/trojan-panel:latest && \
-      docker rmi -f jonssonyan/trojan-panel:latest
-      if [[ "$?" == "0" ]]; then
-        echo_content green "镜像名称：jonssonyan/trojan-panel:latest 架构：${get_arch}推送成功"
-      else
-        echo_content red "镜像名称：jonssonyan/trojan-panel:latest 架构：${get_arch}推送失败"
-      fi
-
-      if [[ ${trojan_panel_version} != "latest" ]]; then
-        docker image tag jonssonyan/trojan-panel-linux-"${get_arch}":latest jonssonyan/trojan-panel:${trojan_panel_version} && \
-        docker image push jonssonyan/trojan-panel:${trojan_panel_version} && \
-        docker rmi -f jonssonyan/trojan-panel:${trojan_panel_version}
-        if [[ "$?" == "0" ]]; then
-          echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} 架构：${get_arch}推送成功"
-        else
-          echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} 架构：${get_arch}推送成功"
-        fi
-      fi
+      echo_content green "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送成功"
     else
-      echo_content red "trojan-panel-linux-${get_arch}构建失败"
+      echo_content red "镜像名称：jonssonyan/trojan-panel:latest CPU架构：${arch_arr}推送失败"
     fi
-  done
+
+    if [[ ${trojan_panel_version} != "latest" ]]; then
+      docker image tag jonssonyan/trojan-panel-linux:latest jonssonyan/trojan-panel:${trojan_panel_version} && \
+      docker image push jonssonyan/trojan-panel:${trojan_panel_version} && \
+      docker rmi -f jonssonyan/trojan-panel:${trojan_panel_version}
+      if [[ "$?" == "0" ]]; then
+        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
+      else
+        echo_content green "镜像名称：jonssonyan/trojan-panel:${trojan_panel_version} CPU架构：${arch_arr}推送成功"
+      fi
+    fi
+  else
+    echo_content red "trojan-panel-linux CPU架构：${arch_arr}构建失败"
+  fi
 }
 
 init_var
