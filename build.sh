@@ -69,7 +69,7 @@ ENTRYPOINT ./trojan-panel \
     -redisPassword=\${redis_pass}
 EOF
 
-  docker buildx build --platform "${arch_arr}" -t jonssonyan/trojan-panel-linux . --load
+  docker buildx build -t jonssonyan/trojan-panel-linux --platform "${arch_arr}" --load .
   if [[ "$?" == "0" ]]; then
     echo_content green "trojan-panel-linux CPU架构：${arch_arr}构建成功"
     echo_content skyBlue "开始推送trojan-panel-linux CPU架构：${arch_arr}"
