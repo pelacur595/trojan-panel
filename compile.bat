@@ -23,8 +23,8 @@ garble -literals build -o build/trojan-panel-linux/amd64
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=arm
-garble -literals build -o build/trojan-panel-linux/v6
-garble -literals build -o build/trojan-panel-linux/v7
+garble -literals build -o build/trojan-panel-linux/arm/v6
+garble -literals build -o build/trojan-panel-linux/arm/v7
 ::Linux arm64
 SET CGO_ENABLED=0
 SET GOOS=linux
