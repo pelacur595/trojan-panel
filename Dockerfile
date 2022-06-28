@@ -14,9 +14,9 @@ COPY build/trojan-panel-${TARGETPLATFORM} trojan-panel
 # 国内环境开启以下注释 设置apk国内镜像
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add bash tzdata ca-certificates && \
-    rm -rf /var/cache/apk/* && \
-    chmod 777 ./trojan-panel
-ENTRYPOINT ./trojan-panel \
+    rm -rf /var/cache/apk/*
+ENTRYPOINT chmod 777 ./trojan-panel && \
+    ./trojan-panel \
     -host=${mariadb_ip} \
     -port=${mariadb_port} \
     -user=${mariadb_user} \
