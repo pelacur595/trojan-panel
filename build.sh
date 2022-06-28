@@ -7,7 +7,7 @@ init_var() {
 
   trojan_panel_version=latest
 
-  arch_arr="linux/amd64,linux/arm64"
+  arch_arr="linux/386,linux/amd64,linux/v6,linux/v7,linux/arm64,linux/ppc64le,linux/s390x"
 }
 
 echo_content() {
