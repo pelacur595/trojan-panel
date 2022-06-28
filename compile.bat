@@ -13,9 +13,9 @@ go install mvdan.cc/garble@latest
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
-garble -literals build -o build/trojan-panel-linux-amd64
+garble -literals build -o build/trojan-panel-linux/amd64
 ::Linux arm64
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=arm64
-garble -literals build -o build/trojan-panel-linux-arm64
+garble -literals build -o build/trojan-panel-linux/arm64
