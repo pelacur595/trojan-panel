@@ -229,9 +229,17 @@ func usage() {
 Usage: trojanpanel [-host] [-password] [-port]
 
 Options:
-	-host    	 database host
-	-password    database password
-	-port    	 database port
-	-h 			 help
+	-host			database host
+	-user			database user
+	-password		database password
+	-port			database port
+	-redisHost		redis redisHost
+	-redisPort		redis redisPort
+	-redisPassword	redis redisPassword
+	-redisDb		redis redisDb
+	-redisMaxIdle   redis redisMaxIdle
+	-redisMaxActive	redis redisMaxActive
+	-redisWait		redis redisWait
+	-h				help
 `)
 }
