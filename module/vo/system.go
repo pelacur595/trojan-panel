@@ -15,6 +15,8 @@ type SystemVo struct {
 }
 
 type SettingVo struct {
-	OpenRegister uint `json:"openRegister"`
-	EmailEnable  uint `json:"emailEnable"`
+	OpenRegister       uint `json:"openRegister"`
+	EmailEnable        uint `json:"emailEnable"`
+	RegisterQuota      int  `json:"registerQuota"`
+	RegisterExpireDays uint `json:"registerExpireDays"`
 }

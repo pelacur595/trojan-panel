@@ -6,7 +6,7 @@ type System struct {
 	Id                 *uint      `ddb:"id"`
 	Name               *string    `ddb:"name"`
 	OpenRegister       *uint      `ddb:"open_register"`        // 开放注册 0/否 1/是
-	RegisterQuota      *int       `ddb:"register_quota"`       // 注册用户默认配额 单位/byte
+	RegisterQuota      *int       `ddb:"register_quota"`       // 注册用户默认配额 单位/MB
 	RegisterExpireDays *uint      `ddb:"register_expire_days"` // 注册用户过期天数 单位/天
 	ExpireWarnEnable   *uint      `ddb:"expire_warn_enable"`   // 是否开启到期警告 0/否 1/是
 	ExpireWarnDay      *uint      `ddb:"expire_warn_day"`      // 到期警告 单位/天

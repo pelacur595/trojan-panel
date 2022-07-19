@@ -52,7 +52,7 @@ func Login(c *gin.Context) {
 	vo.Fail(constant.UsernameOrPassError, c)
 }
 
-// hysteria api
+// HysteriaApi hysteria api
 func HysteriaApi(c *gin.Context) {
 	var hysteriaAutoDto dto.HysteriaAutoDto
 	_ = c.ShouldBindJSON(&hysteriaAutoDto)
@@ -82,7 +82,7 @@ func HysteriaApi(c *gin.Context) {
 	vo.HysteriaApiFail(constant.UsernameOrPassError, c)
 }
 
-// 验证码
+// GenerateCaptcha 验证码
 func GenerateCaptcha(c *gin.Context) {
 	return
 }

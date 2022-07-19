@@ -30,8 +30,10 @@ func Setting(c *gin.Context) {
 		return
 	}
 	settingVo := vo.SettingVo{
-		OpenRegister: systemVo.OpenRegister,
-		EmailEnable:  systemVo.EmailEnable,
+		OpenRegister:       systemVo.OpenRegister,
+		RegisterQuota:      systemVo.RegisterQuota,
+		RegisterExpireDays: systemVo.RegisterExpireDays,
+		EmailEnable:        systemVo.EmailEnable,
 	}
 	vo.Success(settingVo, c)
 }
