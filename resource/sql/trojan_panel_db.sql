@@ -202,7 +202,7 @@ CREATE TABLE `system` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `name` varchar(16) NOT NULL DEFAULT '' COMMENT '系统名称',
   `open_register` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '开放注册 0/否 1/是',
-  `register_quota` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '新默认流量 单位/byte',
+  `register_quota` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '新默认流量 单位/MB',
   `register_expire_days` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '新用户默认过期天数 单位/天',
   `expire_warn_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启到期警告 0/否 1/是',
   `expire_warn_day` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '到期警告 单位/天',
