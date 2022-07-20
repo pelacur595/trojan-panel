@@ -13,6 +13,7 @@ type NodeQRCodeDto struct {
 	Name             *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Ip               *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
 	Port             *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	Sni              *string `json:"sni" form:"sni" validate:"ip|fqdn,min=0,max=64"`
 	Type             *uint   `json:"type" form:"type" validate:"required,gt=0"`
 	WebsocketEnable  *uint   `json:"websocketEnable" validate:"required,oneof=0 1"`
 	WebsocketPath    *string `json:"websocketPath" validate:"omitempty,min=0,max=32"`
@@ -28,6 +29,7 @@ type NodeCreateDto struct {
 	Name             *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Ip               *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
 	Port             *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	Sni              *string `json:"sni" form:"sni" validate:"omitempty,ip|fqdn,min=0,max=64"`
 	Type             *uint   `json:"type" form:"type" validate:"required,gt=0"`
 	WebsocketEnable  *uint   `json:"websocketEnable" validate:"required,oneof=0 1"`
 	WebsocketPath    *string `json:"websocketPath" validate:"omitempty,min=0,max=32"`
@@ -44,6 +46,7 @@ type NodeUpdateDto struct {
 	Name             *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Ip               *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
 	Port             *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	Sni              *string `json:"sni" form:"sni" validate:"omitempty,ip|fqdn,min=0,max=64"`
 	Type             *uint   `json:"type" form:"type" validate:"required,gt=0"`
 	WebsocketEnable  *uint   `json:"websocketEnable" validate:"required,oneof=0 1"`
 	WebsocketPath    *string `json:"websocketPath" validate:"omitempty,min=0,max=32"`

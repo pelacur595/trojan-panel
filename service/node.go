@@ -104,6 +104,9 @@ func NodeURL(userId *uint, nodeQRCodeDto dto.NodeQRCodeDto) (string, error) {
 	if nodeTypeVo.Prefix == constant.TrojanGoPrefix {
 		headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?", nodeTypeVo.Prefix, url.PathEscape(password),
 			*nodeQRCodeDto.Ip, *nodeQRCodeDto.Port))
+		if nodeQRCodeDto.Sni != nil && *nodeQRCodeDto.Sni != "" {
+			headBuilder.WriteString(fmt.Sprintf("sni=%s", *nodeQRCodeDto.Sni))
+		}
 		if nodeQRCodeDto.WebsocketEnable != nil && *nodeQRCodeDto.WebsocketEnable != 0 &&
 			nodeQRCodeDto.WebsocketPath != nil && *nodeQRCodeDto.WebsocketPath != "" {
 			headBuilder.WriteString(fmt.Sprintf("&type=%s", url.PathEscape("ws")))
