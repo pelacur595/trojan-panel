@@ -35,7 +35,7 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 		logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON转换失败 err: %v", err))
 		return nil, errors.New(constant.SysError)
 	}
-	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Microseconds()*2/1000)
+	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Milliseconds()*2/1000)
 	return trafficRank, nil
 }
 
