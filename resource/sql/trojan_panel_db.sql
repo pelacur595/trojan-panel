@@ -109,6 +109,7 @@ CREATE TABLE `node` (
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
   `ip` varchar(64) NOT NULL DEFAULT '' COMMENT 'IP地址',
   `port` int(10) unsigned NOT NULL DEFAULT '443' COMMENT '端口',
+  `sni` varchar(64) NOT NULL DEFAULT '' COMMENT 'sni',
   `type` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '类型 1/trojan-go 2/hysteria',
   `websocket_enable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否开启websocket 0/否 1/是',
   `websocket_path` varchar(64) NOT NULL DEFAULT 'trojan-panel-websocket-path' COMMENT 'websocket路径',
@@ -275,4 +276,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-09 22:51:58
+-- Dump completed on 2022-07-20 11:15:22

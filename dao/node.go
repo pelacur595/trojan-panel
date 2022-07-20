@@ -14,7 +14,7 @@ import (
 func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
+	selectFields := []string{"id", "`name`", "ip", "port", "sni", "type", "websocket_enable",
 		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
 		"hysteria_up_mbps", "hysteria_down_mbps", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
@@ -42,6 +42,7 @@ func SelectNodeById(id *uint) (*vo.NodeVo, error) {
 		Name:             *node.Name,
 		Ip:               *node.Ip,
 		Port:             *node.Port,
+		Sni:              *node.Sni,
 		Type:             *node.Type,
 		WebsocketEnable:  *node.WebsocketEnable,
 		WebsocketPath:    *node.WebsocketPath,
@@ -62,6 +63,9 @@ func CreateNode(node *module.Node) error {
 		"ip":   *node.Ip,
 		"port": *node.Port,
 		"type": *node.Type,
+	}
+	if node.Sni != nil {
+		nodeEntity["sni"] = *node.Sni
 	}
 	if node.WebsocketEnable != nil {
 		nodeEntity["websocket_enable"] = *node.WebsocketEnable
@@ -132,7 +136,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
-	selectFields := []string{"id", "`name`", "ip", "port", "type", "websocket_enable",
+	selectFields := []string{"id", "`name`", "ip", "port", "sni", "type", "websocket_enable",
 		"websocket_path", "ss_enable", "ss_method", "ss_password", "hysteria_protocol",
 		"hysteria_up_mbps", "hysteria_down_mbps", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
@@ -160,6 +164,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			Name:             *item.Name,
 			Ip:               *item.Ip,
 			Port:             *item.Port,
+			Sni:              *item.Sni,
 			Type:             *item.Type,
 			WebsocketEnable:  *item.WebsocketEnable,
 			WebsocketPath:    *item.WebsocketPath,
@@ -209,6 +214,9 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.Port != nil {
 		update["port"] = *node.Port
+	}
+	if node.Sni != nil {
+		update["sni"] = *node.Sni
 	}
 	if node.Type != nil {
 		update["type"] = *node.Type

@@ -7,6 +7,7 @@ type Node struct {
 	Name             *string    `ddb:"name"`
 	Ip               *string    `ddb:"ip"`
 	Port             *uint      `ddb:"port"`
+	Sni              *string    `ddb:"sni"`
 	Type             *uint      `ddb:"type"`
 	WebsocketEnable  *uint      `ddb:"websocket_enable"`
 	WebsocketPath    *string    `ddb:"websocket_path"`

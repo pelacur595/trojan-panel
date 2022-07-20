@@ -7,6 +7,7 @@ type NodeVo struct {
 	Name             string    `json:"name"`
 	Ip               string    `json:"ip"`
 	Port             uint      `json:"port"`
+	Sni              string    `json:"sni"`
 	Type             uint      `json:"type"`
 	WebsocketEnable  uint      `json:"websocketEnable"`
 	WebsocketPath    string    `json:"websocketPath"`
