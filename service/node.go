@@ -106,6 +106,8 @@ func NodeURL(userId *uint, nodeQRCodeDto dto.NodeQRCodeDto) (string, error) {
 			*nodeQRCodeDto.Ip, *nodeQRCodeDto.Port))
 		if nodeQRCodeDto.Sni != nil && *nodeQRCodeDto.Sni != "" {
 			headBuilder.WriteString(fmt.Sprintf("sni=%s", url.PathEscape(*nodeQRCodeDto.Sni)))
+		} else {
+			headBuilder.WriteString(fmt.Sprintf("sni=%s", url.PathEscape(*nodeQRCodeDto.Ip)))
 		}
 		if nodeQRCodeDto.WebsocketEnable != nil && *nodeQRCodeDto.WebsocketEnable != 0 &&
 			nodeQRCodeDto.WebsocketPath != nil && *nodeQRCodeDto.WebsocketPath != "" {
