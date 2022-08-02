@@ -226,7 +226,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 
 func usage() {
 	_, _ = fmt.Fprintf(os.Stderr, `trojan panel help
-Usage: trojanpanel [-host] [-password] [-port]
+Usage: trojanpanel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait]
 
 Options:
 	-host			database host
