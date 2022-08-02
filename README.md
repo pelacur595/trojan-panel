@@ -1,4 +1,4 @@
-# trojan-panel
+# Trojan Panel
 
 Trojan Panel后端
 
