@@ -2,22 +2,25 @@ package constant
 
 // 系统设置
 const (
-	// 系统名称
+	// SystemName 系统名称
 	SystemName string = "trojan-panel"
-	// 伪装站点文件夹路径
+	// WebFilePath 伪装站点文件夹路径
 	WebFilePath string = "webfile"
-	// 伪装站点文件名称
+	// WebFileName 伪装站点文件名称
 	WebFileName string = "webfile.zip"
-	// 日志文件夹路径
+	// LogPath 日志文件夹路径
 	LogPath string = "logs"
-	// 配置文件夹路径
+	// ConfigPath 配置文件夹路径
 	ConfigPath string = "config"
-	// 配置文件路径
+	// ConfigFilePath 配置文件路径
 	ConfigFilePath string = "config/config.ini"
-	// rbac配置文件路径
+	// RbacModelFilePath rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
 
 	TrojanPanelTrojanGoCertDate string = "/tpdata/trojan-panel/trojango-cert/"
 	TrojanPanelCrtFile          string = "trojan-panel.crt"
 	TrojanPanelKeyFile          string = "trojan-panel.key"
+
+	// SaltKey 加密 盐
+	SaltKey string = "well_very_funny!"
 )
