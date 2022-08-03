@@ -217,8 +217,8 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 
 	encryPass := base64.StdEncoding.EncodeToString([]byte(*pass))
 	where := map[string]interface{}{"username": *username, "pass": encryPass}
-	selectFileds := []string{"id", "role_id", "username", "deleted"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFileds)
+	selectFields := []string{"id", "role_id", "username", "deleted"}
+	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -446,8 +446,8 @@ func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error
 	if username != nil && *username != "" {
 		where["username"] = *username
 	}
-	selectFileds := []string{"username"}
-	buildSelect, values, err := builder.BuildSelect("`users`", where, selectFileds)
+	selectFields := []string{"username"}
+	buildSelect, values, err := builder.BuildSelect("`users`", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return "", errors.New(constant.SysError)
