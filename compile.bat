@@ -3,40 +3,40 @@ go install mvdan.cc/garble@latest
 ::SET CGO_ENABLED=0
 ::SET GOOS=windows
 ::SET GOARCH=amd64
-::go build -ldflags="-H windowsgui -s -w" -o build/trojan-panel-win-amd64.exe
+::garble -literals -tiny build -o build/trojan-panel-windows/amd64.exe -trimpath -ldflags="-H windowsgui -s -w -buildid="
 ::Mac amd64
 ::SET CGO_ENABLED=0
 ::SET GOOS=darwin
 ::SET GOARCH=amd64
-::go build -ldflags "-s -w" -o build/trojan-panel-mac-amd64
+::garble -literals -tiny build -o build/trojan-panel-darwin/amd64 -trimpath -ldflags "-s -w -buildid="
 ::Linux 386
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=386
-garble -literals build -o build/trojan-panel-linux/386
+garble -literals -tiny build -o build/trojan-panel-linux/386 -trimpath -ldflags "-s -w -buildid="
 ::Linux amd64
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
-garble -literals build -o build/trojan-panel-linux/amd64
+garble -literals -tiny build -o build/trojan-panel-linux/amd64 -trimpath -ldflags "-s -w -buildid="
 ::Linux arm
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=arm
-garble -literals build -o build/trojan-panel-linux/arm/v6
-garble -literals build -o build/trojan-panel-linux/arm/v7
+garble -literals -tiny build -o build/trojan-panel-linux/arm/v6 -trimpath -ldflags "-s -w -buildid="
+garble -literals -tiny build -o build/trojan-panel-linux/arm/v7 -trimpath -ldflags "-s -w -buildid="
 ::Linux arm64
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=arm64
-garble -literals build -o build/trojan-panel-linux/arm64
+garble -literals -tiny build -o build/trojan-panel-linux/arm64 -trimpath -ldflags "-s -w -buildid="
 ::Linux ppc64le
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=ppc64le
-garble -literals build -o build/trojan-panel-linux/ppc64le
+garble -literals -tiny build -o build/trojan-panel-linux/ppc64le -trimpath -ldflags "-s -w -buildid="
 ::Linux s390x
 SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=s390x
-garble -literals build -o build/trojan-panel-linux/s390x
+garble -literals -tiny build -o build/trojan-panel-linux/s390x -trimpath -ldflags "-s -w -buildid="
