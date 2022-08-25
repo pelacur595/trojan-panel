@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -14,12 +13,12 @@ import (
 	"trojan/util"
 )
 
-func SelectUserById(id *uint) (*vo.UsersVo, error) {
+func SelectAccountById(id *uint) (*vo.UsersVo, error) {
 	var user module.Users
 
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "role_id", "username", "email", "quota", "FLOOR(upload/1024/1024) upload", "download,deleted,expire_time"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -57,14 +56,15 @@ func SelectUserById(id *uint) (*vo.UsersVo, error) {
 
 func CreateUser(users *module.Users) error {
 	// 密码加密
-	encryPass := base64.StdEncoding.EncodeToString([]byte(*users.Pass))
-	encryPassword := fmt.Sprintf("%x", sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *users.Username, *users.Pass))))
+	encryPass, err := util.AesEncode(*users.Pass)
+	if err != nil {
+		return err
+	}
 
 	var data []map[string]interface{}
 	user := map[string]interface{}{
-		"`password`": encryPassword,
-		"username":   *users.Username,
-		"`pass`":     encryPass,
+		"username": *users.Username,
+		"`pass`":   encryPass,
 	}
 	if users.Quota != nil {
 		user["`quota`"] = *users.Quota
@@ -92,7 +92,7 @@ func CreateUser(users *module.Users) error {
 	}
 	data = append(data, user)
 
-	buildInsert, values, err := builder.BuildInsert("users", data)
+	buildInsert, values, err := builder.BuildInsert("account", data)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -112,7 +112,7 @@ func CountUserByUsername(username *string) (int, error) {
 		where["username"] = *username
 	}
 	selectFields := []string{"count(1)"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return 0, errors.New(constant.SysError)
@@ -125,7 +125,7 @@ func CountUserByUsername(username *string) (int, error) {
 	return count, nil
 }
 
-func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.UsersPageVo, error) {
+func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.UsersPageVo, error) {
 	var (
 		total uint
 		users []module.Users
@@ -137,7 +137,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 		whereCount["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
 	}
 	selectFieldsCount := []string{"count(1)"}
-	buildSelect, values, err := builder.BuildSelect("users", whereCount, selectFieldsCount)
+	buildSelect, values, err := builder.BuildSelect("account", whereCount, selectFieldsCount)
 	if err := db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -153,7 +153,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 	}
 	selectFields := []string{"id", "role_id", "username", "quota",
 		"upload", "download", "deleted", "expire_time", "email", "create_time"}
-	selectSQL, values, err := builder.BuildSelect("users", where, selectFields)
+	selectSQL, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -199,7 +199,7 @@ func SelectUserPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.U
 }
 
 func DeleteUserById(id *uint) error {
-	buildDelete, values, err := builder.BuildDelete("users", map[string]interface{}{"id": *id})
+	buildDelete, values, err := builder.BuildDelete("account", map[string]interface{}{"id": *id})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -212,13 +212,13 @@ func DeleteUserById(id *uint) error {
 	return nil
 }
 
-func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, error) {
+func SelectAccountByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, error) {
 	var user module.Users
 
 	encryPass := base64.StdEncoding.EncodeToString([]byte(*pass))
 	where := map[string]interface{}{"username": *username, "pass": encryPass}
 	selectFields := []string{"id", "role_id", "username", "deleted"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -248,22 +248,23 @@ func SelectUserByUsernameAndPass(username *string, pass *string) (*vo.UsersVo, e
 }
 
 func UpdateUserProfile(oldPass *string, newPass *string, username *string, email *string) error {
-	_, err := SelectUserByUsernameAndPass(username, oldPass)
+	_, err := SelectAccountByUsernameAndPass(username, oldPass)
 	if err != nil {
 		return errors.New(constant.OriPassError)
 	}
-	encryPass := base64.StdEncoding.EncodeToString([]byte(*newPass))
-	encryPassword := sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *username, *newPass)))
+	encryPass, err := util.AesEncode(*newPass)
+	if err != nil {
+		return err
+	}
 
 	where := map[string]interface{}{"username": *username}
 	update := map[string]interface{}{
-		"`pass`":   encryPass,
-		"password": fmt.Sprintf("%x", encryPassword),
+		"`pass`": encryPass,
 	}
 	if email != nil && *email != "" {
 		update["email"] = email
 	}
-	buildUpdate, values, err := builder.BuildUpdate("users", where, update)
+	buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -280,10 +281,11 @@ func UpdateUserById(users *module.Users) error {
 	where := map[string]interface{}{"id": *users.Id}
 	update := map[string]interface{}{}
 	if users.Pass != nil && *users.Pass != "" {
-		encryPass := base64.StdEncoding.EncodeToString([]byte(*users.Pass))
-		encryPassword := sha256.Sum224([]byte(fmt.Sprintf("%s&%s", *users.Username, *users.Pass)))
+		encryPass, err := util.AesEncode(*users.Pass)
+		if err != nil {
+			return err
+		}
 		update["`pass`"] = encryPass
-		update["`password`"] = fmt.Sprintf("%x", encryPassword)
 	}
 	if users.Quota != nil {
 		update["quota"] = *users.Quota
@@ -311,7 +313,7 @@ func UpdateUserById(users *module.Users) error {
 	}
 
 	if len(update) > 0 {
-		buildUpdate, values, err := builder.BuildUpdate("users", where, update)
+		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 		if err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
@@ -330,7 +332,7 @@ func UserQRCode(id *uint) (string, error) {
 	var user module.Users
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"username", "pass"}
-	buildSelect, values, err := builder.BuildSelect("users", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return "", errors.New(constant.SysError)
@@ -378,7 +380,7 @@ func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, q
 		update["deleted"] = deleted
 	}
 	if len(update) > 0 {
-		buildUpdate, values, err := builder.BuildUpdate("users", where, update)
+		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 		if err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
@@ -394,7 +396,7 @@ func UpdateUserQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, q
 }
 
 // 查询禁用或者过期的用户名
-func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
+func SelectAccountnameByDeletedOrExpireTime() ([]string, error) {
 	buildSelect, values, err := builder.NamedQuery("select username from users where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
@@ -416,7 +418,7 @@ func SelectUsernameByDeletedOrExpireTime() ([]string, error) {
 	return usernames, nil
 }
 
-func SelectUsersEmailByExpireTime(day uint) ([]module.Users, error) {
+func SelectAccountsEmailByExpireTime(day uint) ([]module.Users, error) {
 	buildSelect, values, err := builder.NamedQuery("select username,email from users where expire_time <= {{expire_time}} and quota != 0",
 		map[string]interface{}{"expire_time": day})
 	if err != nil {
@@ -438,25 +440,26 @@ func SelectUsersEmailByExpireTime(day uint) ([]module.Users, error) {
 	return users, nil
 }
 
-func SelectUserPasswordByUsernameOrId(id *uint, username *string) (string, error) {
+func SelectAccountPasswordByUsername(username string) (string, error) {
 	where := map[string]interface{}{}
-	if id != nil {
-		where["id"] = *id
+	if username != "" {
+		where["username"] = username
 	}
-	if username != nil && *username != "" {
-		where["username"] = *username
-	}
-	selectFields := []string{"username"}
-	buildSelect, values, err := builder.BuildSelect("`users`", where, selectFields)
+	selectFields := []string{"pass"}
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return "", errors.New(constant.SysError)
 	}
-	var password string
-	if err := db.QueryRow(buildSelect, values...).Scan(&password); err != nil {
+	var pass string
+	if err := db.QueryRow(buildSelect, values...).Scan(&pass); err != nil {
 		return "", errors.New(constant.SysError)
 	}
-	return password, err
+	passDecode, err := util.AesDecode(pass)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s&%s", username, passDecode), err
 }
 
 func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
@@ -494,7 +497,7 @@ order by traffic_used desc limit 15`, nil)
 func UpdateUsersQuota() error {
 	where := map[string]interface{}{"role_id": 3}
 	update := map[string]interface{}{"quota": 0}
-	buildUpdate, values, err := builder.BuildUpdate("users", where, update)
+	buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
