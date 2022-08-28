@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type UsersVo struct {
+type AccountVo struct {
 	Id         uint      `json:"id"`
 	Quota      int       `json:"quota"`
 	Download   int       `json:"download"`
@@ -17,22 +17,22 @@ type UsersVo struct {
 	CreateTime time.Time `json:"createTime"`
 }
 
-type UsersPageVo struct {
+type AccountPageVo struct {
 	BaseVoPage
-	Users []UsersVo `json:"users"`
+	AccountVos []AccountVo `json:"accountVos"`
 }
 
-type UsersLoginVo struct {
+type AccountLoginVo struct {
 	Token string `json:"token"`
 }
 
-type UserInfo struct {
+type AccountInfo struct {
 	Id       uint     `json:"id"`
 	Username string   `json:"username"`
 	Roles    []string `json:"roles"`
 }
 
-type UsersTrafficRankVo struct {
+type AccountTrafficRankVo struct {
 	Username    string `json:"username"`
 	TrafficUsed string `json:"trafficUsed"`
 }

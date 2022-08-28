@@ -12,40 +12,6 @@ import (
 	"trojan/module/vo"
 )
 
-func SelectMenuListByRoleId(roleId *uint) ([]vo.MenuListVo, error) {
-	var menuLists []module.MenuList
-	buildSelect, values, err := builder.NamedQuery(
-		"select ml.id, ml.name, ml.icon, ml.route, ml.parent_id from role_menu_list rml left join menu_list ml on rml.menu_list_id = ml.id where rml.role_id = {{role_id}}",
-		map[string]interface{}{"role_id": *roleId})
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	defer rows.Close()
-
-	if err := scanner.Scan(rows, &menuLists); err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-
-	var menuListVos []vo.MenuListVo
-	for _, item := range menuLists {
-		menuListVos = append(menuListVos, vo.MenuListVo{
-			Id:       *item.Id,
-			Name:     *item.Name,
-			Icon:     *item.Icon,
-			Route:    *item.Route,
-			ParentId: *item.ParentId,
-		})
-	}
-	return menuListVos, nil
-}
-
 func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
 	var roles []module.Role
 

@@ -1,0 +1,108 @@
+package dao
+
+import (
+	"errors"
+	"github.com/didi/gendry/builder"
+	"github.com/didi/gendry/scanner"
+	"github.com/sirupsen/logrus"
+	"trojan/module"
+	"trojan/module/constant"
+)
+
+func SelectNodeXray(id *uint) (*module.NodeXray, error) {
+	var nodeXray module.NodeXray
+	where := map[string]interface{}{"id": *id}
+	selectFields := []string{"id", "`protocol`", "settings", "stream_settings", "tag", "sniffing", "allocate"}
+	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+
+	if err = db.QueryRow(buildSelect, values...).Scan(&nodeXray); err == scanner.ErrEmptyResult {
+		return nil, err
+	} else if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	return &nodeXray, nil
+}
+
+func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
+	nodeXrayEntity := map[string]interface{}{}
+	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
+		nodeXrayEntity["protocol"] = nodeXray.Protocol
+	}
+	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+		nodeXrayEntity["settings"] = nodeXray.Settings
+	}
+	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+		nodeXrayEntity["stream_settings"] = nodeXray.StreamSettings
+	}
+	if nodeXray.Tag != nil && *nodeXray.Tag != "" {
+		nodeXrayEntity["tag"] = nodeXray.Tag
+	}
+	if nodeXray.Sniffing != nil && *nodeXray.Sniffing != "" {
+		nodeXrayEntity["sniffing"] = nodeXray.Sniffing
+	}
+	if nodeXray.Allocate != nil && *nodeXray.Allocate != "" {
+		nodeXrayEntity["allocate"] = nodeXray.Allocate
+	}
+	if len(nodeXrayEntity) > 0 {
+		var data []map[string]interface{}
+		data = append(data, nodeXrayEntity)
+		buildInsert, values, err := builder.BuildInsert("node_xray", data)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return 0, errors.New(constant.SysError)
+		}
+		result, err := db.Exec(buildInsert, values...)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return 0, errors.New(constant.SysError)
+		}
+		id, err := result.LastInsertId()
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return 0, errors.New(constant.SysError)
+		}
+		return uint(id), nil
+	}
+	return 0, errors.New(constant.SysError)
+}
+
+func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
+	where := map[string]interface{}{"id": *nodeXray.Id}
+	update := map[string]interface{}{}
+	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
+		update["protocol"] = *nodeXray.Protocol
+	}
+	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+		update["settings"] = *nodeXray.Settings
+	}
+	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+		update["stream_settings"] = *nodeXray.StreamSettings
+	}
+	if nodeXray.Tag != nil && *nodeXray.Tag != "" {
+		update["tag"] = *nodeXray.Tag
+	}
+	if nodeXray.Sniffing != nil && *nodeXray.Sniffing != "" {
+		update["sniffing"] = *nodeXray.Sniffing
+	}
+	if nodeXray.Allocate != nil && *nodeXray.Allocate != "" {
+		update["allocate"] = *nodeXray.Allocate
+	}
+	if len(update) > 0 {
+		buildUpdate, values, err := builder.BuildUpdate("node_xray", where, update)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+
+		if _, err := db.Exec(buildUpdate, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	}
+	return nil
+}

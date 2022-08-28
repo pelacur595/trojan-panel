@@ -2,8 +2,8 @@ package module
 
 import "time"
 
-// Users 账户
-type Users struct {
+// Account 账户
+type Account struct {
 	Id                 *uint      `ddb:"id"`
 	Username           *string    `ddb:"username"`
 	Pass               *string    `ddb:"pass"`

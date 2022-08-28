@@ -1,6 +1,7 @@
 package constant
 
 const (
-	TrojanGoPrefix string = "trojan-go"
-	HysteriaPrefix string = "hysteria"
+	TrojanGoName string = "trojan-go"
+	HysteriaName string = "hysteria"
+	XrayName     string = "xray"
 )

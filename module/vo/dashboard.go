@@ -5,6 +5,6 @@ type PanelGroupVo struct {
 	ResidualFlow int  `json:"residualFlow"`
 	NodeCount    int  `json:"nodeCount"`
 	ExpireTime   uint `json:"expireTime"`
-	UserCount    int  `json:"userCount"`
+	AccountCount int  `json:"accountCount"`
 	OnLine       int  `json:"onLine"`
 }

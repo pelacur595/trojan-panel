@@ -6,7 +6,7 @@ import (
 	"trojan/module/vo"
 )
 
-func GetCurrentUser(c *gin.Context) *vo.UsersVo {
+func GetCurrentAccount(c *gin.Context) *vo.AccountVo {
 	// 解析token获取当前用户信息
 	tokenStr := c.Request.Header.Get("Authorization")
 	token := strings.SplitN(tokenStr, " ", 2)
@@ -15,8 +15,8 @@ func GetCurrentUser(c *gin.Context) *vo.UsersVo {
 		vo.Fail(err.Error(), c)
 		return nil
 	}
-	userVo := myClaims.UserVo
-	return &userVo
+	accountVo := myClaims.AccountVo
+	return &accountVo
 }
 
 func ToMB(b int) int {

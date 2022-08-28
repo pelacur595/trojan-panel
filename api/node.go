@@ -3,11 +3,11 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"trojan/module"
 	"trojan/module/constant"
 	"trojan/module/dto"
 	"trojan/module/vo"
 	"trojan/service"
+	"trojan/util"
 )
 
 func SelectNodeById(c *gin.Context) {
@@ -17,10 +17,25 @@ func SelectNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeVo, err := service.SelectNodeById(nodeRequireIdDto.Id)
+	node, err := service.SelectNodeById(nodeRequireIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
+	}
+	ping, err := util.Ping(*node.Ip)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	nodeVo := vo.NodeVo{
+		Id:         *node.Id,
+		NodeSubId:  *node.NodeSubId,
+		NodeTypeId: *node.NodeTypeId,
+		Name:       *node.Name,
+		Ip:         *node.Ip,
+		Port:       *node.Port,
+		CreateTime: *node.CreateTime,
+		Ping:       ping,
 	}
 	vo.Success(nodeVo, c)
 }
@@ -32,22 +47,7 @@ func CreateNode(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	node := module.Node{
-		Name:             nodeCreateDto.Name,
-		Ip:               nodeCreateDto.Ip,
-		Port:             nodeCreateDto.Port,
-		Sni:              nodeCreateDto.Sni,
-		Type:             nodeCreateDto.Type,
-		WebsocketEnable:  nodeCreateDto.WebsocketEnable,
-		WebsocketPath:    nodeCreateDto.WebsocketPath,
-		SsEnable:         nodeCreateDto.SsEnable,
-		SsMethod:         nodeCreateDto.SsMethod,
-		SsPassword:       nodeCreateDto.SsPassword,
-		HysteriaProtocol: nodeCreateDto.HysteriaProtocol,
-		HysteriaUpMbps:   nodeCreateDto.HysteriaUpMbps,
-		HysteriaDownMbps: nodeCreateDto.HysteriaDownMbps,
-	}
-	if err := service.CreateNode(&node); err != nil {
+	if err := service.CreateNode(nodeCreateDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -90,23 +90,7 @@ func UpdateNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	node := module.Node{
-		Id:               nodeUpdateDto.Id,
-		Name:             nodeUpdateDto.Name,
-		Ip:               nodeUpdateDto.Ip,
-		Sni:              nodeUpdateDto.Sni,
-		Port:             nodeUpdateDto.Port,
-		Type:             nodeUpdateDto.Type,
-		WebsocketEnable:  nodeUpdateDto.WebsocketEnable,
-		WebsocketPath:    nodeUpdateDto.WebsocketPath,
-		SsEnable:         nodeUpdateDto.SsEnable,
-		SsMethod:         nodeUpdateDto.SsMethod,
-		SsPassword:       nodeUpdateDto.SsPassword,
-		HysteriaProtocol: nodeUpdateDto.HysteriaProtocol,
-		HysteriaUpMbps:   nodeUpdateDto.HysteriaUpMbps,
-		HysteriaDownMbps: nodeUpdateDto.HysteriaDownMbps,
-	}
-	if err := service.UpdateNodeById(&node); err != nil {
+	if err := service.UpdateNodeById(&nodeUpdateDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -114,18 +98,18 @@ func UpdateNodeById(c *gin.Context) {
 }
 
 func NodeQRCode(c *gin.Context) {
-	var nodeQRCodeDto dto.NodeQRCodeDto
-	_ = c.ShouldBindJSON(&nodeQRCodeDto)
-	if err := validate.Struct(&nodeQRCodeDto); err != nil {
+	var requiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&requiredIdDto)
+	if err := validate.Struct(&requiredIdDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	userInfo, err := service.GetUserInfo(c)
+	userInfo, err := service.GetAccountInfo(c)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	qrCode, err := service.NodeQRCode(&userInfo.Id, nodeQRCodeDto)
+	qrCode, err := service.NodeQRCode(&userInfo.Id, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
@@ -134,19 +118,19 @@ func NodeQRCode(c *gin.Context) {
 }
 
 func NodeURL(c *gin.Context) {
-	var nodeQRCodeDto dto.NodeQRCodeDto
-	_ = c.ShouldBindJSON(&nodeQRCodeDto)
-	if err := validate.Struct(&nodeQRCodeDto); err != nil {
+	var requiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&requiredIdDto)
+	if err := validate.Struct(&requiredIdDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		fmt.Println(err.Error())
 		return
 	}
-	userInfo, err := service.GetUserInfo(c)
+	accountInfo, err := service.GetAccountInfo(c)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	url, err := service.NodeURL(&userInfo.Id, nodeQRCodeDto)
+	url, err := service.NodeURL(&accountInfo.Id, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return

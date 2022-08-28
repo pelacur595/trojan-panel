@@ -14,16 +14,16 @@ const TokenExpireDuration = time.Hour * 2
 var MySecret = []byte("4eb01fa4acef754ad4fa94f4467fd343")
 
 type MyClaims struct {
-	UserVo vo.UsersVo `json:"userVo"`
+	AccountVo vo.AccountVo `json:"accountVo"`
 	jwt.StandardClaims
 }
 
 // 生成Token
-func GenToken(userVo vo.UsersVo) (string, error) {
+func GenToken(accountVo vo.AccountVo) (string, error) {
 	// 创建一个我们自己的声明
 	c := MyClaims{
 		// 自定义字段
-		UserVo: userVo,
+		AccountVo: accountVo,
 		StandardClaims: jwt.StandardClaims{
 			// 过期时间
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(),

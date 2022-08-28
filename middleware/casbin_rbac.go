@@ -22,8 +22,8 @@ func CasbinHandler() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		split := strings.Split(path, "?")
 		// 获取当前用户
-		userVo := util.GetCurrentUser(c)
-		roleVo, err := dao.SelectRoleById(&userVo.RoleId)
+		accountVo := util.GetCurrentAccount(c)
+		roleVo, err := dao.SelectRoleById(&accountVo.RoleId)
 		if err != nil {
 			vo.Fail(err.Error(), c)
 			c.Abort()

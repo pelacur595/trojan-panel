@@ -29,24 +29,24 @@ func Router(router *gin.Engine) {
 			// 流量排行榜
 			dashboard.GET("/trafficRank", api.TrafficRank)
 		}
-		user := trojan.Group("/users")
+		account := trojan.Group("/account")
 		{
 			// 注销
-			user.POST("/logout", api.Logout)
+			account.POST("/logout", api.Logout)
 			// 查询单个账户
-			user.GET("/selectUserById", api.SelectUserById)
+			account.GET("/SelectAccountById", api.SelectAccountById)
 			// 创建账户
-			user.POST("/createUser", api.CreateUser)
+			account.POST("/createUser", api.CreateAccount)
 			// 获取当前用户信息
-			user.GET("/getUserInfo", api.GetUserInfo)
+			account.GET("/getAccountInfo", api.GetAccountInfo)
 			// 分页查询账户
-			user.GET("/selectUserPage", api.SelectUserPage)
+			account.GET("/selectUserPage", api.SelectAccountPage)
 			// 通过id删除账户
-			user.POST("/deleteUserById", api.DeleteUserById)
+			account.POST("/deleteUserById", api.DeleteAccountById)
 			// 修改个人信息
-			user.POST("/updateUserProfile", api.UpdateUserProfile)
+			account.POST("/updateUserProfile", api.UpdateAccountProfile)
 			// 修改账户
-			user.POST("/updateUserById", api.UpdateUserById)
+			account.POST("/updateUserById", api.UpdateAccountById)
 		}
 		role := trojan.Group("/role")
 		{

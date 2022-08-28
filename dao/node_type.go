@@ -44,7 +44,7 @@ func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
 func SelectNodeTypeById(id *uint) (*vo.NodeTypeVo, error) {
 	var nodeType module.NodeType
 	buildSelect, values, err := builder.NamedQuery(
-		"select id,`name`,prefix from node_type where id = {{id}}", map[string]interface{}{"id": *id})
+		"select id,`name` from node_type where id = {{id}}", map[string]interface{}{"id": *id})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -64,9 +64,8 @@ func SelectNodeTypeById(id *uint) (*vo.NodeTypeVo, error) {
 		return nil, errors.New(constant.SysError)
 	}
 	nodeTypeVo := vo.NodeTypeVo{
-		Id:     *nodeType.Id,
-		Name:   *nodeType.Name,
-		Prefix: *nodeType.Prefix,
+		Id:   *nodeType.Id,
+		Name: *nodeType.Name,
 	}
 	return &nodeTypeVo, nil
 }

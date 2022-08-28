@@ -29,13 +29,13 @@ func TrafficRank(c *gin.Context) {
 		return
 	}
 	if len(bytes) > 0 {
-		var usersTrafficRankVo []vo.UsersTrafficRankVo
-		if err := json.Unmarshal(bytes, &usersTrafficRankVo); err != nil {
-			logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON反转失败 err: %v", err))
+		var accountTrafficRankVo []vo.AccountTrafficRankVo
+		if err := json.Unmarshal(bytes, &accountTrafficRankVo); err != nil {
+			logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo JSON反转失败 err: %v", err))
 			vo.Fail(constant.SysError, c)
 			return
 		}
-		vo.Success(usersTrafficRankVo, c)
+		vo.Success(accountTrafficRankVo, c)
 	} else {
 		trafficRank, err := service.TrafficRank()
 		if err != nil {

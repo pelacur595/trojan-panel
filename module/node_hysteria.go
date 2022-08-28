@@ -1,7 +1,12 @@
 package module
 
+import "time"
+
 type NodeHysteria struct {
-	HysteriaProtocol *string `ddb:"hysteria_protocol"`
-	HysteriaUpMbps   *int    `ddb:"hysteria_up_mbps"`
-	HysteriaDownMbps *int    `ddb:"hysteria_down_mbps"`
+	Id         *uint      `ddb:"id"`
+	Protocol   *string    `ddb:"protocol"`
+	UpMbps     *int       `ddb:"up_mbps"`
+	DownMbps   *int       `ddb:"down_mbps"`
+	CreateTime *time.Time `ddb:"create_time"`
+	UpdateTime *time.Time `ddb:"update_time"`
 }

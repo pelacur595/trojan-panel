@@ -22,8 +22,8 @@ const (
 	RoleNotExist     string = "不存在该角色"
 	SystemNotExist   string = "不存在该系统设置"
 
-	UserRegisterClosed string = "用户注册功能已关闭"
-	UserDisabled       string = "该用户已被禁用"
+	AccountRegisterClosed string = "用户注册功能已关闭"
+	AccountDisabled       string = "该用户已被禁用"
 
 	FileSizeTooBig  string = "文件大小不能超过10MB"
 	FileFormatError string = "文件格式只支持.zip"

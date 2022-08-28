@@ -14,12 +14,12 @@ import (
 	"trojan/util"
 )
 
-// 流量排行榜 一小时更新一次
+// TrafficRankJob 流量排行榜 一小时更新一次
 func TrafficRankJob() {
 	_, _ = TrafficRank()
 }
 
-func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
+func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
 	trafficRank, err := dao.TrafficRank()
 	for index, item := range trafficRank {
 		usernameLen := len(item.Username)
@@ -32,7 +32,7 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 	}
 	trafficRankJson, err := json.Marshal(trafficRank)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON转换失败 err: %v", err))
+		logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo JSON转换失败 err: %v", err))
 		return nil, errors.New(constant.SysError)
 	}
 	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Milliseconds()*2/1000)
@@ -40,11 +40,11 @@ func TrafficRank() ([]vo.UsersTrafficRankVo, error) {
 }
 
 func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
-	userInfo, err := GetUserInfo(c)
+	accountInfo, err := GetAccountInfo(c)
 	if err != nil {
 		return nil, err
 	}
-	userVo, err := SelectUserById(&userInfo.Id)
+	accountVo, err := SelectAccountById(&accountInfo.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -53,33 +53,17 @@ func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
 		return nil, err
 	}
 	panelGroupVo := vo.PanelGroupVo{
-		Quota:        userVo.Quota,
-		ResidualFlow: userVo.Quota - int(userVo.Upload) - int(userVo.Download),
+		Quota:        accountVo.Quota,
+		ResidualFlow: accountVo.Quota - accountVo.Upload - accountVo.Download,
 		NodeCount:    nodeCount,
-		ExpireTime:   userVo.ExpireTime,
+		ExpireTime:   accountVo.ExpireTime,
 	}
-	if util.IsAdmin(userInfo.Roles) {
-		userCount, err := CountUserByUsername(nil)
+	if util.IsAdmin(accountInfo.Roles) {
+		accountCount, err := CountAccountByUsername(nil)
 		if err != nil {
 			return nil, err
 		}
-		panelGroupVo.UserCount = userCount
-
-		//// 在线用户
-		//api := core.TrojanGoApi()
-		//ips, err := SelectNodeIps()
-		//if err != nil {
-		//	return nil, err
-		//}
-		//var online = 0
-		//for _, ip := range ips {
-		//	num, err := api.OnLine(ip)
-		//	if err != nil {
-		//		continue
-		//	}
-		//	online += num
-		//}
-		//panelGroupVo.OnLine = online
+		panelGroupVo.AccountCount = accountCount
 	}
 	return &panelGroupVo, nil
 }
