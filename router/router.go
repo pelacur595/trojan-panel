@@ -34,19 +34,19 @@ func Router(router *gin.Engine) {
 			// 注销
 			account.POST("/logout", api.Logout)
 			// 查询单个账户
-			account.GET("/SelectAccountById", api.SelectAccountById)
+			account.GET("/selectAccountById", api.SelectAccountById)
 			// 创建账户
-			account.POST("/createUser", api.CreateAccount)
+			account.POST("/createAccount", api.CreateAccount)
 			// 获取当前用户信息
 			account.GET("/getAccountInfo", api.GetAccountInfo)
 			// 分页查询账户
-			account.GET("/selectUserPage", api.SelectAccountPage)
+			account.GET("/selectAccountPage", api.SelectAccountPage)
 			// 通过id删除账户
-			account.POST("/deleteUserById", api.DeleteAccountById)
+			account.POST("/deleteAccountById", api.DeleteAccountById)
 			// 修改个人信息
-			account.POST("/updateUserProfile", api.UpdateAccountProfile)
+			account.POST("/updateAccountProfile", api.UpdateAccountProfile)
 			// 修改账户
-			account.POST("/updateUserById", api.UpdateAccountById)
+			account.POST("/updateAccountById", api.UpdateAccountById)
 		}
 		role := trojan.Group("/role")
 		{
