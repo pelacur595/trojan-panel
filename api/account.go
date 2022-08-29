@@ -22,17 +22,23 @@ func Login(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	accountVo, err := service.SelectAccountByUsernameAndPass(accountLoginDto.Username, accountLoginDto.Pass)
+	account, err := service.SelectAccountByUsernameAndPass(accountLoginDto.Username, accountLoginDto.Pass)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	if accountVo.Deleted == 1 {
+	if *account.Deleted == 1 {
 		vo.Fail(constant.AccountDisabled, c)
 		return
 	}
-	if accountVo != nil {
-		tokenStr, err := util.GenToken(*accountVo)
+	if account != nil {
+		accountVo := vo.AccountVo{
+			Id:       *account.Id,
+			Username: *account.Username,
+			RoleId:   *account.RoleId,
+			Deleted:  *account.Deleted,
+		}
+		tokenStr, err := util.GenToken(accountVo)
 		if err != nil {
 			vo.Fail(constant.SysError, c)
 		} else {
@@ -66,17 +72,17 @@ func HysteriaApi(c *gin.Context) {
 		return
 	}
 	usernameAndPass := strings.Split(string(decodeString), "&")
-	accountVo, err := service.SelectAccountByUsernameAndPass(&usernameAndPass[0], &usernameAndPass[1])
+	account, err := service.SelectAccountByUsernameAndPass(&usernameAndPass[0], &usernameAndPass[1])
 	if err != nil {
 		vo.HysteriaApiFail(err.Error(), c)
 		return
 	}
-	if accountVo.Deleted == 1 {
+	if *account.Deleted == 1 {
 		vo.HysteriaApiFail(constant.AccountDisabled, c)
 		return
 	}
-	if accountVo != nil {
-		vo.HysteriaApiSuccess(accountVo.Username, c)
+	if account != nil {
+		vo.HysteriaApiSuccess(*account.Username, c)
 		return
 	}
 	vo.HysteriaApiFail(constant.UsernameOrPassError, c)
@@ -133,10 +139,21 @@ func SelectAccountById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	accountVo, err := service.SelectAccountById(accountRequiredIdDto.Id)
+	account, err := service.SelectAccountById(accountRequiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
+	}
+	accountVo := vo.AccountVo{
+		Id:         *account.Id,
+		Username:   *account.Username,
+		RoleId:     *account.RoleId,
+		Email:      *account.Email,
+		ExpireTime: *account.ExpireTime,
+		Deleted:    *account.Deleted,
+		Quota:      *account.Quota,
+		Download:   *account.Download,
+		Upload:     *account.Upload,
 	}
 	vo.Success(accountVo, c)
 }
@@ -163,12 +180,12 @@ func DeleteAccountById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	accountVo, err := service.SelectAccountById(accountRequiredIdDto.Id)
+	account, err := service.SelectAccountById(accountRequiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	if accountVo.RoleId == constant.SYSADMIN {
+	if *account.RoleId == constant.SYSADMIN {
 		vo.Fail("不能删除超级管理员账户", c)
 		return
 	}

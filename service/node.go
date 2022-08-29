@@ -165,8 +165,8 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 	return nil
 }
 
-func NodeQRCode(userId *uint, id *uint) ([]byte, error) {
-	nodeUrl, err := NodeURL(userId, id)
+func NodeQRCode(accountId *uint, id *uint) ([]byte, error) {
+	nodeUrl, err := NodeURL(accountId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func NodeQRCode(userId *uint, id *uint) ([]byte, error) {
 	return qrCode, nil
 }
 
-func NodeURL(userId *uint, id *uint) (string, error) {
+func NodeURL(accountId *uint, id *uint) (string, error) {
 
 	node, err := dao.SelectNodeById(id)
 	if err != nil {
@@ -189,7 +189,7 @@ func NodeURL(userId *uint, id *uint) (string, error) {
 		return "", err
 	}
 
-	password, err := dao.AccountQRCode(userId)
+	password, err := dao.AccountQRCode(accountId)
 	if err != nil {
 		return "", err
 	}

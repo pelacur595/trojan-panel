@@ -12,46 +12,27 @@ import (
 	"trojan/util"
 )
 
-func SelectAccountById(id *uint) (*vo.AccountVo, error) {
+func SelectAccountById(id *uint) (*module.Account, error) {
 	var account module.Account
 
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "username", "role_id", "email", "expire_time", "deleted", "quota",
-		"FLOOR(download/1024/1024) download", "FLOOR(upload/1024/1024) upload"}
+		"download", "upload"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
+	if err = db.QueryRow(buildSelect, values...).Scan(&account); err == scanner.ErrEmptyResult {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	defer rows.Close()
-
-	err = scanner.Scan(rows, &account)
-	if err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.UnauthorizedError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
-	accountVo := vo.AccountVo{
-		Id:         *account.Id,
-		Username:   *account.Username,
-		RoleId:     *account.RoleId,
-		Email:      *account.Email,
-		ExpireTime: *account.ExpireTime,
-		Deleted:    *account.Deleted,
-		Quota:      *account.Quota,
-		Download:   *account.Download,
-		Upload:     *account.Upload,
-	}
-
-	return &accountVo, nil
+	return &account, nil
 }
 
 func CreateAccount(account *module.Account) error {
@@ -97,7 +78,7 @@ func CreateAccount(account *module.Account) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if _, err := db.Exec(buildInsert, values...); err != nil {
+	if _, err = db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -107,9 +88,8 @@ func CreateAccount(account *module.Account) error {
 func CountAccountByUsername(username *string) (int, error) {
 	var count int
 
-	where := map[string]interface{}{}
-	if username != nil {
-		where["username"] = *username
+	where := map[string]interface{}{
+		"username": *username,
 	}
 	selectFields := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
@@ -118,7 +98,7 @@ func CountAccountByUsername(username *string) (int, error) {
 		return 0, errors.New(constant.SysError)
 	}
 
-	if err := db.QueryRow(buildSelect, values...).Scan(&count); err != nil {
+	if err = db.QueryRow(buildSelect, values...).Scan(&count); err != nil {
 		logrus.Errorln(err.Error())
 		return 0, errors.New(constant.SysError)
 	}
@@ -144,10 +124,9 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 	}
 
 	// 分页查询
-	offset := (*pageNum - 1) * *pageSize
 	where := map[string]interface{}{
 		"_orderby": "role_id,create_time desc",
-		"_limit":   []uint{offset, *pageSize}}
+		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryUsername != nil && *queryUsername != "" {
 		where["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
 	}
@@ -180,9 +159,9 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 			Email:      *item.Email,
 			ExpireTime: *item.ExpireTime,
 			Deleted:    *item.Deleted,
-			Quota:      util.ToMB(*item.Quota),
-			Download:   util.ToMB(*item.Download),
-			Upload:     util.ToMB(*item.Upload),
+			Quota:      *item.Quota,
+			Download:   *item.Download,
+			Upload:     *item.Upload,
 			CreateTime: *item.CreateTime,
 		})
 	}
@@ -205,14 +184,14 @@ func DeleteAccountById(id *uint) error {
 		return errors.New(constant.SysError)
 	}
 
-	if _, err := db.Exec(buildDelete, values...); err != nil {
+	if _, err = db.Exec(buildDelete, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
 	return nil
 }
 
-func SelectAccountByUsernameAndPass(username *string, pass *string) (*vo.AccountVo, error) {
+func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Account, error) {
 	var account module.Account
 
 	encryPass, err := util.AesEncode(*pass)
@@ -233,21 +212,13 @@ func SelectAccountByUsernameAndPass(username *string, pass *string) (*vo.Account
 	}
 	defer rows.Close()
 
-	err = scanner.Scan(rows, &account)
-	if err == scanner.ErrEmptyResult {
+	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.UsernameOrPassError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-
-	accountVo := vo.AccountVo{
-		Id:       *account.Id,
-		Username: *account.Username,
-		RoleId:   *account.RoleId,
-		Deleted:  *account.Deleted,
-	}
-	return &accountVo, nil
+	return &account, nil
 }
 
 func UpdateAccountProfile(oldPass *string, newPass *string, username *string, email *string) error {
@@ -273,7 +244,7 @@ func UpdateAccountProfile(oldPass *string, newPass *string, username *string, em
 		return errors.New(constant.SysError)
 	}
 
-	if _, err := db.Exec(buildUpdate, values...); err != nil {
+	if _, err = db.Exec(buildUpdate, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -322,8 +293,7 @@ func UpdateAccountById(account *module.Account) error {
 			return errors.New(constant.SysError)
 		}
 
-		_, err = db.Exec(buildUpdate, values...)
-		if err != nil {
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
@@ -348,8 +318,7 @@ func AccountQRCode(id *uint) (string, error) {
 	}
 	defer rows.Close()
 
-	err = scanner.Scan(rows, &account)
-	if err == scanner.ErrEmptyResult {
+	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
 		return "", errors.New(constant.UnauthorizedError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
@@ -389,8 +358,7 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 			return errors.New(constant.SysError)
 		}
 
-		_, err = db.Exec(buildUpdate, values...)
-		if err != nil {
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
@@ -414,7 +382,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 	defer rows.Close()
 
 	var usernames []string
-	if err := scanner.Scan(rows, &usernames); err != nil {
+	if err = scanner.Scan(rows, &usernames); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -436,7 +404,7 @@ func SelectAccountsEmailByExpireTime(expireTime uint) ([]module.Account, error) 
 	defer rows.Close()
 
 	var account []module.Account
-	if err := scanner.Scan(rows, &account); err != nil {
+	if err = scanner.Scan(rows, &account); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -485,8 +453,7 @@ func UpdateAccountQuota() error {
 		return errors.New(constant.SysError)
 	}
 
-	_, err = db.Exec(buildUpdate, values...)
-	if err != nil {
+	if _, err = db.Exec(buildUpdate, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}

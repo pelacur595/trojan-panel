@@ -104,12 +104,12 @@ func NodeQRCode(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	userInfo, err := service.GetAccountInfo(c)
+	accountInfo, err := service.GetAccountInfo(c)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	qrCode, err := service.NodeQRCode(&userInfo.Id, requiredIdDto.Id)
+	qrCode, err := service.NodeQRCode(&accountInfo.Id, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return

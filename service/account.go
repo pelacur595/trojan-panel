@@ -46,7 +46,7 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 
 	return nil
 }
-func SelectAccountById(id *uint) (*vo.AccountVo, error) {
+func SelectAccountById(id *uint) (*module.Account, error) {
 	return dao.SelectAccountById(id)
 }
 func CountAccountByUsername(username *string) (int, error) {
@@ -59,7 +59,7 @@ func DeleteAccountById(id *uint) error {
 	return dao.DeleteAccountById(id)
 }
 
-func SelectAccountByUsernameAndPass(username *string, pass *string) (*vo.AccountVo, error) {
+func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Account, error) {
 	return dao.SelectAccountByUsernameAndPass(username, pass)
 }
 

@@ -44,7 +44,7 @@ func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
 	if err != nil {
 		return nil, err
 	}
-	accountVo, err := SelectAccountById(&accountInfo.Id)
+	account, err := SelectAccountById(&accountInfo.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +53,10 @@ func PanelGroup(c *gin.Context) (*vo.PanelGroupVo, error) {
 		return nil, err
 	}
 	panelGroupVo := vo.PanelGroupVo{
-		Quota:        accountVo.Quota,
-		ResidualFlow: accountVo.Quota - accountVo.Upload - accountVo.Download,
+		Quota:        *account.Quota,
+		ResidualFlow: *account.Quota - *account.Upload - *account.Download,
 		NodeCount:    nodeCount,
-		ExpireTime:   accountVo.ExpireTime,
+		ExpireTime:   *account.ExpireTime,
 	}
 	if util.IsAdmin(accountInfo.Roles) {
 		accountCount, err := CountAccountByUsername(nil)
