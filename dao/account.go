@@ -329,7 +329,11 @@ func AccountQRCode(id *uint) (string, error) {
 		logrus.Errorln(err.Error())
 		return "", errors.New(constant.SysError)
 	}
-	return fmt.Sprintf("%s%s", *account.Username, decodePass), nil
+	password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
+	if err != nil {
+		return "", err
+	}
+	return password, nil
 }
 
 func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {
