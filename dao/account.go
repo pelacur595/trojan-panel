@@ -31,7 +31,6 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-
 	return &account, nil
 }
 
@@ -42,13 +41,9 @@ func CreateAccount(account *module.Account) error {
 		return err
 	}
 
-	var data []map[string]interface{}
 	accountCreate := map[string]interface{}{
 		"username": *account.Username,
 		"`pass`":   encryPass,
-	}
-	if account.Quota != nil {
-		accountCreate["`quota`"] = *account.Quota
 	}
 	if account.RoleId != nil {
 		accountCreate["`role_id`"] = *account.RoleId
@@ -62,6 +57,9 @@ func CreateAccount(account *module.Account) error {
 	if account.Deleted != nil {
 		accountCreate["deleted"] = *account.Deleted
 	}
+	if account.Quota != nil {
+		accountCreate["`quota`"] = *account.Quota
+	}
 	if account.IpLimit != nil {
 		accountCreate["ip_limit"] = *account.IpLimit
 	}
@@ -71,6 +69,7 @@ func CreateAccount(account *module.Account) error {
 	if account.DownloadSpeedLimit != nil {
 		accountCreate["download_speed_limit"] = *account.DownloadSpeedLimit
 	}
+	var data []map[string]interface{}
 	data = append(data, accountCreate)
 
 	buildInsert, values, err := builder.BuildInsert("account", data)
@@ -118,7 +117,7 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("account", whereCount, selectFieldsCount)
-	if err := db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
+	if err = db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -145,7 +144,7 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 	}
 	defer rows.Close()
 
-	if err := scanner.Scan(rows, &accounts); err != nil {
+	if err = scanner.Scan(rows, &accounts); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -226,27 +225,30 @@ func UpdateAccountProfile(oldPass *string, newPass *string, username *string, em
 	if err != nil {
 		return errors.New(constant.OriPassError)
 	}
-	encryPass, err := util.AesEncode(*newPass)
-	if err != nil {
-		return err
-	}
 
 	where := map[string]interface{}{"username": *username}
-	update := map[string]interface{}{
-		"`pass`": encryPass,
+	update := map[string]interface{}{}
+	if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
+		encryPass, err := util.AesEncode(*newPass)
+		if err != nil {
+			return err
+		}
+		update["pass"] = encryPass
 	}
 	if email != nil && *email != "" {
-		update["email"] = email
+		update["email"] = *email
 	}
-	buildUpdate, values, err := builder.BuildUpdate("account", where, update)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return errors.New(constant.SysError)
-	}
+	if len(update) > 0 {
+		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
 
-	if _, err = db.Exec(buildUpdate, values...); err != nil {
-		logrus.Errorln(err.Error())
-		return errors.New(constant.SysError)
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
 	}
 	return nil
 }
@@ -259,7 +261,7 @@ func UpdateAccountById(account *module.Account) error {
 		if err != nil {
 			return err
 		}
-		update["`pass`"] = encryPass
+		update["pass"] = encryPass
 	}
 	if account.RoleId != nil {
 		update["role_id"] = *account.RoleId
@@ -303,6 +305,7 @@ func UpdateAccountById(account *module.Account) error {
 
 func AccountQRCode(id *uint) (string, error) {
 	var account module.Account
+
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"username", "pass"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
@@ -311,19 +314,13 @@ func AccountQRCode(id *uint) (string, error) {
 		return "", errors.New(constant.SysError)
 	}
 
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	defer rows.Close()
-
-	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
+	if err = db.QueryRow(buildSelect, values...).Scan(&account); err == scanner.ErrEmptyResult {
 		return "", errors.New(constant.UnauthorizedError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return "", errors.New(constant.SysError)
 	}
+
 	if account.Username == nil || *account.Username == "" || account.Pass == nil || *account.Pass == "" {
 		return "", errors.New(constant.NodeQRCodeError)
 	}
@@ -340,16 +337,16 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 
 	update := map[string]interface{}{}
 	if quota != nil {
-		update["quota"] = quota
+		update["quota"] = *quota
 	}
 	if download != nil {
-		update["download"] = download
+		update["download"] = *download
 	}
 	if upload != nil {
-		update["upload"] = upload
+		update["upload"] = *upload
 	}
 	if deleted != nil {
-		update["deleted"] = deleted
+		update["deleted"] = *deleted
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
@@ -403,12 +400,12 @@ func SelectAccountsEmailByExpireTime(expireTime uint) ([]module.Account, error) 
 	}
 	defer rows.Close()
 
-	var account []module.Account
-	if err = scanner.Scan(rows, &account); err != nil {
+	var accounts []module.Account
+	if err = scanner.Scan(rows, &accounts); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	return account, nil
+	return accounts, nil
 }
 
 // TrafficRank 流量排行 前15名

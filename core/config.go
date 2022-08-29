@@ -8,7 +8,7 @@ import (
 
 var Config = new(AppConfig)
 
-// 初始化全局配置文件
+// InitConfig 初始化全局配置文件
 func InitConfig() {
 	if err := ini.MapTo(Config, constant.ConfigFilePath); err != nil {
 		logrus.Errorf("配置文件加载失败 err: %v\n", err)
@@ -22,7 +22,6 @@ type AppConfig struct {
 	RedisConfig `ini:"redis"`
 }
 
-// MySQL
 type MySQLConfig struct {
 	Host     string `ini:"host"`
 	User     string `ini:"user"`
@@ -30,7 +29,6 @@ type MySQLConfig struct {
 	Port     int    `ini:"port"`
 }
 
-// log
 type LogConfig struct {
 	FileName   string `ini:"filename"`    // 日志文件位置
 	MaxSize    int    `ini:"max_size"`    // 单文件最大容量,单位是MB
@@ -39,7 +37,6 @@ type LogConfig struct {
 	Compress   bool   `ini:"compress"`    // 是否需要压缩滚动日志, 使用的 gzip 压缩
 }
 
-// Redis
 type RedisConfig struct {
 	Host      string `ini:"host"`
 	Port      int    `ini:"port"`
