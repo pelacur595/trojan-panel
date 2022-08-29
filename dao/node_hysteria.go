@@ -8,7 +8,7 @@ import (
 	"trojan/module/constant"
 )
 
-func SelectHysteriaById(id *uint) (*module.NodeHysteria, error) {
+func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 	var nodeHysteria module.NodeHysteria
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "protocol", "up_mbps", "down_mbps"}

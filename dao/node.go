@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"trojan/module"
 	"trojan/module/constant"
-	"trojan/module/vo"
 )
 
 func SelectNodeById(id *uint) (*module.Node, error) {
@@ -55,7 +54,7 @@ func CreateNode(node *module.Node) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodePageVo, error) {
+func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*[]module.Node, uint, error) {
 	var (
 		total uint
 		nodes []module.Node
@@ -70,11 +69,11 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	buildSelect, values, err := builder.BuildSelect("node", whereCount, selectFieldsCount)
 	if err != nil {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
+		return nil, 0, errors.New(constant.SysError)
 	}
 	if err = db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
+		return nil, 0, errors.New(constant.SysError)
 	}
 
 	// 分页查询
@@ -88,43 +87,21 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
+		return nil, 0, errors.New(constant.SysError)
 	}
 
 	rows, err := db.Query(selectSQL, values...)
 	if err != nil {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
+		return nil, 0, errors.New(constant.SysError)
 	}
 	defer rows.Close()
 
 	if err = scanner.Scan(rows, &nodes); err != nil {
 		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
+		return nil, 0, errors.New(constant.SysError)
 	}
-
-	var nodeVos = make([]vo.NodeVo, 0)
-	for _, node := range nodes {
-		nodeVos = append(nodeVos, vo.NodeVo{
-			Id:         *node.Id,
-			NodeSubId:  *node.NodeSubId,
-			NodeTypeId: *node.NodeTypeId,
-			Name:       *node.Name,
-			Ip:         *node.Ip,
-			Port:       *node.Port,
-			CreateTime: *node.CreateTime,
-		})
-	}
-
-	nodePageVo := vo.NodePageVo{
-		BaseVoPage: vo.BaseVoPage{
-			PageNum:  *pageNum,
-			PageSize: *pageSize,
-			Total:    total,
-		},
-		Nodes: nodeVos,
-	}
-	return &nodePageVo, nil
+	return &nodes, total, nil
 }
 
 func DeleteNodeById(id *uint) error {

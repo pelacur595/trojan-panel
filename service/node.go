@@ -88,18 +88,78 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
 }
 
 func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodePageVo, error) {
-	nodePagVo, err := dao.SelectNodePage(queryName, pageNum, pageSize)
+	nodePage, total, err := dao.SelectNodePage(queryName, pageNum, pageSize)
 	if err != nil {
 		return nil, err
 	}
-	for index, node := range nodePagVo.Nodes {
-		ttl, err := util.Ping(node.Ip)
-		if err != nil {
-			nodePagVo.Nodes[index].Ping = -1
+	nodeVos := make([]vo.NodeVo, 0)
+	for _, item := range *nodePage {
+		nodeVo := vo.NodeVo{
+			Id:         *item.Id,
+			NodeSubId:  *item.NodeSubId,
+			NodeTypeId: *item.NodeTypeId,
+			Name:       *item.Name,
+			Ip:         *item.Ip,
+			Port:       *item.Port,
+			CreateTime: *item.CreateTime,
 		}
-		nodePagVo.Nodes[index].Ping = ttl
+
+		ttl, err := util.Ping(*item.Ip)
+		if err != nil {
+			ttl = -1
+		}
+		nodeVo.Ping = ttl
+
+		nodeType, err := dao.SelectNodeById(item.NodeTypeId)
+		if err != nil {
+			continue
+		}
+		if *nodeType.Name == constant.TrojanGoName {
+			nodeTroajanGo, err := dao.SelectNodeTrojanGoById(item.NodeSubId)
+			if err != nil {
+				continue
+			}
+			nodeVo.TrojanGoSni = nodeTroajanGo.Sni
+			nodeVo.TrojanGoMuxEnable = nodeTroajanGo.MuxEnable
+			nodeVo.TrojanGoWebsocketEnable = nodeTroajanGo.WebsocketEnable
+			nodeVo.TrojanGoWebsocketPath = nodeTroajanGo.WebsocketPath
+			nodeVo.TrojanGoSsEnable = nodeTroajanGo.SsEnable
+			nodeVo.TrojanGoSsMethod = nodeTroajanGo.SsMethod
+			nodeVo.TrojanGoSsPassword = nodeTroajanGo.SsPassword
+		}
+		if *nodeType.Name == constant.HysteriaName {
+			nodeHysteria, err := dao.SelectNodeHysteriaById(item.NodeSubId)
+			if err != nil {
+				continue
+			}
+			nodeVo.HysteriaProtocol = nodeHysteria.Protocol
+			nodeVo.HysteriaUpMbps = nodeHysteria.UpMbps
+			nodeVo.HysteriaDownMbps = nodeHysteria.DownMbps
+		}
+		if *nodeType.Name == constant.XrayName {
+			nodeXray, err := dao.SelectNodeXrayById(item.NodeSubId)
+			if err != nil {
+				continue
+			}
+			nodeVo.XrayProtocol = nodeXray.Protocol
+			nodeVo.XraySettings = nodeXray.Settings
+			nodeVo.XrayStreamSettings = nodeXray.StreamSettings
+			nodeVo.XrayTag = nodeXray.Tag
+			nodeVo.XraySniffing = nodeXray.Sniffing
+			nodeVo.XrayAllocate = nodeXray.Allocate
+		}
+
+		nodeVos = append(nodeVos, nodeVo)
 	}
-	return nodePagVo, nil
+	nodePageVo := vo.NodePageVo{
+		BaseVoPage: vo.BaseVoPage{
+			PageNum:  *pageNum,
+			PageSize: *pageSize,
+			Total:    total,
+		},
+		Nodes: nodeVos,
+	}
+	return &nodePageVo, nil
 }
 
 func DeleteNodeById(id *uint) error {
@@ -224,7 +284,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 	}
 
 	if *nodeType.Name == constant.HysteriaName {
-		nodeHysteria, err := dao.SelectHysteriaById(id)
+		nodeHysteria, err := dao.SelectNodeHysteriaById(id)
 		if err != nil {
 			return "", errors.New(constant.NodeURLError)
 		}

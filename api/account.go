@@ -229,17 +229,17 @@ func UpdateAccountById(c *gin.Context) {
 	}
 	toByte := util.ToByte(*accountUpdateDto.Quota)
 	account := module.Account{
-		Id:         accountUpdateDto.Id,
-		Quota:      &toByte,
-		Username:   accountUpdateDto.Username,
-		Pass:       accountUpdateDto.Pass,
-		Email:      accountUpdateDto.Email,
-		RoleId:     accountUpdateDto.RoleId,
-		Deleted:    accountUpdateDto.Deleted,
-		ExpireTime: accountUpdateDto.ExpireTime,
-		//IpLimit:            accountUpdateDto.IpLimit,
-		//UploadSpeedLimit:   accountUpdateDto.UploadSpeedLimit,
-		//DownloadSpeedLimit: accountUpdateDto.DownloadSpeedLimit,
+		Id:                 accountUpdateDto.Id,
+		Quota:              &toByte,
+		Username:           accountUpdateDto.Username,
+		Pass:               accountUpdateDto.Pass,
+		Email:              accountUpdateDto.Email,
+		RoleId:             accountUpdateDto.RoleId,
+		Deleted:            accountUpdateDto.Deleted,
+		ExpireTime:         accountUpdateDto.ExpireTime,
+		IpLimit:            accountUpdateDto.IpLimit,
+		UploadSpeedLimit:   accountUpdateDto.UploadSpeedLimit,
+		DownloadSpeedLimit: accountUpdateDto.DownloadSpeedLimit,
 	}
 	if err := service.UpdateAccountById(&account); err != nil {
 		vo.Fail(err.Error(), c)

@@ -12,6 +12,23 @@ type NodeVo struct {
 	CreateTime time.Time `json:"createTime"`
 
 	Ping int `json:"ping"`
+
+	TrojanGoSni             *string `json:"trojanGoSni"`
+	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable"`
+	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable"`
+	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath"`
+	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable"`
+	TrojanGoSsMethod        *string `json:"trojanGoSsMethod"`
+	TrojanGoSsPassword      *string `json:"trojanGoSsPassword"`
+	HysteriaProtocol        *string `json:"hysteriaProtocol"`
+	HysteriaUpMbps          *int    `json:"hysteriaUpMbps"`
+	HysteriaDownMbps        *int    `json:"hysteriaDownMbps"`
+	XrayProtocol            *string `json:"xrayProtocol"`
+	XraySettings            *string `json:"xraySettings"`
+	XrayStreamSettings      *string `json:"xrayStreamSettings"`
+	XrayTag                 *string `json:"xrayTag"`
+	XraySniffing            *string `json:"xraySniffing"`
+	XrayAllocate            *string `json:"xrayAllocate"`
 }
 
 type NodePageVo struct {
