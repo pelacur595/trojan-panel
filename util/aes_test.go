@@ -6,7 +6,7 @@ import (
 )
 
 func Test(t *testing.T) {
-	encode, err := AesEncode("sfdsfsdf1231!")
+	encode, err := AesEncode("123456")
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
