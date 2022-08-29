@@ -14,8 +14,8 @@ import (
 	"trojan/util"
 )
 
-// TrafficRankJob 流量排行榜 一小时更新一次
-func TrafficRankJob() {
+// CronTrafficRank 流量排行榜 一小时更新一次
+func CronTrafficRank() {
 	_, _ = TrafficRank()
 }
 

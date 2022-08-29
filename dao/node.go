@@ -22,7 +22,7 @@ func SelectNodeById(id *uint) (*module.Node, error) {
 	}
 
 	if err = db.QueryRow(buildSelect, values...).Scan(&node); err == scanner.ErrEmptyResult {
-		return nil, err
+		return nil, errors.New(constant.NodeNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)

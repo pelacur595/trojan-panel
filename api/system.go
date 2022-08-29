@@ -14,26 +14,39 @@ import (
 
 func SelectSystemByName(c *gin.Context) {
 	name := constant.SystemName
-	systemVo, err := service.SelectSystemByName(&name)
+	system, err := service.SelectSystemByName(&name)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
+	}
+	systemVo := vo.SystemVo{
+		Id:                 *system.Id,
+		OpenRegister:       *system.OpenRegister,
+		RegisterQuota:      *system.RegisterQuota,
+		RegisterExpireDays: *system.RegisterExpireDays,
+		ExpireWarnEnable:   *system.ExpireWarnEnable,
+		ExpireWarnDay:      *system.ExpireWarnDay,
+		EmailEnable:        *system.EmailEnable,
+		EmailHost:          *system.EmailHost,
+		EmailPort:          *system.EmailPort,
+		EmailUsername:      *system.EmailUsername,
+		EmailPassword:      *system.EmailPassword,
 	}
 	vo.Success(systemVo, c)
 }
 
 func Setting(c *gin.Context) {
 	name := constant.SystemName
-	systemVo, err := service.SelectSystemByName(&name)
+	system, err := service.SelectSystemByName(&name)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
 	settingVo := vo.SettingVo{
-		OpenRegister:       systemVo.OpenRegister,
-		RegisterQuota:      systemVo.RegisterQuota,
-		RegisterExpireDays: systemVo.RegisterExpireDays,
-		EmailEnable:        systemVo.EmailEnable,
+		OpenRegister:       *system.OpenRegister,
+		RegisterQuota:      *system.RegisterQuota,
+		RegisterExpireDays: *system.RegisterExpireDays,
+		EmailEnable:        *system.EmailEnable,
 	}
 	vo.Success(settingVo, c)
 }

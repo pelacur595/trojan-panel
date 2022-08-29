@@ -12,11 +12,12 @@ import (
 	"trojan/module/vo"
 )
 
-func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
+func SelectRoleList(roleDto dto.RoleDto) ([]module.Role, error) {
 	var roles []module.Role
 
-	where := map[string]interface{}{}
-	where["_orderby"] = "create_time desc"
+	where := map[string]interface{}{
+		"_orderby": "create_time desc",
+	}
 	if roleDto.Name != nil && *roleDto.Name != "" {
 		where["name"] = *roleDto.Name
 	}
@@ -36,20 +37,12 @@ func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
 	}
 	defer rows.Close()
 
-	if err := scanner.Scan(rows, &roles); err != nil {
+	if err = scanner.Scan(rows, &roles); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
-	var roleListVos []vo.RoleListVo
-	for _, item := range roles {
-		roleListVos = append(roleListVos, vo.RoleListVo{
-			Id:   *item.Id,
-			Name: *item.Name,
-			Desc: *item.Desc,
-		})
-	}
-	return &roleListVos, nil
+	return roles, nil
 }
 
 func SelectRoleNameByParentId(id *uint, includeSelf bool) ([]string, error) {

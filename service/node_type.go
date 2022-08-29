@@ -6,9 +6,5 @@ import (
 )
 
 func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
-	nodeTypeVos, err := dao.SelectNodeTypeList()
-	if err != nil {
-		return nil, err
-	}
-	return nodeTypeVos, nil
+	return dao.SelectNodeTypeList()
 }

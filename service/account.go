@@ -23,13 +23,16 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 	}
 	toByte := util.ToByte(*accountCreateDto.Quota)
 	account := module.Account{
-		Username:   accountCreateDto.Username,
-		Pass:       accountCreateDto.Pass,
-		RoleId:     accountCreateDto.RoleId,
-		Email:      accountCreateDto.Email,
-		ExpireTime: accountCreateDto.ExpireTime,
-		Deleted:    accountCreateDto.Deleted,
-		Quota:      &toByte,
+		Username:           accountCreateDto.Username,
+		Pass:               accountCreateDto.Pass,
+		RoleId:             accountCreateDto.RoleId,
+		Email:              accountCreateDto.Email,
+		ExpireTime:         accountCreateDto.ExpireTime,
+		Deleted:            accountCreateDto.Deleted,
+		Quota:              &toByte,
+		IpLimit:            accountCreateDto.IpLimit,
+		DownloadSpeedLimit: accountCreateDto.DownloadSpeedLimit,
+		UploadSpeedLimit:   accountCreateDto.UploadSpeedLimit,
 	}
 	if err = dao.CreateAccount(&account); err != nil {
 		return err
@@ -43,7 +46,6 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 			return err
 		}
 	}
-
 	return nil
 }
 func SelectAccountById(id *uint) (*module.Account, error) {
@@ -100,11 +102,11 @@ func UpdateAccountById(account *module.Account) error {
 
 func Register(accountRegisterDto dto.AccountRegisterDto) error {
 	name := constant.SystemName
-	systemVo, err := SelectSystemByName(&name)
+	system, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
 	}
-	if systemVo.OpenRegister == 0 {
+	if *system.OpenRegister == 0 {
 		return errors.New(constant.AccountRegisterClosed)
 	}
 
@@ -116,8 +118,8 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 		return errors.New(constant.UsernameExist)
 	}
 	u := constant.USER
-	milli := util.DayToMilli(systemVo.RegisterExpireDays)
-	registerQuota := util.ToByte(systemVo.RegisterQuota)
+	milli := util.DayToMilli(*system.RegisterExpireDays)
+	registerQuota := util.ToByte(*system.RegisterQuota)
 	account := module.Account{
 		Quota:      &registerQuota,
 		Username:   accountRegisterDto.Username,
@@ -158,8 +160,8 @@ func DisableAccount(usernames []string) error {
 	return nil
 }
 
-// ScanAccounts 定时任务：扫描无效用户
-func ScanAccounts() {
+// CronScanAccounts 定时任务：扫描无效用户
+func CronScanAccounts() {
 	usernames, err := dao.SelectAccountUsernameByDeletedOrExpireTime()
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -174,26 +176,19 @@ func ScanAccounts() {
 	}
 }
 
-// ScanAccountResetTraffic 设置角色为普通用户流量为0
-func ScanAccountResetTraffic() {
-	if err := dao.UpdateAccountQuota(); err != nil {
-		logrus.Errorf("定时重设用户总流量异常 error: %v\n", err)
-	}
-}
-
-// ScanAccountExpireWarn 定时任务：到期警告
-func ScanAccountExpireWarn() {
+// CronScanAccountExpireWarn 定时任务：到期警告
+func CronScanAccountExpireWarn() {
 	systemName := constant.SystemName
-	systemVo, err := SelectSystemByName(&systemName)
+	system, err := SelectSystemByName(&systemName)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return
 	}
-	if systemVo.EmailEnable == 0 || systemVo.ExpireWarnEnable == 0 {
+	if *system.EmailEnable == 0 || *system.ExpireWarnEnable == 0 {
 		return
 	}
-	expireWarnDay := systemVo.ExpireWarnDay
-	accounts, err := dao.SelectAccountsEmailByExpireTime(util.DayToMilli(expireWarnDay))
+	expireWarnDay := system.ExpireWarnDay
+	accounts, err := dao.SelectAccountsByExpireTime(util.DayToMilli(*expireWarnDay))
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return

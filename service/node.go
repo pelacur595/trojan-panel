@@ -107,7 +107,6 @@ func DeleteNodeById(id *uint) error {
 }
 
 func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
-
 	node := module.Node{
 		Id:   nodeUpdateDto.Id,
 		Name: nodeUpdateDto.Name,
@@ -133,7 +132,7 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 			SsMethod:        nodeUpdateDto.TrojanGoSsMethod,
 			SsPassword:      nodeUpdateDto.TrojanGoSsPassword,
 		}
-		if err := dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
+		if err = dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
 			return err
 		}
 	}
@@ -144,7 +143,7 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 			UpMbps:   nodeUpdateDto.HysteriaUpMbps,
 			DownMbps: nodeUpdateDto.HysteriaDownMbps,
 		}
-		if err := dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
+		if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
 			return err
 		}
 	}
@@ -158,7 +157,7 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 			Sniffing:       nodeUpdateDto.XraySniffing,
 			Allocate:       nodeUpdateDto.XrayAllocate,
 		}
-		if err := dao.UpdateNodeXrayById(&nodeXray); err != nil {
+		if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
 			return err
 		}
 	}
@@ -181,17 +180,17 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 
 	node, err := dao.SelectNodeById(id)
 	if err != nil {
-		return "", nil
+		return "", errors.New(constant.NodeURLError)
 	}
 
 	nodeType, err := dao.SelectNodeTypeById(node.NodeTypeId)
 	if err != nil {
-		return "", err
+		return "", errors.New(constant.NodeURLError)
 	}
 
 	password, err := dao.AccountQRCode(accountId)
 	if err != nil {
-		return "", err
+		return "", errors.New(constant.NodeURLError)
 	}
 
 	// 构建URL
@@ -199,7 +198,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 	if *nodeType.Name == constant.TrojanGoName {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 		if err != nil {
-			return "", nil
+			return "", errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("trojan-go://%s@%s:%d?", url.PathEscape(password),
 			*node.Ip, *node.Port))
@@ -227,11 +226,11 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 	if *nodeType.Name == constant.HysteriaName {
 		nodeHysteria, err := dao.SelectHysteriaById(id)
 		if err != nil {
-			return "", err
+			return "", errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("hysteria://%s:%d?protocol=%s&auth=%s&upmbps=%d&downmbps=%d",
-			node.Ip,
-			node.Port,
+			*node.Ip,
+			*node.Port,
 			*nodeHysteria.Protocol,
 			password,
 			*nodeHysteria.UpMbps,

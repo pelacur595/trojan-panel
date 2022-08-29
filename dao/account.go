@@ -386,7 +386,8 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 	return usernames, nil
 }
 
-func SelectAccountsEmailByExpireTime(expireTime uint) ([]module.Account, error) {
+// 用于发邮件
+func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 	buildSelect, values, err := builder.NamedQuery("select username,email from account where expire_time <= {{expire_time}} and quota != 0",
 		map[string]interface{}{"expire_time": expireTime})
 	if err != nil {
