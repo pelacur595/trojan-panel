@@ -79,7 +79,7 @@ func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
 			return errors.New(constant.SysError)
 		}
 
-		if _, err := db.Exec(buildUpdate, values...); err != nil {
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}

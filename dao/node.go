@@ -36,7 +36,9 @@ func CreateNode(node *module.Node) error {
 		"node_type_id": *node.NodeTypeId,
 		"name":         *node.Name,
 		"ip":           *node.Ip,
-		"port":         *node.Port,
+	}
+	if node.Port != nil && *node.Port != 0 {
+		nodeEntity["port"] = *node.Port
 	}
 
 	var data []map[string]interface{}
@@ -46,7 +48,7 @@ func CreateNode(node *module.Node) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if _, err := db.Exec(buildInsert, values...); err != nil {
+	if _, err = db.Exec(buildInsert, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -70,16 +72,15 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	if err := db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
+	if err = db.QueryRow(buildSelect, values...).Scan(&total); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
 	// 分页查询
-	offset := (*pageNum - 1) * *pageSize
 	where := map[string]interface{}{
 		"_orderby": "create_time desc",
-		"_limit":   []uint{offset, *pageSize}}
+		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
@@ -97,7 +98,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	}
 	defer rows.Close()
 
-	if err := scanner.Scan(rows, &nodes); err != nil {
+	if err = scanner.Scan(rows, &nodes); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -133,7 +134,7 @@ func DeleteNodeById(id *uint) error {
 		return errors.New(constant.SysError)
 	}
 
-	if _, err := db.Exec(buildDelete, values...); err != nil {
+	if _, err = db.Exec(buildDelete, values...); err != nil {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
@@ -159,7 +160,7 @@ func UpdateNodeById(node *module.Node) error {
 			return errors.New(constant.SysError)
 		}
 
-		if _, err := db.Exec(buildUpdate, values...); err != nil {
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
@@ -186,7 +187,7 @@ func CountNodeByName(queryName *string) (int, error) {
 		return 0, errors.New(constant.SysError)
 	}
 
-	if err := db.QueryRow(buildSelect, values...).Scan(&count); err != nil {
+	if err = db.QueryRow(buildSelect, values...).Scan(&count); err != nil {
 		logrus.Errorln(err.Error())
 		return 0, errors.New(constant.SysError)
 	}

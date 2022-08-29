@@ -31,15 +31,15 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 		Deleted:    accountCreateDto.Deleted,
 		Quota:      &toByte,
 	}
-	if err := dao.CreateAccount(&account); err != nil {
+	if err = dao.CreateAccount(&account); err != nil {
 		return err
 	}
 	if account.Deleted != nil && *account.Deleted == 1 {
-		if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
+		if err = PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
 			return err
 		}
 	} else if *account.ExpireTime <= util.NowMilli() {
-		if err := DisableAccount([]string{*account.Username}); err != nil {
+		if err = DisableAccount([]string{*account.Username}); err != nil {
 			return err
 		}
 	}
@@ -126,7 +126,7 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 		Deleted:    new(uint),
 		ExpireTime: &milli,
 	}
-	if err := dao.CreateAccount(&account); err != nil {
+	if err = dao.CreateAccount(&account); err != nil {
 		return err
 	}
 	return nil
@@ -167,7 +167,7 @@ func ScanAccounts() {
 	}
 
 	if len(usernames) > 0 {
-		if err := DisableAccount(usernames); err != nil {
+		if err = DisableAccount(usernames); err != nil {
 			logrus.Errorf("定时扫描用户任务禁用用户异常 usernames: %s error: %v\n", usernames, err)
 		}
 		logrus.Infof("定时扫描用户任务禁用用户 usernames: %s\n", usernames)
@@ -208,7 +208,7 @@ func ScanAccountExpireWarn() {
 					Subject:       "账号到期提醒",
 					Content:       fmt.Sprintf("您的账户: %s,还有%d天到期,请及时续期", *account.Username, expireWarnDay),
 				}
-				if err := SendEmail(&emailDto); err != nil {
+				if err = SendEmail(&emailDto); err != nil {
 					logrus.Errorln(fmt.Sprintf("到期警告邮件发送失败 err: %v", err))
 				}
 			}
