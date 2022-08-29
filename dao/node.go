@@ -145,7 +145,7 @@ func UpdateNodeById(node *module.Node) error {
 	where := map[string]interface{}{"id": *node.Id}
 	update := map[string]interface{}{}
 	if node.Name != nil {
-		update["`name`"] = *node.Name
+		update["name"] = *node.Name
 	}
 	if node.Ip != nil {
 		update["ip"] = *node.Ip

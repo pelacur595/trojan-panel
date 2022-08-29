@@ -27,31 +27,31 @@ func SelectNodeTrojanGoById(id *uint) (*module.NodeTrojanGo, error) {
 }
 
 func CreateNodeTrojanGo(nodeTrojanGo *module.NodeTrojanGo) (uint, error) {
-	nodeTrojanGoEntity := map[string]interface{}{}
+	nodeTrojanGoCreate := map[string]interface{}{}
 	if nodeTrojanGo.Sni != nil && *nodeTrojanGo.Sni != "" {
-		nodeTrojanGoEntity["sni"] = nodeTrojanGo.Sni
+		nodeTrojanGoCreate["sni"] = nodeTrojanGo.Sni
 	}
 	if nodeTrojanGo.MuxEnable != nil {
-		nodeTrojanGoEntity["mux_enable"] = nodeTrojanGo.MuxEnable
+		nodeTrojanGoCreate["mux_enable"] = nodeTrojanGo.MuxEnable
 	}
 	if nodeTrojanGo.WebsocketEnable != nil {
-		nodeTrojanGoEntity["websocket_enable"] = nodeTrojanGo.WebsocketEnable
+		nodeTrojanGoCreate["websocket_enable"] = nodeTrojanGo.WebsocketEnable
 	}
 	if nodeTrojanGo.WebsocketPath != nil && *nodeTrojanGo.WebsocketPath != "" {
-		nodeTrojanGoEntity["websocket_path"] = nodeTrojanGo.WebsocketPath
+		nodeTrojanGoCreate["websocket_path"] = nodeTrojanGo.WebsocketPath
 	}
 	if nodeTrojanGo.SsEnable != nil {
-		nodeTrojanGoEntity["ss_enable"] = nodeTrojanGo.SsEnable
+		nodeTrojanGoCreate["ss_enable"] = nodeTrojanGo.SsEnable
 	}
 	if nodeTrojanGo.SsMethod != nil && *nodeTrojanGo.SsMethod != "" {
-		nodeTrojanGoEntity["ss_method"] = nodeTrojanGo.SsMethod
+		nodeTrojanGoCreate["ss_method"] = nodeTrojanGo.SsMethod
 	}
 	if nodeTrojanGo.SsPassword != nil && *nodeTrojanGo.SsPassword != "" {
-		nodeTrojanGoEntity["ss_password"] = nodeTrojanGo.SsPassword
+		nodeTrojanGoCreate["ss_password"] = nodeTrojanGo.SsPassword
 	}
-	if len(nodeTrojanGoEntity) > 0 {
+	if len(nodeTrojanGoCreate) > 0 {
 		var data []map[string]interface{}
-		data = append(data, nodeTrojanGoEntity)
+		data = append(data, nodeTrojanGoCreate)
 		buildInsert, values, err := builder.BuildInsert("node_trojan_go", data)
 		if err != nil {
 			logrus.Errorln(err.Error())

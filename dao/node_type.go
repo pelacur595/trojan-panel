@@ -26,7 +26,7 @@ func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
 	}
 	defer rows.Close()
 
-	if err := scanner.Scan(rows, &nodeTypes); err != nil {
+	if err = scanner.Scan(rows, &nodeTypes); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
@@ -41,7 +41,7 @@ func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
 	return nodeTypeVos, nil
 }
 
-func SelectNodeTypeById(id *uint) (*vo.NodeTypeVo, error) {
+func SelectNodeTypeById(id *uint) (*module.NodeType, error) {
 	var nodeType module.NodeType
 	buildSelect, values, err := builder.NamedQuery(
 		"select id,`name` from node_type where id = {{id}}", map[string]interface{}{"id": *id})
@@ -49,23 +49,12 @@ func SelectNodeTypeById(id *uint) (*vo.NodeTypeVo, error) {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	defer rows.Close()
-
-	err = scanner.Scan(rows, &nodeType)
-	if err == scanner.ErrEmptyResult {
+	if err = db.QueryRow(buildSelect, values...).Scan(&nodeType); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.NodeTypeNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	nodeTypeVo := vo.NodeTypeVo{
-		Id:   *nodeType.Id,
-		Name: *nodeType.Name,
-	}
-	return &nodeTypeVo, nil
+
+	return &nodeType, nil
 }

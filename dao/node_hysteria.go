@@ -27,19 +27,19 @@ func SelectHysteriaById(id *uint) (*module.NodeHysteria, error) {
 }
 
 func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
-	nodeHysteriaEntity := map[string]interface{}{}
+	nodeHysteriaCreate := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {
-		nodeHysteriaEntity["protocol"] = nodeHysteria.Protocol
+		nodeHysteriaCreate["protocol"] = nodeHysteria.Protocol
 	}
 	if nodeHysteria.UpMbps != nil {
-		nodeHysteriaEntity["up_mbps"] = nodeHysteria.UpMbps
+		nodeHysteriaCreate["up_mbps"] = nodeHysteria.UpMbps
 	}
 	if nodeHysteria.DownMbps != nil {
-		nodeHysteriaEntity["down_mbps"] = nodeHysteria.DownMbps
+		nodeHysteriaCreate["down_mbps"] = nodeHysteria.DownMbps
 	}
-	if len(nodeHysteriaEntity) > 0 {
+	if len(nodeHysteriaCreate) > 0 {
 		var data []map[string]interface{}
-		data = append(data, nodeHysteriaEntity)
+		data = append(data, nodeHysteriaCreate)
 		buildInsert, values, err := builder.BuildInsert("node_hysteria", data)
 		if err != nil {
 			logrus.Errorln(err.Error())

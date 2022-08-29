@@ -9,7 +9,7 @@ import (
 	"trojan/module/constant"
 )
 
-func SelectNodeXray(id *uint) (*module.NodeXray, error) {
+func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 	var nodeXray module.NodeXray
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`protocol`", "settings", "stream_settings", "tag", "sniffing", "allocate"}
@@ -29,28 +29,28 @@ func SelectNodeXray(id *uint) (*module.NodeXray, error) {
 }
 
 func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
-	nodeXrayEntity := map[string]interface{}{}
+	nodeXrayCreate := map[string]interface{}{}
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
-		nodeXrayEntity["protocol"] = nodeXray.Protocol
+		nodeXrayCreate["protocol"] = nodeXray.Protocol
 	}
 	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
-		nodeXrayEntity["settings"] = nodeXray.Settings
+		nodeXrayCreate["settings"] = nodeXray.Settings
 	}
 	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
-		nodeXrayEntity["stream_settings"] = nodeXray.StreamSettings
+		nodeXrayCreate["stream_settings"] = nodeXray.StreamSettings
 	}
 	if nodeXray.Tag != nil && *nodeXray.Tag != "" {
-		nodeXrayEntity["tag"] = nodeXray.Tag
+		nodeXrayCreate["tag"] = nodeXray.Tag
 	}
 	if nodeXray.Sniffing != nil && *nodeXray.Sniffing != "" {
-		nodeXrayEntity["sniffing"] = nodeXray.Sniffing
+		nodeXrayCreate["sniffing"] = nodeXray.Sniffing
 	}
 	if nodeXray.Allocate != nil && *nodeXray.Allocate != "" {
-		nodeXrayEntity["allocate"] = nodeXray.Allocate
+		nodeXrayCreate["allocate"] = nodeXray.Allocate
 	}
-	if len(nodeXrayEntity) > 0 {
+	if len(nodeXrayCreate) > 0 {
 		var data []map[string]interface{}
-		data = append(data, nodeXrayEntity)
+		data = append(data, nodeXrayCreate)
 		buildInsert, values, err := builder.BuildInsert("node_xray", data)
 		if err != nil {
 			logrus.Errorln(err.Error())
