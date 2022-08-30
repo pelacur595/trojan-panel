@@ -3,9 +3,12 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"net/url"
 	"strings"
+	"sync"
+	"trojan/core"
 	"trojan/dao"
 	"trojan/module"
 	"trojan/module/constant"
@@ -32,46 +35,73 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
 	}
 
 	var nodeId uint
-	if *nodeType.Name == constant.TrojanGoName {
-		trojanGo := module.NodeTrojanGo{
-			Sni:             nodeCreateDto.TrojanGoSni,
-			MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
-			WebsocketEnable: nodeCreateDto.TrojanGoWebsocketEnable,
-			WebsocketPath:   nodeCreateDto.TrojanGoWebsocketPath,
-			SsEnable:        nodeCreateDto.TrojanGoSsEnable,
-			SsMethod:        nodeCreateDto.TrojanGoSsMethod,
-			SsPassword:      nodeCreateDto.TrojanGoSsPassword,
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		if err = GrpcAddNode(&core.NodeAddDto{
+			NodeType:                uint64(*nodeType.Id),
+			TrojanGoPort:            uint64(*nodeCreateDto.Port),
+			TrojanGoIp:              *nodeCreateDto.Ip,
+			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
+			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
+			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
+			TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
+			TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
+			TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
+			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
+			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
+			HysteriaPort:            uint64(*nodeCreateDto.Port),
+			HysteriaProtocol:        *nodeCreateDto.HysteriaProtocol,
+			HysteriaIp:              *nodeCreateDto.Ip,
+			HysteriaUpMbps:          int64(*nodeCreateDto.HysteriaUpMbps),
+			HysteriaDownMbps:        int64(*nodeCreateDto.HysteriaDownMbps),
+			XrayPort:                uint64(*nodeCreateDto.Port),
+			XrayProtocol:            *nodeCreateDto.XrayProtocol,
+			XraySettings:            *nodeCreateDto.XraySettings,
+			XrayStreamSettings:      *nodeCreateDto.XrayStreamSettings,
+			XrayTag:                 *nodeCreateDto.XrayTag,
+			XraySniffing:            *nodeCreateDto.XraySniffing,
+			XrayAllocate:            *nodeCreateDto.XrayAllocate,
+		}); err != nil {
+			return err
 		}
-		nodeId, err = dao.CreateNodeTrojanGo(&trojanGo)
-		if err != nil {
-			return nil
-		}
-	}
-
-	if *nodeType.Name == constant.HysteriaName {
-		hysteria := module.NodeHysteria{
-			Protocol: nodeCreateDto.HysteriaProtocol,
-			UpMbps:   nodeCreateDto.HysteriaUpMbps,
-			DownMbps: nodeCreateDto.HysteriaDownMbps,
-		}
-		nodeId, err = dao.CreateNodeHysteria(&hysteria)
-		if err != nil {
-			return nil
-		}
-	}
-
-	if *nodeType.Name == constant.XrayName {
-		nodeXray := module.NodeXray{
-			Protocol:       nodeCreateDto.XrayProtocol,
-			Settings:       nodeCreateDto.XraySettings,
-			StreamSettings: nodeCreateDto.XrayStreamSettings,
-			Tag:            nodeCreateDto.XrayTag,
-			Sniffing:       nodeCreateDto.XraySniffing,
-			Allocate:       nodeCreateDto.XrayAllocate,
-		}
-		nodeId, err = dao.CreateNodeXray(&nodeXray)
-		if err != nil {
-			return nil
+		if *nodeType.Name == constant.TrojanGoName {
+			trojanGo := module.NodeTrojanGo{
+				Sni:             nodeCreateDto.TrojanGoSni,
+				MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
+				WebsocketEnable: nodeCreateDto.TrojanGoWebsocketEnable,
+				WebsocketPath:   nodeCreateDto.TrojanGoWebsocketPath,
+				SsEnable:        nodeCreateDto.TrojanGoSsEnable,
+				SsMethod:        nodeCreateDto.TrojanGoSsMethod,
+				SsPassword:      nodeCreateDto.TrojanGoSsPassword,
+			}
+			nodeId, err = dao.CreateNodeTrojanGo(&trojanGo)
+			if err != nil {
+				return nil
+			}
+		} else if *nodeType.Name == constant.HysteriaName {
+			hysteria := module.NodeHysteria{
+				Protocol: nodeCreateDto.HysteriaProtocol,
+				UpMbps:   nodeCreateDto.HysteriaUpMbps,
+				DownMbps: nodeCreateDto.HysteriaDownMbps,
+			}
+			nodeId, err = dao.CreateNodeHysteria(&hysteria)
+			if err != nil {
+				return nil
+			}
+		} else if *nodeType.Name == constant.XrayName {
+			nodeXray := module.NodeXray{
+				Protocol:       nodeCreateDto.XrayProtocol,
+				Settings:       nodeCreateDto.XraySettings,
+				StreamSettings: nodeCreateDto.XrayStreamSettings,
+				Tag:            nodeCreateDto.XrayTag,
+				Sniffing:       nodeCreateDto.XraySniffing,
+				Allocate:       nodeCreateDto.XrayAllocate,
+			}
+			nodeId, err = dao.CreateNodeXray(&nodeXray)
+			if err != nil {
+				return nil
+			}
 		}
 	}
 	node := module.Node{
@@ -163,7 +193,21 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 }
 
 func DeleteNodeById(id *uint) error {
-	return dao.DeleteNodeById(id)
+	var mutex sync.Mutex
+	defer mutex.TryLock()
+	if mutex.TryLock() {
+		node, err := dao.SelectNodeById(id)
+		if err != nil {
+			return err
+		}
+		if err = GrpcRemoveNode(*node.NodeTypeId, *node.Port); err != nil {
+			return err
+		}
+		if err = dao.DeleteNodeById(id); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
@@ -195,8 +239,7 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 		if err = dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
 			return err
 		}
-	}
-	if *nodeType.Name == constant.HysteriaName {
+	} else if *nodeType.Name == constant.HysteriaName {
 		nodeHysteria := module.NodeHysteria{
 			Id:       nodeUpdateDto.NodeSubId,
 			Protocol: nodeUpdateDto.HysteriaProtocol,
@@ -206,8 +249,7 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 		if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
 			return err
 		}
-	}
-	if *nodeType.Name == constant.XrayName {
+	} else if *nodeType.Name == constant.XrayName {
 		nodeXray := module.NodeXray{
 			Id:             nodeUpdateDto.NodeSubId,
 			Protocol:       nodeUpdateDto.XrayProtocol,
@@ -309,4 +351,35 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 
 func CountNode() (int, error) {
 	return dao.CountNode()
+}
+
+func GrpcAddNode(nodeAddDto *core.NodeAddDto) error {
+	nodes, err := dao.SelectNodesIpAndPort()
+	if err != nil {
+		return err
+	}
+	for _, node := range nodes {
+		if err = core.AddNode(*node.Ip, nodeAddDto); err != nil {
+			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", *node.Ip, err)
+		}
+		continue
+	}
+	return nil
+}
+
+func GrpcRemoveNode(nodeType uint, port uint) error {
+	nodes, err := dao.SelectNodesIpAndPort()
+	if err != nil {
+		return err
+	}
+	for _, node := range nodes {
+		if err = core.RemoveNode(*node.Ip, &core.NodeRemoveDto{
+			NodeType: uint64(nodeType),
+			Port:     uint64(port),
+		}); err != nil {
+			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", *node.Ip, err)
+		}
+		continue
+	}
+	return nil
 }

@@ -11,7 +11,7 @@ import (
 func SelectNodeTrojanGoById(id *uint) (*module.NodeTrojanGo, error) {
 	var nodeTrojanGo module.NodeTrojanGo
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "`sni`", "mux_enable", "websocket_enable", "websocket_path", "ss_enable", "ss_method", "ss_password"}
+	selectFields := []string{"id", "`sni`", "mux_enable", "websocket_enable", "websocket_path", "websocket_host", "ss_enable", "ss_method", "ss_password"}
 	buildSelect, values, err := builder.BuildSelect("node_trojan_go", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -86,6 +86,9 @@ func UpdateNodeTrojanGoById(nodeTrojanGo *module.NodeTrojanGo) error {
 	}
 	if nodeTrojanGo.WebsocketPath != nil && *nodeTrojanGo.WebsocketPath != "" {
 		update["websocket_path"] = *nodeTrojanGo.WebsocketPath
+	}
+	if nodeTrojanGo.WebsocketHost != nil && *nodeTrojanGo.WebsocketHost != "" {
+		update["websocket_host"] = *nodeTrojanGo.WebsocketHost
 	}
 	if nodeTrojanGo.SsEnable != nil {
 		update["ss_enable"] = *nodeTrojanGo.SsEnable

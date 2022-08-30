@@ -170,3 +170,25 @@ func CountNodeByName(queryName *string) (int, error) {
 	}
 	return count, nil
 }
+
+func SelectNodesIpAndPort() ([]module.Node, error) {
+	var nodes []module.Node
+
+	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"ip", "port"})
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nodes, errors.New(constant.SysError)
+	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nodes, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &nodes); err != nil {
+		logrus.Errorln(err.Error())
+		return nodes, errors.New(constant.SysError)
+	}
+	return nodes, nil
+}

@@ -17,6 +17,7 @@ type NodeVo struct {
 	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable"`
 	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable"`
 	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath"`
+	TrojanGoWebsocketHost   *string `json:"trojanGoWebsocketHost"`
 	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable"`
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword"`

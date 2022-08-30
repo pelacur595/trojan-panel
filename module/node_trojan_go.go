@@ -8,6 +8,7 @@ type NodeTrojanGo struct {
 	MuxEnable       *uint      `ddb:"mux_enable"`
 	WebsocketEnable *uint      `ddb:"websocket_enable"`
 	WebsocketPath   *string    `ddb:"websocket_path"`
+	WebsocketHost   *string    `ddb:"websocket_host"`
 	SsEnable        *uint      `ddb:"ss_enable"`
 	SsMethod        *string    `ddb:"ss_method"`
 	SsPassword      *string    `ddb:"ss_password"`

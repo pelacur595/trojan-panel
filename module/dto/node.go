@@ -18,6 +18,7 @@ type NodeCreateDto struct {
 	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable" form:"trojanGoMuxEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable" form:"trojanGoWebsocketEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath" form:"trojanGoWebsocketPath" validate:"omitempty,min=0,max=64"`
+	TrojanGoWebsocketHost   *string `json:"TrojanGoWebsocketHost" form:"TrojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
 	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable" form:"trojanGoSsEnable" validate:"required,oneof=0 1"`
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
@@ -43,6 +44,7 @@ type NodeUpdateDto struct {
 	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable" form:"trojanGoMuxEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable" form:"trojanGoWebsocketEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath" form:"trojanGoWebsocketPath" validate:"omitempty,min=0,max=64"`
+	TrojanGoWebsocketHost   *string `json:"TrojanGoWebsocketHost" form:"TrojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
 	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable" form:"trojanGoSsEnable" validate:"required,oneof=0 1"`
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
