@@ -40,6 +40,9 @@ func CreateNodeTrojanGo(nodeTrojanGo *module.NodeTrojanGo) (uint, error) {
 	if nodeTrojanGo.WebsocketPath != nil && *nodeTrojanGo.WebsocketPath != "" {
 		nodeTrojanGoCreate["websocket_path"] = nodeTrojanGo.WebsocketPath
 	}
+	if nodeTrojanGo.WebsocketHost != nil && *nodeTrojanGo.WebsocketHost != "" {
+		nodeTrojanGoCreate["websocket_host"] = nodeTrojanGo.WebsocketHost
+	}
 	if nodeTrojanGo.SsEnable != nil {
 		nodeTrojanGoCreate["ss_enable"] = nodeTrojanGo.SsEnable
 	}
@@ -86,6 +89,9 @@ func UpdateNodeTrojanGoById(nodeTrojanGo *module.NodeTrojanGo) error {
 	}
 	if nodeTrojanGo.WebsocketPath != nil && *nodeTrojanGo.WebsocketPath != "" {
 		update["websocket_path"] = *nodeTrojanGo.WebsocketPath
+	}
+	if nodeTrojanGo.WebsocketHost != nil && *nodeTrojanGo.WebsocketHost != "" {
+		update["websocket_host"] = nodeTrojanGo.WebsocketHost
 	}
 	if nodeTrojanGo.WebsocketHost != nil && *nodeTrojanGo.WebsocketHost != "" {
 		update["websocket_host"] = *nodeTrojanGo.WebsocketHost
