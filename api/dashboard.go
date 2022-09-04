@@ -21,7 +21,7 @@ func PanelGroup(c *gin.Context) {
 	vo.Success(panelGroup, c)
 }
 
-// 流量排行榜
+// TrafficRank 流量排行榜
 func TrafficRank(c *gin.Context) {
 	bytes, err := redis.Client.String.Get("trojan-panel:trafficRank").Bytes()
 	if err != nil && err != redisgo.ErrNil {

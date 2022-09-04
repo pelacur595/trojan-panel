@@ -10,51 +10,57 @@ type NodeDto struct {
 }
 
 type NodeCreateDto struct {
-	NodeTypeId              *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
-	Name                    *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip                      *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
-	Port                    *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	NodeTypeId *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
+	Name       *string `json:"name" form:"name" validate:"required,min=2,max=20"`
+	Ip         *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
+	Port       *uint   `json:"port" form:"port" validate:"required,validatePort"`
+
+	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
+	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
+	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`
+	XrayTag            *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
+	XraySniffing       *string `json:"xraySniffing" form:"xraySniffing" validate:"omitempty,min=0,max=256"`
+	XrayAllocate       *string `json:"xrayAllocate" form:"xrayAllocate" validate:"omitempty,min=0,max=256"`
+
 	TrojanGoSni             *string `json:"trojanGoSni" form:"trojanGoSni" validate:"omitempty,min=0,max=64"`
 	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable" form:"trojanGoMuxEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable" form:"trojanGoWebsocketEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath" form:"trojanGoWebsocketPath" validate:"omitempty,min=0,max=64"`
-	TrojanGoWebsocketHost   *string `json:"TrojanGoWebsocketHost" form:"TrojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
+	TrojanGoWebsocketHost   *string `json:"trojanGoWebsocketHost" form:"trojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
 	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable" form:"trojanGoSsEnable" validate:"required,oneof=0 1"`
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
-	HysteriaProtocol        *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"required,min=0,max=32"`
-	HysteriaUpMbps          *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
-	HysteriaDownMbps        *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
-	XrayProtocol            *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
-	XraySettings            *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
-	XrayStreamSettings      *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`
-	XrayTag                 *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
-	XraySniffing            *string `json:"xraySniffing" form:"xraySniffing" validate:"omitempty,min=0,max=256"`
-	XrayAllocate            *string `json:"xrayAllocate" form:"xrayAllocate" validate:"omitempty,min=0,max=256"`
+
+	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
 }
 
 type NodeUpdateDto struct {
 	RequiredIdDto
-	NodeSubId               *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gt=0"`
-	NodeTypeId              *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
-	Name                    *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip                      *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
-	Port                    *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	NodeSubId  *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gt=0"`
+	NodeTypeId *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
+	Name       *string `json:"name" form:"name" validate:"required,min=2,max=20"`
+	Ip         *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
+	Port       *uint   `json:"port" form:"port" validate:"required,validatePort"`
+
+	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
+	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
+	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`
+	XrayTag            *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
+	XraySniffing       *string `json:"xraySniffing" form:"xraySniffing" validate:"omitempty,min=0,max=256"`
+	XrayAllocate       *string `json:"xrayAllocate" form:"xrayAllocate" validate:"omitempty,min=0,max=256"`
+
 	TrojanGoSni             *string `json:"trojanGoSni" form:"trojanGoSni" validate:"omitempty,min=0,max=64"`
 	TrojanGoMuxEnable       *uint   `json:"trojanGoMuxEnable" form:"trojanGoMuxEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketEnable *uint   `json:"trojanGoWebsocketEnable" form:"trojanGoWebsocketEnable" validate:"required,oneof=0 1"`
 	TrojanGoWebsocketPath   *string `json:"trojanGoWebsocketPath" form:"trojanGoWebsocketPath" validate:"omitempty,min=0,max=64"`
-	TrojanGoWebsocketHost   *string `json:"TrojanGoWebsocketHost" form:"TrojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
+	TrojanGoWebsocketHost   *string `json:"trojanGoWebsocketHost" form:"trojanGoWebsocketHost" validate:"omitempty,min=0,max=64"`
 	TrojanGoSsEnable        *uint   `json:"trojanGoSsEnable" form:"trojanGoSsEnable" validate:"required,oneof=0 1"`
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
-	HysteriaProtocol        *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"required,min=0,max=32"`
-	HysteriaUpMbps          *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
-	HysteriaDownMbps        *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
-	XrayProtocol            *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
-	XraySettings            *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
-	XrayStreamSettings      *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`
-	XrayTag                 *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
-	XraySniffing            *string `json:"xraySniffing" form:"xraySniffing" validate:"omitempty,min=0,max=256"`
-	XrayAllocate            *string `json:"xrayAllocate" form:"xrayAllocate" validate:"omitempty,min=0,max=256"`
+
+	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
 }

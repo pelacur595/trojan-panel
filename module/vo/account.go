@@ -19,7 +19,7 @@ type AccountVo struct {
 
 type AccountPageVo struct {
 	BaseVoPage
-	AccountVos []AccountVo `json:"accountVos"`
+	AccountVos []AccountVo `json:"accounts"`
 }
 
 type AccountLoginVo struct {
