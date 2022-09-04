@@ -415,7 +415,8 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 
 // TrafficRank 流量排行 前15名
 func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
-	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as traffic_used
+	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
+	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as trafficUsed
 from account
 where quota != 0 and username not like '%admin%'
 order by traffic_used desc limit 15`, nil)
@@ -430,17 +431,9 @@ order by traffic_used desc limit 15`, nil)
 	}
 	defer rows.Close()
 
-	var accountTrafficRankVos []vo.AccountTrafficRankVo
-	result, err := scanner.ScanMap(rows)
-	if err != nil {
+	if err = scanner.Scan(rows, &accountTrafficRankVos); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
-	}
-	for _, record := range result {
-		accountTrafficRankVos = append(accountTrafficRankVos, vo.AccountTrafficRankVo{
-			Username:    fmt.Sprintf("%s", record["username"]),
-			TrafficUsed: fmt.Sprintf("%s", record["traffic_used"]),
-		})
 	}
 	return accountTrafficRankVos, nil
 }
