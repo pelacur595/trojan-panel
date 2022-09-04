@@ -38,39 +38,40 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		if err = GrpcAddNode(&core.NodeAddDto{
-			NodeType:                uint64(*nodeType.Id),
-			TrojanGoPort:            uint64(*nodeCreateDto.Port),
-			TrojanGoIp:              *nodeCreateDto.Ip,
-			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
-			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
-			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
-			TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
-			TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
-			TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
-			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
-			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
-			HysteriaPort:            uint64(*nodeCreateDto.Port),
-			HysteriaProtocol:        *nodeCreateDto.HysteriaProtocol,
-			HysteriaIp:              *nodeCreateDto.Ip,
-			HysteriaUpMbps:          int64(*nodeCreateDto.HysteriaUpMbps),
-			HysteriaDownMbps:        int64(*nodeCreateDto.HysteriaDownMbps),
-			XrayPort:                uint64(*nodeCreateDto.Port),
-			XrayProtocol:            *nodeCreateDto.XrayProtocol,
-			XraySettings:            *nodeCreateDto.XraySettings,
-			XrayStreamSettings:      *nodeCreateDto.XrayStreamSettings,
-			XrayTag:                 *nodeCreateDto.XrayTag,
-			XraySniffing:            *nodeCreateDto.XraySniffing,
-			XrayAllocate:            *nodeCreateDto.XrayAllocate,
-		}); err != nil {
-			return err
-		}
+		//if err = GrpcAddNode(&core.NodeAddDto{
+		//	NodeType:                uint64(*nodeType.Id),
+		//	TrojanGoPort:            uint64(*nodeCreateDto.Port),
+		//	TrojanGoIp:              *nodeCreateDto.Ip,
+		//	TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
+		//	TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
+		//	TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
+		//	TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
+		//	TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
+		//	TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
+		//	TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
+		//	TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
+		//	HysteriaPort:            uint64(*nodeCreateDto.Port),
+		//	HysteriaProtocol:        *nodeCreateDto.HysteriaProtocol,
+		//	HysteriaIp:              *nodeCreateDto.Ip,
+		//	HysteriaUpMbps:          int64(*nodeCreateDto.HysteriaUpMbps),
+		//	HysteriaDownMbps:        int64(*nodeCreateDto.HysteriaDownMbps),
+		//	XrayPort:                uint64(*nodeCreateDto.Port),
+		//	XrayProtocol:            *nodeCreateDto.XrayProtocol,
+		//	XraySettings:            *nodeCreateDto.XraySettings,
+		//	XrayStreamSettings:      *nodeCreateDto.XrayStreamSettings,
+		//	XrayTag:                 *nodeCreateDto.XrayTag,
+		//	XraySniffing:            *nodeCreateDto.XraySniffing,
+		//	XrayAllocate:            *nodeCreateDto.XrayAllocate,
+		//}); err != nil {
+		//	return err
+		//}
 		if *nodeType.Name == constant.TrojanGoName {
 			trojanGo := module.NodeTrojanGo{
 				Sni:             nodeCreateDto.TrojanGoSni,
 				MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
 				WebsocketEnable: nodeCreateDto.TrojanGoWebsocketEnable,
 				WebsocketPath:   nodeCreateDto.TrojanGoWebsocketPath,
+				WebsocketHost:   nodeCreateDto.TrojanGoWebsocketHost,
 				SsEnable:        nodeCreateDto.TrojanGoSsEnable,
 				SsMethod:        nodeCreateDto.TrojanGoSsMethod,
 				SsPassword:      nodeCreateDto.TrojanGoSsPassword,
@@ -140,7 +141,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		}
 		nodeVo.Ping = ttl
 
-		nodeType, err := dao.SelectNodeById(item.NodeTypeId)
+		nodeType, err := dao.SelectNodeTypeById(item.NodeTypeId)
 		if err != nil {
 			continue
 		}
@@ -153,6 +154,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			nodeVo.TrojanGoMuxEnable = nodeTroajanGo.MuxEnable
 			nodeVo.TrojanGoWebsocketEnable = nodeTroajanGo.WebsocketEnable
 			nodeVo.TrojanGoWebsocketPath = nodeTroajanGo.WebsocketPath
+			nodeVo.TrojanGoWebsocketHost = nodeTroajanGo.WebsocketHost
 			nodeVo.TrojanGoSsEnable = nodeTroajanGo.SsEnable
 			nodeVo.TrojanGoSsMethod = nodeTroajanGo.SsMethod
 			nodeVo.TrojanGoSsPassword = nodeTroajanGo.SsPassword

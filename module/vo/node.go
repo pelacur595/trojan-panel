@@ -4,8 +4,8 @@ import "time"
 
 type NodeVo struct {
 	Id         uint      `json:"id"`
-	NodeSubId  uint      `json:"node_sub_id"`
-	NodeTypeId uint      `json:"node_type_id"`
+	NodeSubId  uint      `json:"nodeSubId"`
+	NodeTypeId uint      `json:"nodeTypeId"`
 	Name       string    `json:"name"`
 	Ip         string    `json:"ip"`
 	Port       uint      `json:"port"`
