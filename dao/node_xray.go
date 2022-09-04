@@ -18,13 +18,20 @@ func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
 
-	if err = db.QueryRow(buildSelect, values...).Scan(&nodeXray); err == scanner.ErrEmptyResult {
-		return nil, err
+	if err = scanner.Scan(rows, &nodeXray); err == scanner.ErrEmptyResult {
+		return nil, errors.New(constant.NodeNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
+
 	return &nodeXray, nil
 }
 

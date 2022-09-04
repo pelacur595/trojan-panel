@@ -20,7 +20,13 @@ func SelectNodeById(id *uint) (*module.Node, error) {
 		return nil, errors.New(constant.SysError)
 	}
 
-	if err = db.QueryRow(buildSelect, values...).Scan(&node); err == scanner.ErrEmptyResult {
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+
+	if err = scanner.Scan(rows, &node); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.NodeNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())

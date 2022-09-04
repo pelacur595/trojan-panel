@@ -24,8 +24,14 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 		return nil, errors.New(constant.SysError)
 	}
 
-	if err = db.QueryRow(buildSelect, values...).Scan(&account); err == scanner.ErrEmptyResult {
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
 		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.UnauthorizedError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
@@ -87,9 +93,11 @@ func CreateAccount(account *module.Account) error {
 func CountAccountByUsername(username *string) (int, error) {
 	var count int
 
-	where := map[string]interface{}{
-		"username": *username,
+	where := map[string]interface{}{}
+	if username != nil {
+		where["username"] = *username
 	}
+
 	selectFields := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
@@ -314,7 +322,14 @@ func AccountQRCode(id *uint) (string, error) {
 		return "", errors.New(constant.SysError)
 	}
 
-	if err = db.QueryRow(buildSelect, values...).Scan(&account); err == scanner.ErrEmptyResult {
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return "", errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
 		return "", errors.New(constant.UnauthorizedError)
 	} else if err != nil {
 		logrus.Errorln(err.Error())

@@ -3,6 +3,7 @@ package dao
 import (
 	"errors"
 	"github.com/didi/gendry/builder"
+	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
 	"trojan/module"
 	"trojan/module/constant"
@@ -18,11 +19,19 @@ func SelectNodeTrojanGoById(id *uint) (*module.NodeTrojanGo, error) {
 		return nil, errors.New(constant.SysError)
 	}
 
-	if err = db.QueryRow(buildSelect, values...).Scan(&nodeTrojanGo); err != nil {
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
+	defer rows.Close()
 
+	if err = scanner.Scan(rows, &nodeTrojanGo); err == scanner.ErrEmptyResult {
+		return nil, errors.New(constant.NodeNotExist)
+	} else if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
 	return &nodeTrojanGo, nil
 }
 

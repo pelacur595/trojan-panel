@@ -49,7 +49,15 @@ func SelectNodeTypeById(id *uint) (*module.NodeType, error) {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
-	if err = db.QueryRow(buildSelect, values...).Scan(&nodeType); err == scanner.ErrEmptyResult {
+
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &nodeType); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.NodeTypeNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
