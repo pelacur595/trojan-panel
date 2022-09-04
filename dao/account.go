@@ -434,7 +434,7 @@ func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
 	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as trafficUsed
 from account
 where quota != 0 and username not like '%admin%'
-order by traffic_used desc limit 15`, nil)
+order by trafficUsed desc limit 15`, nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
