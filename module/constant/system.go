@@ -17,9 +17,9 @@ const (
 	// RbacModelFilePath rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
 
-	TrojanPanelTrojanGoCertDate string = "/tpdata/trojan-panel/trojango-cert/"
-	TrojanPanelCrtFile          string = "trojan-panel.crt"
-	TrojanPanelKeyFile          string = "trojan-panel.key"
+	TrojanPanelCertFilePath string = "/tpdata/trojan-panel/cert/"
+	TrojanPanelCrtFile      string = "trojan-panel.crt"
+	TrojanPanelKeyFile      string = "trojan-panel.key"
 
 	// SaltKey 加密 盐
 	SaltKey string = "well_very_funny!"
