@@ -38,33 +38,33 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		//if err = GrpcAddNode(&core.NodeAddDto{
-		//	NodeType:                uint64(*nodeType.Id),
-		//	TrojanGoPort:            uint64(*nodeCreateDto.Port),
-		//	TrojanGoIp:              *nodeCreateDto.Ip,
-		//	TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
-		//	TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
-		//	TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
-		//	TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
-		//	TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
-		//	TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
-		//	TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
-		//	TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
-		//	HysteriaPort:            uint64(*nodeCreateDto.Port),
-		//	HysteriaProtocol:        *nodeCreateDto.HysteriaProtocol,
-		//	HysteriaIp:              *nodeCreateDto.Ip,
-		//	HysteriaUpMbps:          int64(*nodeCreateDto.HysteriaUpMbps),
-		//	HysteriaDownMbps:        int64(*nodeCreateDto.HysteriaDownMbps),
-		//	XrayPort:                uint64(*nodeCreateDto.Port),
-		//	XrayProtocol:            *nodeCreateDto.XrayProtocol,
-		//	XraySettings:            *nodeCreateDto.XraySettings,
-		//	XrayStreamSettings:      *nodeCreateDto.XrayStreamSettings,
-		//	XrayTag:                 *nodeCreateDto.XrayTag,
-		//	XraySniffing:            *nodeCreateDto.XraySniffing,
-		//	XrayAllocate:            *nodeCreateDto.XrayAllocate,
-		//}); err != nil {
-		//	return err
-		//}
+		if err = GrpcAddNode(&core.NodeAddDto{
+			NodeType:                uint64(*nodeType.Id),
+			TrojanGoPort:            uint64(*nodeCreateDto.Port),
+			TrojanGoIp:              *nodeCreateDto.Ip,
+			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
+			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
+			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
+			TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
+			TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
+			TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
+			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
+			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
+			HysteriaPort:            uint64(*nodeCreateDto.Port),
+			HysteriaProtocol:        *nodeCreateDto.HysteriaProtocol,
+			HysteriaIp:              *nodeCreateDto.Ip,
+			HysteriaUpMbps:          int64(*nodeCreateDto.HysteriaUpMbps),
+			HysteriaDownMbps:        int64(*nodeCreateDto.HysteriaDownMbps),
+			XrayPort:                uint64(*nodeCreateDto.Port),
+			XrayProtocol:            *nodeCreateDto.XrayProtocol,
+			XraySettings:            *nodeCreateDto.XraySettings,
+			XrayStreamSettings:      *nodeCreateDto.XrayStreamSettings,
+			XrayTag:                 *nodeCreateDto.XrayTag,
+			XraySniffing:            *nodeCreateDto.XraySniffing,
+			XrayAllocate:            *nodeCreateDto.XrayAllocate,
+		}); err != nil {
+			return err
+		}
 		if *nodeType.Name == constant.TrojanGoName {
 			trojanGo := module.NodeTrojanGo{
 				Sni:             nodeCreateDto.TrojanGoSni,
