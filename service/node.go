@@ -141,45 +141,45 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		}
 		nodeVo.Ping = ttl
 
-		nodeType, err := dao.SelectNodeTypeById(item.NodeTypeId)
-		if err != nil {
-			continue
-		}
-		if *nodeType.Name == constant.TrojanGoName {
-			nodeTroajanGo, err := dao.SelectNodeTrojanGoById(item.NodeSubId)
-			if err != nil {
-				continue
-			}
-			nodeVo.TrojanGoSni = nodeTroajanGo.Sni
-			nodeVo.TrojanGoMuxEnable = nodeTroajanGo.MuxEnable
-			nodeVo.TrojanGoWebsocketEnable = nodeTroajanGo.WebsocketEnable
-			nodeVo.TrojanGoWebsocketPath = nodeTroajanGo.WebsocketPath
-			nodeVo.TrojanGoWebsocketHost = nodeTroajanGo.WebsocketHost
-			nodeVo.TrojanGoSsEnable = nodeTroajanGo.SsEnable
-			nodeVo.TrojanGoSsMethod = nodeTroajanGo.SsMethod
-			nodeVo.TrojanGoSsPassword = nodeTroajanGo.SsPassword
-		}
-		if *nodeType.Name == constant.HysteriaName {
-			nodeHysteria, err := dao.SelectNodeHysteriaById(item.NodeSubId)
-			if err != nil {
-				continue
-			}
-			nodeVo.HysteriaProtocol = nodeHysteria.Protocol
-			nodeVo.HysteriaUpMbps = nodeHysteria.UpMbps
-			nodeVo.HysteriaDownMbps = nodeHysteria.DownMbps
-		}
-		if *nodeType.Name == constant.XrayName {
-			nodeXray, err := dao.SelectNodeXrayById(item.NodeSubId)
-			if err != nil {
-				continue
-			}
-			nodeVo.XrayProtocol = nodeXray.Protocol
-			nodeVo.XraySettings = nodeXray.Settings
-			nodeVo.XrayStreamSettings = nodeXray.StreamSettings
-			nodeVo.XrayTag = nodeXray.Tag
-			nodeVo.XraySniffing = nodeXray.Sniffing
-			nodeVo.XrayAllocate = nodeXray.Allocate
-		}
+		//nodeType, err := dao.SelectNodeTypeById(item.NodeTypeId)
+		//if err != nil {
+		//	continue
+		//}
+		//if *nodeType.Name == constant.TrojanGoName {
+		//	nodeTroajanGo, err := dao.SelectNodeTrojanGoById(item.NodeSubId)
+		//	if err != nil {
+		//		continue
+		//	}
+		//	nodeVo.TrojanGoSni = nodeTroajanGo.Sni
+		//	nodeVo.TrojanGoMuxEnable = nodeTroajanGo.MuxEnable
+		//	nodeVo.TrojanGoWebsocketEnable = nodeTroajanGo.WebsocketEnable
+		//	nodeVo.TrojanGoWebsocketPath = nodeTroajanGo.WebsocketPath
+		//	nodeVo.TrojanGoWebsocketHost = nodeTroajanGo.WebsocketHost
+		//	nodeVo.TrojanGoSsEnable = nodeTroajanGo.SsEnable
+		//	nodeVo.TrojanGoSsMethod = nodeTroajanGo.SsMethod
+		//	nodeVo.TrojanGoSsPassword = nodeTroajanGo.SsPassword
+		//}
+		//if *nodeType.Name == constant.HysteriaName {
+		//	nodeHysteria, err := dao.SelectNodeHysteriaById(item.NodeSubId)
+		//	if err != nil {
+		//		continue
+		//	}
+		//	nodeVo.HysteriaProtocol = nodeHysteria.Protocol
+		//	nodeVo.HysteriaUpMbps = nodeHysteria.UpMbps
+		//	nodeVo.HysteriaDownMbps = nodeHysteria.DownMbps
+		//}
+		//if *nodeType.Name == constant.XrayName {
+		//	nodeXray, err := dao.SelectNodeXrayById(item.NodeSubId)
+		//	if err != nil {
+		//		continue
+		//	}
+		//	nodeVo.XrayProtocol = nodeXray.Protocol
+		//	nodeVo.XraySettings = nodeXray.Settings
+		//	nodeVo.XrayStreamSettings = nodeXray.StreamSettings
+		//	nodeVo.XrayTag = nodeXray.Tag
+		//	nodeVo.XraySniffing = nodeXray.Sniffing
+		//	nodeVo.XrayAllocate = nodeXray.Allocate
+		//}
 
 		nodeVos = append(nodeVos, nodeVo)
 	}
