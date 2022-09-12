@@ -227,7 +227,20 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 	if err != nil {
 		return nil
 	}
-	if *nodeType.Name == constant.TrojanGoName {
+	if *nodeType.Name == constant.XrayName {
+		nodeXray := module.NodeXray{
+			Id:             nodeUpdateDto.NodeSubId,
+			Protocol:       nodeUpdateDto.XrayProtocol,
+			Settings:       nodeUpdateDto.XraySettings,
+			StreamSettings: nodeUpdateDto.XrayStreamSettings,
+			Tag:            nodeUpdateDto.XrayTag,
+			Sniffing:       nodeUpdateDto.XraySniffing,
+			Allocate:       nodeUpdateDto.XrayAllocate,
+		}
+		if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
+			return err
+		}
+	} else if *nodeType.Name == constant.TrojanGoName {
 		nodeTrojanGo := module.NodeTrojanGo{
 			Id:              nodeUpdateDto.NodeSubId,
 			Sni:             nodeUpdateDto.TrojanGoSni,
@@ -249,19 +262,6 @@ func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
 			DownMbps: nodeUpdateDto.HysteriaDownMbps,
 		}
 		if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
-			return err
-		}
-	} else if *nodeType.Name == constant.XrayName {
-		nodeXray := module.NodeXray{
-			Id:             nodeUpdateDto.NodeSubId,
-			Protocol:       nodeUpdateDto.XrayProtocol,
-			Settings:       nodeUpdateDto.XraySettings,
-			StreamSettings: nodeUpdateDto.XrayStreamSettings,
-			Tag:            nodeUpdateDto.XrayTag,
-			Sniffing:       nodeUpdateDto.XraySniffing,
-			Allocate:       nodeUpdateDto.XrayAllocate,
-		}
-		if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
 			return err
 		}
 	}
@@ -299,7 +299,10 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 
 	// 构建URL
 	var headBuilder strings.Builder
-	if *nodeType.Name == constant.TrojanGoName {
+
+	if *nodeType.Name == constant.XrayName {
+
+	} else if *nodeType.Name == constant.TrojanGoName {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 		if err != nil {
 			return "", errors.New(constant.NodeURLError)
@@ -325,9 +328,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 					fmt.Sprintf("ss;%s:%s", *nodeTrojanGo.SsMethod, *nodeTrojanGo.SsPassword))))
 			}
 		}
-	}
-
-	if *nodeType.Name == constant.HysteriaName {
+	} else if *nodeType.Name == constant.HysteriaName {
 		nodeHysteria, err := dao.SelectNodeHysteriaById(id)
 		if err != nil {
 			return "", errors.New(constant.NodeURLError)
@@ -339,10 +340,6 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			password,
 			*nodeHysteria.UpMbps,
 			*nodeHysteria.DownMbps))
-	}
-
-	if *nodeType.Name == constant.XrayName {
-
 	}
 
 	if node.Name != nil && *node.Name != "" {
