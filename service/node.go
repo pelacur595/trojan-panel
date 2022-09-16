@@ -17,8 +17,59 @@ import (
 	"trojan/util"
 )
 
-func SelectNodeById(id *uint) (*module.Node, error) {
-	return dao.SelectNodeById(id)
+func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
+	node, err := dao.SelectNodeById(id)
+	if err != nil {
+		return nil, err
+	}
+	if node != nil {
+		nodeOneVo := vo.NodeOneVo{
+			Id:         *node.Id,
+			NodeSubId:  *node.NodeSubId,
+			NodeTypeId: *node.NodeTypeId,
+			Name:       *node.Name,
+			Ip:         *node.Ip,
+			Port:       *node.Port,
+			CreateTime: *node.CreateTime,
+		}
+		nodeTypeId := node.NodeTypeId
+		switch *nodeTypeId {
+		case 1:
+			nodeXray, err := dao.SelectNodeXrayById(node.NodeSubId)
+			if err != nil {
+				return nil, err
+			}
+			nodeOneVo.XrayProtocol = nodeXray.Protocol
+			nodeOneVo.XraySettings = nodeXray.Settings
+			nodeOneVo.XrayStreamSettings = nodeXray.StreamSettings
+			nodeOneVo.XrayTag = nodeXray.Tag
+			nodeOneVo.XraySniffing = nodeXray.Sniffing
+			nodeOneVo.XrayAllocate = nodeXray.Allocate
+		case 2:
+			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
+			if err != nil {
+				return nil, err
+			}
+			nodeOneVo.TrojanGoSni = nodeTrojanGo.Sni
+			nodeOneVo.TrojanGoMuxEnable = nodeTrojanGo.MuxEnable
+			nodeOneVo.TrojanGoWebsocketEnable = nodeTrojanGo.WebsocketEnable
+			nodeOneVo.TrojanGoWebsocketPath = nodeTrojanGo.WebsocketPath
+			nodeOneVo.TrojanGoWebsocketHost = nodeTrojanGo.WebsocketHost
+			nodeOneVo.TrojanGoSsEnable = nodeTrojanGo.SsEnable
+			nodeOneVo.TrojanGoSsMethod = nodeTrojanGo.SsMethod
+			nodeOneVo.TrojanGoSsPassword = nodeTrojanGo.SsPassword
+		case 3:
+			nodeHysteria, err := dao.SelectNodeHysteriaById(node.NodeSubId)
+			if err != nil {
+				return nil, err
+			}
+			nodeOneVo.HysteriaProtocol = nodeHysteria.Protocol
+			nodeOneVo.HysteriaUpMbps = nodeHysteria.UpMbps
+			nodeOneVo.HysteriaDownMbps = nodeHysteria.DownMbps
+		}
+		return &nodeOneVo, nil
+	}
+	return nil, errors.New(constant.NodeNotExist)
 }
 
 func CreateNode(nodeCreateDto dto.NodeCreateDto) error {

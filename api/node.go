@@ -7,7 +7,6 @@ import (
 	"trojan/module/dto"
 	"trojan/module/vo"
 	"trojan/service"
-	"trojan/util"
 )
 
 func SelectNodeById(c *gin.Context) {
@@ -17,27 +16,12 @@ func SelectNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	node, err := service.SelectNodeById(nodeRequireIdDto.Id)
+	nodeOneVo, err := service.SelectNodeById(nodeRequireIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	ping, err := util.Ping(*node.Ip)
-	if err != nil {
-		vo.Fail(err.Error(), c)
-		return
-	}
-	nodeVo := vo.NodeVo{
-		Id:         *node.Id,
-		NodeSubId:  *node.NodeSubId,
-		NodeTypeId: *node.NodeTypeId,
-		Name:       *node.Name,
-		Ip:         *node.Ip,
-		Port:       *node.Port,
-		CreateTime: *node.CreateTime,
-		Ping:       ping,
-	}
-	vo.Success(nodeVo, c)
+	vo.Success(nodeOneVo, c)
 }
 
 func CreateNode(c *gin.Context) {
