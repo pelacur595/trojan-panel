@@ -72,7 +72,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 	return nil, errors.New(constant.NodeNotExist)
 }
 
-func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
+func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 	count, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
 		return err
@@ -113,7 +113,7 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto) error {
 			XrayTag:                 *nodeCreateDto.XrayTag,
 			XraySniffing:            *nodeCreateDto.XraySniffing,
 			XrayAllocate:            *nodeCreateDto.XrayAllocate,
-		}); err != nil {
+		}, token); err != nil {
 			return err
 		}
 		if *nodeType.Name == constant.TrojanGoName {
@@ -245,7 +245,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	return &nodePageVo, nil
 }
 
-func DeleteNodeById(id *uint) error {
+func DeleteNodeById(id *uint, token string) error {
 	var mutex sync.Mutex
 	defer mutex.TryLock()
 	if mutex.TryLock() {
@@ -253,7 +253,7 @@ func DeleteNodeById(id *uint) error {
 		if err != nil {
 			return err
 		}
-		if err = GrpcRemoveNode(*node.NodeTypeId, *node.Port); err != nil {
+		if err = GrpcRemoveNode(*node.NodeTypeId, *node.Port, token); err != nil {
 			return err
 		}
 		if err = dao.DeleteNodeById(id); err != nil {
@@ -403,13 +403,13 @@ func CountNode() (int, error) {
 	return dao.CountNode()
 }
 
-func GrpcAddNode(nodeAddDto *core.NodeAddDto) error {
+func GrpcAddNode(nodeAddDto *core.NodeAddDto, token string) error {
 	nodes, err := dao.SelectNodesIpAndPort()
 	if err != nil {
 		return err
 	}
 	for _, node := range nodes {
-		if err = core.AddNode(*node.Ip, nodeAddDto); err != nil {
+		if err = core.AddNode(*node.Ip, token, nodeAddDto); err != nil {
 			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", *node.Ip, err)
 		}
 		continue
@@ -417,13 +417,13 @@ func GrpcAddNode(nodeAddDto *core.NodeAddDto) error {
 	return nil
 }
 
-func GrpcRemoveNode(nodeType uint, port uint) error {
+func GrpcRemoveNode(nodeType uint, port uint, token string) error {
 	nodes, err := dao.SelectNodesIpAndPort()
 	if err != nil {
 		return err
 	}
 	for _, node := range nodes {
-		if err = core.RemoveNode(*node.Ip, &core.NodeRemoveDto{
+		if err = core.RemoveNode(*node.Ip, token, &core.NodeRemoveDto{
 			NodeType: uint64(nodeType),
 			Port:     uint64(port),
 		}); err != nil {

@@ -6,15 +6,22 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
 	"trojan/module/constant"
 )
 
-func newGrpcInstance(ip string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
+func newGrpcInstance(ip string, token string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
+	tokenParam := TokenValidateParam{
+		Token: token,
+	}
+
+	opts := []grpc.DialOption{
+		grpc.WithInsecure(),
+		grpc.WithPerRPCCredentials(&tokenParam),
+	}
 	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, 8100),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
+		opts...)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	clo = func() {
 		cancel()
@@ -26,8 +33,8 @@ func newGrpcInstance(ip string) (conn *grpc.ClientConn, ctx context.Context, clo
 	}
 	return
 }
-func AddNode(ip string, nodeAddDto *NodeAddDto) error {
-	conn, ctx, clo, err := newGrpcInstance(ip)
+func AddNode(ip string, token string, nodeAddDto *NodeAddDto) error {
+	conn, ctx, clo, err := newGrpcInstance(ip, token)
 	defer clo()
 	if err != nil {
 		return err
@@ -43,8 +50,8 @@ func AddNode(ip string, nodeAddDto *NodeAddDto) error {
 	return errors.New(send.Msg)
 }
 
-func RemoveNode(ip string, nodeRemoveDto *NodeRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(ip)
+func RemoveNode(ip string, token string, nodeRemoveDto *NodeRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(ip, token)
 	defer clo()
 	if err != nil {
 		return err

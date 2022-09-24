@@ -7,6 +7,7 @@ import (
 	"trojan/module/dto"
 	"trojan/module/vo"
 	"trojan/service"
+	"trojan/util"
 )
 
 func SelectNodeById(c *gin.Context) {
@@ -31,7 +32,7 @@ func CreateNode(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.CreateNode(nodeCreateDto); err != nil {
+	if err := service.CreateNode(nodeCreateDto, util.GetToken(c)); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -60,7 +61,7 @@ func DeleteNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.DeleteNodeById(nodeRequireIdDto.Id); err != nil {
+	if err := service.DeleteNodeById(nodeRequireIdDto.Id, util.GetToken(c)); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
