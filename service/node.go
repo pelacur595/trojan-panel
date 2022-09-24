@@ -72,17 +72,13 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 	return nil, errors.New(constant.NodeNotExist)
 }
 
-func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
+func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	count, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
 		return err
 	}
 	if count > 0 {
 		return errors.New(constant.NodeNameExist)
-	}
-	nodeType, err := dao.SelectNodeTypeById(nodeCreateDto.NodeTypeId)
-	if err != nil {
-		return err
 	}
 
 	var nodeId uint
@@ -91,7 +87,7 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 	if mutex.TryLock() {
 		// Grpc添加节点
 		if err = GrpcAddNode(token, &core.NodeAddDto{
-			NodeType: uint64(*nodeType.Id),
+			NodeType: uint64(*nodeCreateDto.NodeTypeId),
 			//  Xray
 			XrayPort:           uint64(*nodeCreateDto.Port),
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
@@ -121,7 +117,7 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 			return err
 		}
 		// 数据插入到数据库中
-		if *nodeType.Name == constant.XrayName {
+		if *nodeCreateDto.NodeTypeId == 1 {
 			nodeXray := module.NodeXray{
 				Protocol:       nodeCreateDto.XrayProtocol,
 				Settings:       nodeCreateDto.XraySettings,
@@ -134,7 +130,7 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 			if err != nil {
 				return nil
 			}
-		} else if *nodeType.Name == constant.TrojanGoName {
+		} else if *nodeCreateDto.NodeTypeId == 2 {
 			trojanGo := module.NodeTrojanGo{
 				Sni:             nodeCreateDto.TrojanGoSni,
 				MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
@@ -149,7 +145,7 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 			if err != nil {
 				return nil
 			}
-		} else if *nodeType.Name == constant.HysteriaName {
+		} else if *nodeCreateDto.NodeTypeId == 3 {
 			hysteria := module.NodeHysteria{
 				Protocol: nodeCreateDto.HysteriaProtocol,
 				UpMbps:   nodeCreateDto.HysteriaUpMbps,
@@ -160,17 +156,18 @@ func CreateNode(nodeCreateDto dto.NodeCreateDto, token string) error {
 				return nil
 			}
 		}
-	}
-	// 在主表中插入数据
-	node := module.Node{
-		NodeSubId:  &nodeId,
-		NodeTypeId: nodeCreateDto.NodeTypeId,
-		Name:       nodeCreateDto.Name,
-		Ip:         nodeCreateDto.Ip,
-		Port:       nodeCreateDto.Port,
-	}
-	if err = dao.CreateNode(&node); err != nil {
-		return err
+
+		// 在主表中插入数据
+		node := module.Node{
+			NodeSubId:  &nodeId,
+			NodeTypeId: nodeCreateDto.NodeTypeId,
+			Name:       nodeCreateDto.Name,
+			Ip:         nodeCreateDto.Ip,
+			Port:       nodeCreateDto.Port,
+		}
+		if err = dao.CreateNode(&node); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -228,57 +225,191 @@ func DeleteNodeById(id *uint, token string) error {
 	return nil
 }
 
-func UpdateNodeById(nodeUpdateDto *dto.NodeUpdateDto) error {
-	node := module.Node{
-		Id:   nodeUpdateDto.Id,
-		Name: nodeUpdateDto.Name,
-		Ip:   nodeUpdateDto.Ip,
-		Port: nodeUpdateDto.Port,
-	}
-	if err := dao.UpdateNodeById(&node); err != nil {
+func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
+	count, err := dao.CountNodeByName(nodeUpdateDto.Name)
+	if err != nil {
 		return err
 	}
-
-	nodeType, err := dao.SelectNodeTypeById(nodeUpdateDto.NodeTypeId)
-	if err != nil {
-		return nil
+	if count > 0 {
+		return errors.New(constant.NodeNameExist)
 	}
-	if *nodeType.Name == constant.XrayName {
-		nodeXray := module.NodeXray{
-			Id:             nodeUpdateDto.NodeSubId,
-			Protocol:       nodeUpdateDto.XrayProtocol,
-			Settings:       nodeUpdateDto.XraySettings,
-			StreamSettings: nodeUpdateDto.XrayStreamSettings,
-			Tag:            nodeUpdateDto.XrayTag,
-			Sniffing:       nodeUpdateDto.XraySniffing,
-			Allocate:       nodeUpdateDto.XrayAllocate,
-		}
-		if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		nodeEntity, err := dao.SelectNodeById(nodeUpdateDto.Id)
+		if err != nil {
 			return err
 		}
-	} else if *nodeType.Name == constant.TrojanGoName {
-		nodeTrojanGo := module.NodeTrojanGo{
-			Id:              nodeUpdateDto.NodeSubId,
-			Sni:             nodeUpdateDto.TrojanGoSni,
-			MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
-			WebsocketEnable: nodeUpdateDto.TrojanGoWebsocketEnable,
-			WebsocketPath:   nodeUpdateDto.TrojanGoWebsocketPath,
-			SsEnable:        nodeUpdateDto.TrojanGoSsEnable,
-			SsMethod:        nodeUpdateDto.TrojanGoSsMethod,
-			SsPassword:      nodeUpdateDto.TrojanGoSsPassword,
-		}
-		if err = dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
-			return err
-		}
-	} else if *nodeType.Name == constant.HysteriaName {
-		nodeHysteria := module.NodeHysteria{
-			Id:       nodeUpdateDto.NodeSubId,
-			Protocol: nodeUpdateDto.HysteriaProtocol,
-			UpMbps:   nodeUpdateDto.HysteriaUpMbps,
-			DownMbps: nodeUpdateDto.HysteriaDownMbps,
-		}
-		if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
-			return err
+		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
+			// Grpc的操作
+			if err = GrpcRemoveNode(*nodeEntity.NodeTypeId, *nodeEntity.Port, token); err != nil {
+				return err
+			}
+			if err = GrpcAddNode(token, &core.NodeAddDto{
+				NodeType: uint64(*nodeEntity.NodeTypeId),
+				//  Xray
+				XrayPort:           uint64(*nodeUpdateDto.Port),
+				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
+				XraySettings:       *nodeUpdateDto.XraySettings,
+				XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
+				XrayTag:            *nodeUpdateDto.XrayTag,
+				XraySniffing:       *nodeUpdateDto.XraySniffing,
+				XrayAllocate:       *nodeUpdateDto.XrayAllocate,
+				// Trojan Go
+				TrojanGoPort:            uint64(*nodeUpdateDto.Port),
+				TrojanGoIp:              *nodeUpdateDto.Ip,
+				TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
+				TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
+				TrojanGoWebsocketEnable: uint64(*nodeUpdateDto.TrojanGoWebsocketEnable),
+				TrojanGoWebsocketPath:   *nodeUpdateDto.TrojanGoWebsocketPath,
+				TrojanGoWebsocketHost:   *nodeUpdateDto.TrojanGoWebsocketHost,
+				TrojanGoSSEnable:        uint64(*nodeUpdateDto.TrojanGoSsEnable),
+				TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
+				TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
+				// Hysteria
+				HysteriaPort:     uint64(*nodeUpdateDto.Port),
+				HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
+				HysteriaIp:       *nodeUpdateDto.Ip,
+				HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
+				HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
+			}); err != nil {
+				return err
+			}
+			// 修改了节点类型
+			if *nodeEntity.NodeTypeId == 1 {
+				nodeXray := module.NodeXray{
+					Id:             nodeUpdateDto.NodeSubId,
+					Protocol:       nodeUpdateDto.XrayProtocol,
+					Settings:       nodeUpdateDto.XraySettings,
+					StreamSettings: nodeUpdateDto.XrayStreamSettings,
+					Tag:            nodeUpdateDto.XrayTag,
+					Sniffing:       nodeUpdateDto.XraySniffing,
+					Allocate:       nodeUpdateDto.XrayAllocate,
+				}
+				if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
+					return err
+				}
+			} else if *nodeEntity.NodeTypeId == 2 {
+				nodeTrojanGo := module.NodeTrojanGo{
+					Id:              nodeUpdateDto.NodeSubId,
+					Sni:             nodeUpdateDto.TrojanGoSni,
+					MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
+					WebsocketEnable: nodeUpdateDto.TrojanGoWebsocketEnable,
+					WebsocketPath:   nodeUpdateDto.TrojanGoWebsocketPath,
+					SsEnable:        nodeUpdateDto.TrojanGoSsEnable,
+					SsMethod:        nodeUpdateDto.TrojanGoSsMethod,
+					SsPassword:      nodeUpdateDto.TrojanGoSsPassword,
+				}
+				if err = dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
+					return err
+				}
+			} else if *nodeEntity.NodeTypeId == 3 {
+				nodeHysteria := module.NodeHysteria{
+					Id:       nodeUpdateDto.NodeSubId,
+					Protocol: nodeUpdateDto.HysteriaProtocol,
+					UpMbps:   nodeUpdateDto.HysteriaUpMbps,
+					DownMbps: nodeUpdateDto.HysteriaDownMbps,
+				}
+				if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
+					return err
+				}
+			}
+			node := module.Node{
+				Id:   nodeUpdateDto.Id,
+				Name: nodeUpdateDto.Name,
+				Ip:   nodeUpdateDto.Ip,
+				Port: nodeUpdateDto.Port,
+			}
+			if err = dao.UpdateNodeById(&node); err != nil {
+				return err
+			}
+		} else {
+			// 修改了节点类型需要删除分库的数据，然后重新再插入
+			if err = DeleteNodeById(nodeUpdateDto.Id, token); err != nil {
+				return err
+			}
+			if err = GrpcAddNode(token, &core.NodeAddDto{
+				NodeType: uint64(*nodeUpdateDto.NodeTypeId),
+				//  Xray
+				XrayPort:           uint64(*nodeUpdateDto.Port),
+				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
+				XraySettings:       *nodeUpdateDto.XraySettings,
+				XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
+				XrayTag:            *nodeUpdateDto.XrayTag,
+				XraySniffing:       *nodeUpdateDto.XraySniffing,
+				XrayAllocate:       *nodeUpdateDto.XrayAllocate,
+				// Trojan Go
+				TrojanGoPort:            uint64(*nodeUpdateDto.Port),
+				TrojanGoIp:              *nodeUpdateDto.Ip,
+				TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
+				TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
+				TrojanGoWebsocketEnable: uint64(*nodeUpdateDto.TrojanGoWebsocketEnable),
+				TrojanGoWebsocketPath:   *nodeUpdateDto.TrojanGoWebsocketPath,
+				TrojanGoWebsocketHost:   *nodeUpdateDto.TrojanGoWebsocketHost,
+				TrojanGoSSEnable:        uint64(*nodeUpdateDto.TrojanGoSsEnable),
+				TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
+				TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
+				// Hysteria
+				HysteriaPort:     uint64(*nodeUpdateDto.Port),
+				HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
+				HysteriaIp:       *nodeUpdateDto.Ip,
+				HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
+				HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
+			}); err != nil {
+				return err
+			}
+			var nodeId uint
+			if *nodeUpdateDto.NodeTypeId == 1 {
+				nodeXray := module.NodeXray{
+					Protocol:       nodeUpdateDto.XrayProtocol,
+					Settings:       nodeUpdateDto.XraySettings,
+					StreamSettings: nodeUpdateDto.XrayStreamSettings,
+					Tag:            nodeUpdateDto.XrayTag,
+					Sniffing:       nodeUpdateDto.XraySniffing,
+					Allocate:       nodeUpdateDto.XrayAllocate,
+				}
+				nodeId, err = dao.CreateNodeXray(&nodeXray)
+				if err != nil {
+					return nil
+				}
+			} else if *nodeUpdateDto.NodeTypeId == 2 {
+				trojanGo := module.NodeTrojanGo{
+					Sni:             nodeUpdateDto.TrojanGoSni,
+					MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
+					WebsocketEnable: nodeUpdateDto.TrojanGoWebsocketEnable,
+					WebsocketPath:   nodeUpdateDto.TrojanGoWebsocketPath,
+					WebsocketHost:   nodeUpdateDto.TrojanGoWebsocketHost,
+					SsEnable:        nodeUpdateDto.TrojanGoSsEnable,
+					SsMethod:        nodeUpdateDto.TrojanGoSsMethod,
+					SsPassword:      nodeUpdateDto.TrojanGoSsPassword,
+				}
+				nodeId, err = dao.CreateNodeTrojanGo(&trojanGo)
+				if err != nil {
+					return nil
+				}
+			} else if *nodeUpdateDto.NodeTypeId == 3 {
+				hysteria := module.NodeHysteria{
+					Protocol: nodeUpdateDto.HysteriaProtocol,
+					UpMbps:   nodeUpdateDto.HysteriaUpMbps,
+					DownMbps: nodeUpdateDto.HysteriaDownMbps,
+				}
+				nodeId, err = dao.CreateNodeHysteria(&hysteria)
+				if err != nil {
+					return nil
+				}
+			}
+
+			node := module.Node{
+				Id:         nodeUpdateDto.Id,
+				NodeSubId:  &nodeId,
+				NodeTypeId: nodeUpdateDto.NodeTypeId,
+				Name:       nodeUpdateDto.Name,
+				Ip:         nodeUpdateDto.Ip,
+				Port:       nodeUpdateDto.Port,
+			}
+			if err = dao.UpdateNodeById(&node); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

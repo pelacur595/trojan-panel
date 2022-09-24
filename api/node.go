@@ -32,7 +32,7 @@ func CreateNode(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.CreateNode(nodeCreateDto, util.GetToken(c)); err != nil {
+	if err := service.CreateNode(util.GetToken(c), nodeCreateDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -75,7 +75,7 @@ func UpdateNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.UpdateNodeById(&nodeUpdateDto); err != nil {
+	if err := service.UpdateNodeById(util.GetToken(c), &nodeUpdateDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
