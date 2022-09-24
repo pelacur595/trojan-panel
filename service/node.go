@@ -87,7 +87,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	if mutex.TryLock() {
 		// Grpc添加节点
 		if err = GrpcAddNode(token, &core.NodeAddDto{
-			NodeType: uint64(*nodeCreateDto.NodeTypeId),
+			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
 			//  Xray
 			XrayPort:           uint64(*nodeCreateDto.Port),
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
@@ -246,7 +246,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return err
 			}
 			if err = GrpcAddNode(token, &core.NodeAddDto{
-				NodeType: uint64(*nodeEntity.NodeTypeId),
+				NodeTypeId: uint64(*nodeEntity.NodeTypeId),
 				//  Xray
 				XrayPort:           uint64(*nodeUpdateDto.Port),
 				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
@@ -329,7 +329,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return err
 			}
 			if err = GrpcAddNode(token, &core.NodeAddDto{
-				NodeType: uint64(*nodeUpdateDto.NodeTypeId),
+				NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 				//  Xray
 				XrayPort:           uint64(*nodeUpdateDto.Port),
 				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
