@@ -13,7 +13,7 @@ func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 	var nodeHysteria module.NodeHysteria
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "protocol", "up_mbps", "down_mbps"}
-	buildSelect, values, err := builder.BuildSelect("node_trojan_go", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("node_hysteria", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)

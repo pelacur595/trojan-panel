@@ -13,7 +13,7 @@ func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 	var nodeXray module.NodeXray
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`protocol`", "settings", "stream_settings", "tag", "sniffing", "allocate"}
-	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
+	buildSelect, values, err := builder.BuildSelect("node_xray", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
