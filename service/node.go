@@ -41,12 +41,12 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 				return nil, err
 			}
 			nodeOneVo.XrayProtocol = nodeXray.Protocol
-			xrayStreamSettings := vo.XrayStreamSettings{}
-			if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettings); err != nil {
+			xrayStreamSettingsEntity := vo.XrayStreamSettingsEntity{}
+			if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettingsEntity); err != nil {
 				logrus.Errorln(fmt.Sprintf("StreamSettings JSON反转失败 err: %v", err))
 				return nil, errors.New(constant.SysError)
 			}
-			nodeOneVo.XrayStreamSettings = xrayStreamSettings
+			nodeOneVo.XrayStreamSettingsEntity = &xrayStreamSettingsEntity
 		case 2:
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 			if err != nil {
