@@ -30,9 +30,9 @@ type NodeOneVo struct {
 	Port       uint      `json:"port"`
 	CreateTime time.Time `json:"createTime"`
 
-	XrayProtocol            *string `json:"xrayProtocol"`
-	XraySettings            *string `json:"xraySettings"`
-	XrayStreamSettings      *string `json:"xrayStreamSettings"`
+	XrayProtocol *string `json:"xrayProtocol"`
+	XraySettings *string `json:"xraySettings"`
+	XrayStreamSettings
 	XrayTag                 *string `json:"xrayTag"`
 	XraySniffing            *string `json:"xraySniffing"`
 	XrayAllocate            *string `json:"xrayAllocate"`
@@ -47,4 +47,9 @@ type NodeOneVo struct {
 	HysteriaProtocol        *string `json:"hysteriaProtocol"`
 	HysteriaUpMbps          *int    `json:"hysteriaUpMbps"`
 	HysteriaDownMbps        *int    `json:"hysteriaDownMbps"`
+}
+
+type XrayStreamSettings struct {
+	XrayStreamSettingsNetwork  *string `json:"xrayStreamSettingsNetwork"`
+	XrayStreamSettingsSecurity *string `json:"xrayStreamSettingsSecurity"`
 }

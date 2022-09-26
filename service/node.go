@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -40,11 +41,12 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 				return nil, err
 			}
 			nodeOneVo.XrayProtocol = nodeXray.Protocol
-			nodeOneVo.XraySettings = nodeXray.Settings
-			nodeOneVo.XrayStreamSettings = nodeXray.StreamSettings
-			nodeOneVo.XrayTag = nodeXray.Tag
-			nodeOneVo.XraySniffing = nodeXray.Sniffing
-			nodeOneVo.XrayAllocate = nodeXray.Allocate
+			xrayStreamSettings := vo.XrayStreamSettings{}
+			if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettings); err != nil {
+				logrus.Errorln(fmt.Sprintf("StreamSettings JSON反转失败 err: %v", err))
+				return nil, errors.New(constant.SysError)
+			}
+			nodeOneVo.XrayStreamSettings = xrayStreamSettings
 		case 2:
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 			if err != nil {
