@@ -210,3 +210,20 @@ func CronScanAccountExpireWarn() {
 		}
 	}
 }
+
+func ClashSubscribe(username string) (*module.Account, []vo.NodeOneVo, error) {
+	account, err := dao.SelectAccountClashSubscribe(username)
+	if err != nil {
+		return nil, nil, err
+	}
+	nodes, err := dao.SelectNodesIpAndPort()
+	var nodeVos []vo.NodeOneVo
+	for _, item := range nodes {
+		nodeOneVo, err := SelectNodeById(item.Id)
+		if err != nil {
+			continue
+		}
+		nodeVos = append(nodeVos, *nodeOneVo)
+	}
+	return account, nodeVos, nil
+}

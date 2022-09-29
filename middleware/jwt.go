@@ -34,6 +34,11 @@ func JWTHandler() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		if myClaims.AccountVo.Deleted != 0 {
+			vo.Fail(constant.AccountDisabled, c)
+			c.Abort()
+			return
+		}
 		get := redis.Client.String.
 			Get(fmt.Sprintf("trojan-panel:token:%s", myClaims.AccountVo.Username))
 		result, err := get.String()

@@ -27,7 +27,7 @@ func Login(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	if *account.Deleted == 1 {
+	if *account.Deleted != 0 {
 		vo.Fail(constant.AccountDisabled, c)
 		return
 	}
@@ -77,7 +77,7 @@ func HysteriaApi(c *gin.Context) {
 		vo.HysteriaApiFail(err.Error(), c)
 		return
 	}
-	if *account.Deleted == 1 {
+	if *account.Deleted != 0 {
 		vo.HysteriaApiFail(constant.AccountDisabled, c)
 		return
 	}
@@ -247,3 +247,45 @@ func UpdateAccountById(c *gin.Context) {
 	}
 	vo.Success(nil, c)
 }
+
+// ClashSubscribe Clash for windows 参考文档：
+// 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
+// 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+//func ClashSubscribe(c *gin.Context) {
+//	passwordHeader := c.GetHeader("password")
+//	accountVo := util.GetCurrentAccount(c)
+//	if accountVo != nil && accountVo.Username != "" {
+//		account, nodeOneVos, err := service.ClashSubscribe(accountVo.Username)
+//		if err != nil {
+//			vo.Fail(err.Error(), c)
+//			return
+//		}
+//		decodePass, err := util.AesDecode(*account.Pass)
+//		if err != nil {
+//			vo.Fail(err.Error(), c)
+//			return
+//		}
+//		// 节点密码
+//		password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
+//		if err != nil {
+//			vo.Fail(err.Error(), c)
+//			return
+//		}
+//		if passwordHeader != password {
+//			vo.Fail(constant.IllegalTokenError, c)
+//			return
+//		}
+//		userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
+//			*account.Upload,
+//			*account.Download,
+//			*account.Quota,
+//			*account.ExpireTime/1000)
+//
+//		c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
+//		c.Header("profile-update-interval", "12")
+//		c.Header("subscription-userinfo", userInfo)
+//		c.String(200, result)
+//		return
+//	}
+//	vo.Fail(constant.IllegalTokenError, c)
+//}

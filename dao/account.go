@@ -469,3 +469,30 @@ func UpdateAccountQuota() error {
 	}
 	return nil
 }
+
+func SelectAccountClashSubscribe(username string) (*module.Account, error) {
+	var account module.Account
+
+	where := map[string]interface{}{"username": username}
+	selectFields := []string{"id", "username", "pass", "expire_time", "quota", "download", "upload"}
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
+		return nil, errors.New(constant.UnauthorizedError)
+	} else if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	return &account, nil
+}

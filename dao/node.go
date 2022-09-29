@@ -180,7 +180,7 @@ func CountNodeByName(queryName *string) (int, error) {
 func SelectNodesIpAndPort() ([]module.Node, error) {
 	var nodes []module.Node
 
-	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"ip", "port"})
+	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"id", "ip", "port"})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nodes, errors.New(constant.SysError)
