@@ -66,3 +66,20 @@ func RemoveNode(ip string, token string, nodeRemoveDto *NodeRemoveDto) error {
 	}
 	return errors.New(send.Msg)
 }
+
+func RemoveAccount(ip string, token string, accountRemoveDto *AccountRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(ip, token)
+	defer clo()
+	if err != nil {
+		return err
+	}
+	client := NewApiAccountServiceClient(conn)
+	send, err := client.RemoveAccount(ctx, accountRemoveDto)
+	if err != nil {
+		log.Println(err)
+	}
+	if send.Success {
+		return nil
+	}
+	return errors.New(send.Msg)
+}
