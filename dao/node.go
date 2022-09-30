@@ -198,3 +198,25 @@ func SelectNodesIpAndPort() ([]module.Node, error) {
 	}
 	return nodes, nil
 }
+
+func SelectNodesIpDistinct() ([]string, error) {
+	var ips []string
+
+	buildSelect, values, err := builder.NamedQuery("select distinct ip from node", nil)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return ips, errors.New(constant.SysError)
+	}
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return ips, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &ips); err != nil {
+		logrus.Errorln(err.Error())
+		return ips, errors.New(constant.SysError)
+	}
+	return ips, nil
+}

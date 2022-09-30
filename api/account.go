@@ -189,7 +189,7 @@ func DeleteAccountById(c *gin.Context) {
 		vo.Fail("不能删除超级管理员账户", c)
 		return
 	}
-	if err := service.DeleteAccountById(accountRequiredIdDto.Id); err != nil {
+	if err := service.DeleteAccountById(util.GetToken(c), accountRequiredIdDto.Id); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -203,7 +203,7 @@ func UpdateAccountProfile(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.UpdateAccountProfile(accountUpdateProfileDto.OldPass, accountUpdateProfileDto.NewPass,
+	if err := service.UpdateAccountProfile(util.GetToken(c), accountUpdateProfileDto.OldPass, accountUpdateProfileDto.NewPass,
 		accountUpdateProfileDto.Username, accountUpdateProfileDto.Email); err != nil {
 		vo.Fail(err.Error(), c)
 		return
@@ -241,7 +241,7 @@ func UpdateAccountById(c *gin.Context) {
 		UploadSpeedLimit:   accountUpdateDto.UploadSpeedLimit,
 		DownloadSpeedLimit: accountUpdateDto.DownloadSpeedLimit,
 	}
-	if err := service.UpdateAccountById(&account); err != nil {
+	if err := service.UpdateAccountById(util.GetToken(c), &account); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}

@@ -311,44 +311,52 @@ func UpdateAccountById(account *module.Account) error {
 	return nil
 }
 
-func AccountQRCode(id *uint) (string, error) {
+func SelectConnectPassword(id *uint, username *string) (string, error) {
 	var account module.Account
+	where := map[string]interface{}{}
+	if id != nil && *id != 0 {
+		where["id"] = *id
+	}
+	if username != nil && *username != "" {
+		where["username"] = *username
+	}
+	if len(where) > 0 {
+		selectFields := []string{"username", "pass"}
+		buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return "", errors.New(constant.SysError)
+		}
 
-	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"username", "pass"}
-	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
+		rows, err := db.Query(buildSelect, values...)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return "", errors.New(constant.SysError)
+		}
+		defer rows.Close()
 
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	defer rows.Close()
+		if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
+			return "", errors.New(constant.UnauthorizedError)
+		} else if err != nil {
+			logrus.Errorln(err.Error())
+			return "", errors.New(constant.SysError)
+		}
 
-	if err = scanner.Scan(rows, &account); err == scanner.ErrEmptyResult {
-		return "", errors.New(constant.UnauthorizedError)
-	} else if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
+		if account.Username == nil || *account.Username == "" || account.Pass == nil || *account.Pass == "" {
+			return "", errors.New(constant.NodeQRCodeError)
+		}
+		decodePass, err := util.AesDecode(*account.Pass)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return "", errors.New(constant.SysError)
+		}
+		password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
+		if err != nil {
+			return "", err
+		}
+		return password, nil
 	}
-
-	if account.Username == nil || *account.Username == "" || account.Pass == nil || *account.Pass == "" {
-		return "", errors.New(constant.NodeQRCodeError)
-	}
-	decodePass, err := util.AesDecode(*account.Pass)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return "", errors.New(constant.SysError)
-	}
-	password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
-	if err != nil {
-		return "", err
-	}
-	return password, nil
+	return "", errors.New(constant.SysError)
 }
 
 func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {

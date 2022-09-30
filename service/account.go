@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"sync"
+	"trojan/core"
 	"trojan/dao"
 	"trojan/module"
 	"trojan/module/constant"
@@ -57,16 +59,46 @@ func CountAccountByUsername(username *string) (int, error) {
 func SelectAccountPage(username *string, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
 	return dao.SelectAccountPage(username, pageNum, pageSize)
 }
-func DeleteAccountById(id *uint) error {
-	return dao.DeleteAccountById(id)
+func DeleteAccountById(token string, id *uint) error {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		password, err := dao.SelectConnectPassword(id, nil)
+		if err != nil {
+			return err
+		}
+		if err = RemoveAccount(token, password); err != nil {
+			return err
+		}
+		if err = dao.DeleteAccountById(id); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Account, error) {
 	return dao.SelectAccountByUsernameAndPass(username, pass)
 }
 
-func UpdateAccountProfile(oldPass *string, newPass *string, username *string, email *string) error {
-	return dao.UpdateAccountProfile(oldPass, newPass, username, email)
+func UpdateAccountProfile(token string, oldPass *string, newPass *string, username *string, email *string) error {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
+			password, err := dao.SelectConnectPassword(nil, username)
+			if err != nil {
+				return err
+			}
+			if err = RemoveAccount(token, password); err != nil {
+				return err
+			}
+		}
+		if err := dao.UpdateAccountProfile(oldPass, newPass, username, email); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // GetAccountInfo 获取当前请求账户信息
@@ -84,17 +116,30 @@ func GetAccountInfo(c *gin.Context) (*vo.AccountInfo, error) {
 	return &userInfo, nil
 }
 
-func UpdateAccountById(account *module.Account) error {
-	if err := dao.UpdateAccountById(account); err != nil {
-		return err
-	}
-	if account.Deleted != nil && *account.Deleted == 1 {
-		if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
+func UpdateAccountById(token string, account *module.Account) error {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		if account.Pass != nil && *account.Pass != "" {
+			password, err := dao.SelectConnectPassword(account.Id, nil)
+			if err != nil {
+				return err
+			}
+			if err = RemoveAccount(token, password); err != nil {
+				return err
+			}
+		}
+		if err := dao.UpdateAccountById(account); err != nil {
 			return err
 		}
-	} else if *account.ExpireTime <= util.NowMilli() {
-		if err := DisableAccount([]string{*account.Username}); err != nil {
-			return err
+		if account.Deleted != nil && *account.Deleted == 1 {
+			if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
+				return err
+			}
+		} else if *account.ExpireTime <= util.NowMilli() {
+			if err := DisableAccount([]string{*account.Username}); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -226,4 +271,21 @@ func ClashSubscribe(username string) (*module.Account, []vo.NodeOneVo, error) {
 		nodeVos = append(nodeVos, *nodeOneVo)
 	}
 	return account, nodeVos, nil
+}
+
+func RemoveAccount(token string, password string) error {
+	ips, err := dao.SelectNodesIpDistinct()
+	if err != nil {
+		return err
+	}
+	for _, ip := range ips {
+		removeDto := core.AccountRemoveDto{
+			Password: password,
+		}
+		if err := core.RemoveAccount(ip, token, &removeDto); err != nil {
+			logrus.Errorf("gRPC删除用户异常 ip: %s err: %v", ip, err)
+			continue
+		}
+	}
+	return nil
 }

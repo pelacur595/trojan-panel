@@ -442,7 +442,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 		return "", errors.New(constant.NodeURLError)
 	}
 
-	password, err := dao.AccountQRCode(accountId)
+	password, err := dao.SelectConnectPassword(accountId, nil)
 	if err != nil {
 		return "", errors.New(constant.NodeURLError)
 	}
@@ -503,13 +503,13 @@ func CountNode() (int, error) {
 }
 
 func GrpcAddNode(token string, nodeAddDto *core.NodeAddDto) error {
-	nodes, err := dao.SelectNodesIpAndPort()
+	ips, err := dao.SelectNodesIpDistinct()
 	if err != nil {
 		return err
 	}
-	for _, node := range nodes {
-		if err = core.AddNode(*node.Ip, token, nodeAddDto); err != nil {
-			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", *node.Ip, err)
+	for _, ip := range ips {
+		if err = core.AddNode(ip, token, nodeAddDto); err != nil {
+			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
 			continue
 		}
 	}
@@ -517,16 +517,16 @@ func GrpcAddNode(token string, nodeAddDto *core.NodeAddDto) error {
 }
 
 func GrpcRemoveNode(nodeType uint, port uint, token string) error {
-	nodes, err := dao.SelectNodesIpAndPort()
+	ips, err := dao.SelectNodesIpDistinct()
 	if err != nil {
 		return err
 	}
-	for _, node := range nodes {
-		if err = core.RemoveNode(*node.Ip, token, &core.NodeRemoveDto{
+	for _, ip := range ips {
+		if err = core.RemoveNode(ip, token, &core.NodeRemoveDto{
 			NodeType: uint64(nodeType),
 			Port:     uint64(port),
 		}); err != nil {
-			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", *node.Ip, err)
+			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
 			continue
 		}
 	}
