@@ -88,7 +88,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	defer mutex.Unlock()
 	if mutex.TryLock() {
 		// Grpc添加节点
-		if err = GrpcAddNode(token, &core.NodeAddDto{
+		if err = GrpcAddNode(token, *nodeCreateDto.Ip, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
 			//  Xray
 			XrayPort:           uint64(*nodeCreateDto.Port),
@@ -209,7 +209,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	return &nodePageVo, nil
 }
 
-func DeleteNodeById(id *uint, token string) error {
+func DeleteNodeById(token string, id *uint) error {
 	var mutex sync.Mutex
 	defer mutex.TryLock()
 	if mutex.TryLock() {
@@ -217,7 +217,7 @@ func DeleteNodeById(id *uint, token string) error {
 		if err != nil {
 			return err
 		}
-		if err = GrpcRemoveNode(*node.NodeTypeId, *node.Port, token); err != nil {
+		if err = GrpcRemoveNode(token, *node.Ip, *node.Port, *node.NodeTypeId); err != nil {
 			return err
 		}
 		if err = dao.DeleteNodeById(id); err != nil {
@@ -244,10 +244,10 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		}
 		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
 			// Grpc的操作
-			if err = GrpcRemoveNode(*nodeEntity.NodeTypeId, *nodeEntity.Port, token); err != nil {
+			if err = GrpcRemoveNode(token, *nodeUpdateDto.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
 				return err
 			}
-			if err = GrpcAddNode(token, &core.NodeAddDto{
+			if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
 				NodeTypeId: uint64(*nodeEntity.NodeTypeId),
 				//  Xray
 				XrayPort:           uint64(*nodeUpdateDto.Port),
@@ -327,10 +327,10 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 		} else {
 			// 修改了节点类型需要删除分库的数据，然后重新再插入
-			if err = DeleteNodeById(nodeUpdateDto.Id, token); err != nil {
+			if err = DeleteNodeById(token, nodeUpdateDto.Id); err != nil {
 				return err
 			}
-			if err = GrpcAddNode(token, &core.NodeAddDto{
+			if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
 				NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 				//  Xray
 				XrayPort:           uint64(*nodeUpdateDto.Port),
@@ -502,33 +502,21 @@ func CountNode() (int, error) {
 	return dao.CountNode()
 }
 
-func GrpcAddNode(token string, nodeAddDto *core.NodeAddDto) error {
-	ips, err := dao.SelectNodesIpDistinct()
-	if err != nil {
-		return err
-	}
-	for _, ip := range ips {
-		if err = core.AddNode(ip, token, nodeAddDto); err != nil {
-			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
-			continue
-		}
+func GrpcAddNode(token string, ip string, nodeAddDto *core.NodeAddDto) error {
+	if err := core.AddNode(token, ip, nodeAddDto); err != nil {
+		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
+		return errors.New(constant.GrpcAddNodeError)
 	}
 	return nil
 }
 
-func GrpcRemoveNode(nodeType uint, port uint, token string) error {
-	ips, err := dao.SelectNodesIpDistinct()
-	if err != nil {
-		return err
-	}
-	for _, ip := range ips {
-		if err = core.RemoveNode(ip, token, &core.NodeRemoveDto{
-			NodeType: uint64(nodeType),
-			Port:     uint64(port),
-		}); err != nil {
-			logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
-			continue
-		}
+func GrpcRemoveNode(token string, ip string, port uint, nodeType uint) error {
+	if err := core.RemoveNode(token, ip, &core.NodeRemoveDto{
+		NodeType: uint64(nodeType),
+		Port:     uint64(port),
+	}); err != nil {
+		logrus.Errorf("gRPC移除节点异常 ip: %s err: %v", ip, err)
+		return errors.New(constant.GrpcRemoveNodeError)
 	}
 	return nil
 }

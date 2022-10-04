@@ -12,7 +12,7 @@ import (
 	"trojan/module/constant"
 )
 
-func newGrpcInstance(ip string, token string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
+func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
 	tokenParam := TokenValidateParam{
 		Token: token,
 	}
@@ -34,8 +34,9 @@ func newGrpcInstance(ip string, token string) (conn *grpc.ClientConn, ctx contex
 	}
 	return
 }
-func AddNode(ip string, token string, nodeAddDto *NodeAddDto) error {
-	conn, ctx, clo, err := newGrpcInstance(ip, token)
+
+func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip)
 	defer clo()
 	if err != nil {
 		return err
@@ -52,8 +53,8 @@ func AddNode(ip string, token string, nodeAddDto *NodeAddDto) error {
 	return errors.New(send.Msg)
 }
 
-func RemoveNode(ip string, token string, nodeRemoveDto *NodeRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(ip, token)
+func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip)
 	defer clo()
 	if err != nil {
 		return err
@@ -70,8 +71,8 @@ func RemoveNode(ip string, token string, nodeRemoveDto *NodeRemoveDto) error {
 	return errors.New(send.Msg)
 }
 
-func RemoveAccount(ip string, token string, accountRemoveDto *AccountRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(ip, token)
+func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip)
 	defer clo()
 	if err != nil {
 		return err

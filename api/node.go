@@ -61,7 +61,7 @@ func DeleteNodeById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.DeleteNodeById(nodeRequireIdDto.Id, util.GetToken(c)); err != nil {
+	if err := service.DeleteNodeById(util.GetToken(c), nodeRequireIdDto.Id); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
