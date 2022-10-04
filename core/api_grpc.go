@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
 	"trojan/module/constant"
@@ -17,7 +18,7 @@ func newGrpcInstance(ip string, token string) (conn *grpc.ClientConn, ctx contex
 	}
 
 	opts := []grpc.DialOption{
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithPerRPCCredentials(&tokenParam),
 	}
 	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, 8100),
@@ -43,6 +44,7 @@ func AddNode(ip string, token string, nodeAddDto *NodeAddDto) error {
 	send, err := client.AddNode(ctx, nodeAddDto)
 	if err != nil {
 		log.Println(err)
+		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		return nil
@@ -60,6 +62,7 @@ func RemoveNode(ip string, token string, nodeRemoveDto *NodeRemoveDto) error {
 	send, err := client.RemoveNode(ctx, nodeRemoveDto)
 	if err != nil {
 		log.Println(err)
+		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		return nil
@@ -77,6 +80,7 @@ func RemoveAccount(ip string, token string, accountRemoveDto *AccountRemoveDto) 
 	send, err := client.RemoveAccount(ctx, accountRemoveDto)
 	if err != nil {
 		log.Println(err)
+		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		return nil
