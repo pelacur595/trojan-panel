@@ -406,9 +406,13 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 	defer rows.Close()
 
 	var usernames []string
-	if err = scanner.Scan(rows, &usernames); err != nil {
+	result, err := scanner.ScanMap(rows)
+	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
+	}
+	for _, record := range result {
+		usernames = append(usernames, fmt.Sprintf("%s", record["username"]))
 	}
 	return usernames, nil
 }

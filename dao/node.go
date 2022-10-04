@@ -214,9 +214,13 @@ func SelectNodesIpDistinct() ([]string, error) {
 	}
 	defer rows.Close()
 
-	if err = scanner.Scan(rows, &ips); err != nil {
+	result, err := scanner.ScanMap(rows)
+	if err != nil {
 		logrus.Errorln(err.Error())
 		return ips, errors.New(constant.SysError)
+	}
+	for _, record := range result {
+		ips = append(ips, fmt.Sprintf("%s", record["ip"]))
 	}
 	return ips, nil
 }
