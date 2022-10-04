@@ -8,7 +8,7 @@ import (
 
 func TestGrpcAddNode(t *testing.T) {
 	dto := core.NodeAddDto{
-		NodeType:                2,
+		NodeTypeId:              2,
 		TrojanGoPort:            443,
 		TrojanGoIp:              "127.0.0.1",
 		TrojanGoSni:             "",
