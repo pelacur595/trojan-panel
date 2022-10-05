@@ -256,6 +256,7 @@ func CronScanAccountExpireWarn() {
 	}
 }
 
+// ClashSubscribe 导出Clash配置
 func ClashSubscribe(username string) (*module.Account, []vo.NodeOneVo, error) {
 	account, err := dao.SelectAccountClashSubscribe(username)
 	if err != nil {
