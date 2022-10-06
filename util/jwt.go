@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"time"
-	"trojan/module/constant"
-	"trojan/module/vo"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
 )
 
 // 过期时间默认2小时

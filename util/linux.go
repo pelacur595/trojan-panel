@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/go-ping/ping"
 	"runtime"
-	"trojan/module/constant"
+	"trojan-panel/module/constant"
 )
 
 func Ping(ip string) (int, error) {

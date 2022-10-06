@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func PanelGroup(c *gin.Context) {

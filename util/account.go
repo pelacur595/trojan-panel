@@ -3,7 +3,7 @@ package util
 import (
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan/module/vo"
+	"trojan-panel/module/vo"
 )
 
 // GetCurrentAccount 获取当前用户

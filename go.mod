@@ -1,4 +1,4 @@
-module trojan
+module trojan-panel
 
 go 1.18
 

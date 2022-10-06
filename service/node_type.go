@@ -1,8 +1,8 @@
 package service
 
 import (
-	"trojan/dao"
-	"trojan/module/vo"
+	"trojan-panel/dao"
+	"trojan-panel/module/vo"
 )
 
 func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {

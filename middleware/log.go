@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"time"
-	"trojan/core"
+	"trojan-panel/core"
 )
 
 // 日志初始化

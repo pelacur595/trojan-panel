@@ -7,10 +7,10 @@ import (
 	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"time"
-	"trojan/dao"
-	"trojan/dao/redis"
-	"trojan/module"
-	"trojan/module/constant"
+	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
 )
 
 func SelectSystemByName(name *string) (*module.System, error) {

@@ -1,9 +1,9 @@
 package service
 
 import (
-	"trojan/dao"
-	"trojan/module"
-	"trojan/module/vo"
+	"trojan-panel/dao"
+	"trojan-panel/module"
+	"trojan-panel/module/vo"
 )
 
 func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint, pageSize *uint) (*vo.EmailRecordPageVo, error) {

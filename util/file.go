@@ -12,7 +12,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	"trojan/module/constant"
+	"trojan-panel/module/constant"
 )
 
 func DownloadFile(url string, fileName string) error {

@@ -5,8 +5,8 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
 )
 
 func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {

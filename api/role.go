@@ -2,10 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func SelectRoleList(c *gin.Context) {

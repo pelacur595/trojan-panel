@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"sync"
-	"trojan/core"
-	"trojan/dao"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/util"
+	"trojan-panel/core"
+	"trojan-panel/dao"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 func CreateAccount(accountCreateDto dto.AccountCreateDto) error {

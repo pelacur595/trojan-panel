@@ -5,7 +5,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"time"
-	"trojan/core"
+	"trojan-panel/core"
 )
 
 var pool *redis.Pool

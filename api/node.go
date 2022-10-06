@@ -3,11 +3,11 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/service"
-	"trojan/util"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
+	"trojan-panel/util"
 )
 
 func SelectNodeById(c *gin.Context) {

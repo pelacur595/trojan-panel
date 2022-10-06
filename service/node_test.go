@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 	"testing"
-	"trojan/core"
+	"trojan-panel/core"
 )
 
 func TestGrpcAddNode(t *testing.T) {

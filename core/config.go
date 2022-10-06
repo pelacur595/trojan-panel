@@ -3,7 +3,7 @@ package core
 import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/ini.v1"
-	"trojan/module/constant"
+	"trojan-panel/module/constant"
 )
 
 var Config = new(AppConfig)

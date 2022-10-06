@@ -6,10 +6,10 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
 )
 
 func SelectRoleList(roleDto dto.RoleDto) ([]module.Role, error) {

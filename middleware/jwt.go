@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/util"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 // jwt认证中间件

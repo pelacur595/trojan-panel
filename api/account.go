@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"strings"
 	"time"
-	"trojan/dao/redis"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/service"
-	"trojan/util"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
+	"trojan-panel/util"
 )
 
 func Login(c *gin.Context) {

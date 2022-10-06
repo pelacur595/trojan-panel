@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"trojan/core"
+	"trojan-panel/core"
 )
 
 var db *sql.DB

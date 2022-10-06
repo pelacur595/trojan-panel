@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
 )
 
 func SendEmail(sendEmailDto *dto.SendEmailDto) error {

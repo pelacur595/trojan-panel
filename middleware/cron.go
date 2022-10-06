@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/robfig/cron/v3"
 	"time"
-	"trojan/service"
+	"trojan-panel/service"
 )
 
 // 初始化定时任务

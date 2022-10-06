@@ -6,10 +6,10 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/util"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 func SelectAccountById(id *uint) (*module.Account, error) {

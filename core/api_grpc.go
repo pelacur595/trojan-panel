@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
-	"trojan/module/constant"
+	"trojan-panel/module/constant"
 )
 
 func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {

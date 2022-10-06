@@ -7,11 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"time"
-	"trojan/dao"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/util"
+	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 // CronTrafficRank 流量排行榜 一小时更新一次

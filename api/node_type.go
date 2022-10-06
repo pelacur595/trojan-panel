@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func SelectNodeTypeList(c *gin.Context) {

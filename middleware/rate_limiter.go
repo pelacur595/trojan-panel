@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 	redisgo "github.com/gomodule/redigo/redis"
 	"time"
-	"trojan/dao"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
+	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
 )
 
 var limit *limiter.Limiter

@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/api"
-	"trojan/middleware"
+	"trojan-panel/api"
+	"trojan-panel/middleware"
 )
 
 func Router(router *gin.Engine) {
