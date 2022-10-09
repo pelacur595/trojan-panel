@@ -489,7 +489,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			}
 		}
 	} else if *nodeType.Name == constant.HysteriaName {
-		nodeHysteria, err := dao.SelectNodeHysteriaById(id)
+		nodeHysteria, err := dao.SelectNodeHysteriaById(node.NodeSubId)
 		if err != nil {
 			return "", errors.New(constant.NodeURLError)
 		}
