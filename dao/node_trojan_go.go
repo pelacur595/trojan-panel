@@ -128,3 +128,17 @@ func UpdateNodeTrojanGoById(nodeTrojanGo *module.NodeTrojanGo) error {
 	}
 	return nil
 }
+
+func DeleteNodeTrojanGoById(id *uint) error {
+	buildDelete, values, err := builder.BuildDelete("node_trojan_go", map[string]interface{}{"id": *id})
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+
+	if _, err = db.Exec(buildDelete, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	return nil
+}

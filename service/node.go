@@ -233,6 +233,19 @@ func DeleteNodeById(token string, id *uint) error {
 		if err = dao.DeleteNodeById(id); err != nil {
 			return err
 		}
+		if *node.NodeTypeId == 1 {
+			if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
+				return err
+			}
+		} else if *node.NodeTypeId == 2 {
+			if err := dao.DeleteNodeTrojanGoById(node.NodeSubId); err != nil {
+				return err
+			}
+		} else if *node.NodeTypeId == 3 {
+			if err := dao.DeleteNodeHysteriaById(node.NodeSubId); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

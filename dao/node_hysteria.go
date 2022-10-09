@@ -94,3 +94,17 @@ func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
 	}
 	return nil
 }
+
+func DeleteNodeHysteriaById(id *uint) error {
+	buildDelete, values, err := builder.BuildDelete("node_hysteria", map[string]interface{}{"id": *id})
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+
+	if _, err = db.Exec(buildDelete, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	return nil
+}

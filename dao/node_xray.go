@@ -113,3 +113,17 @@ func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
 	}
 	return nil
 }
+
+func DeleteNodeXrayById(id *uint) error {
+	buildDelete, values, err := builder.BuildDelete("node_xray", map[string]interface{}{"id": *id})
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+
+	if _, err = db.Exec(buildDelete, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	return nil
+}
