@@ -266,7 +266,7 @@ func UpdateAccountById(c *gin.Context) {
 //			return
 //		}
 //		// 节点密码
-//		password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
+//		password, err := util.AesEncode(fmt.Sprintf("%s&%s", *account.Username, decodePass))
 //		if err != nil {
 //			vo.Fail(err.Error(), c)
 //			return

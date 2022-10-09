@@ -350,7 +350,7 @@ func SelectConnectPassword(id *uint, username *string) (string, error) {
 			logrus.Errorln(err.Error())
 			return "", errors.New(constant.SysError)
 		}
-		password, err := util.AesEncode(fmt.Sprintf("%s%s", *account.Username, decodePass))
+		password, err := util.AesEncode(fmt.Sprintf("%s&%s", *account.Username, decodePass))
 		if err != nil {
 			return "", err
 		}
