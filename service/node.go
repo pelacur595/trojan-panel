@@ -75,12 +75,22 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 }
 
 func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
-	count, err := dao.CountNodeByName(nodeCreateDto.Name)
+	// 校验名称
+	countName, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
 		return err
 	}
-	if count > 0 {
+	if countName > 0 {
 		return errors.New(constant.NodeNameExist)
+	}
+
+	// 校验端口
+	countPort, err := dao.CountNodeByIpAndPort(nodeCreateDto.Ip, nodeCreateDto.Port)
+	if err != nil {
+		return err
+	}
+	if countPort > 0 {
+		return errors.New(constant.PortUsed)
 	}
 
 	var nodeId uint

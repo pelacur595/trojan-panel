@@ -155,6 +155,31 @@ func CountNode() (int, error) {
 	return CountNodeByName(nil)
 }
 
+func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
+	var count int
+
+	var whereCount = map[string]interface{}{}
+	if ip != nil && *ip != "" {
+		whereCount["ip"] = *ip
+	}
+	if port != nil && *port != 0 {
+		whereCount["port"] = *port
+	}
+
+	selectFields := []string{"count(1)"}
+	buildSelect, values, err := builder.BuildSelect("node", whereCount, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return 0, errors.New(constant.SysError)
+	}
+
+	if err = db.QueryRow(buildSelect, values...).Scan(&count); err != nil {
+		logrus.Errorln(err.Error())
+		return 0, errors.New(constant.SysError)
+	}
+	return count, nil
+}
+
 func CountNodeByName(queryName *string) (int, error) {
 	var count int
 

@@ -17,6 +17,7 @@ const (
 
 	UsernameExist    string = "用户名已存在"
 	NodeNameExist    string = "节点名称名已存在"
+	PortUsed         string = "端口已经被使用"
 	NodeNotExist     string = "不存在该节点"
 	NodeTypeNotExist string = "不存在该节点类型"
 	RoleNotExist     string = "不存在该角色"
