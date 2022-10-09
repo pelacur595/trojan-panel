@@ -526,7 +526,6 @@ func GrpcRemoveNode(token string, ip string, port uint, nodeType uint) error {
 		Port:     uint64(port),
 	}); err != nil {
 		logrus.Errorf("gRPC移除节点异常 ip: %s err: %v", ip, err)
-		return errors.New(constant.GrpcRemoveNodeError)
 	}
 	return nil
 }
