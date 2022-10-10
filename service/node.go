@@ -80,7 +80,10 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		if !util.IsPortAvailable(*nodeCreateDto.Port, "tcp") {
 			return errors.New(constant.PortIsOccupied)
 		}
-	} else if *nodeCreateDto.NodeTypeId == 3 && *nodeCreateDto.HysteriaProtocol == "udp" {
+		if !util.IsPortAvailable(*nodeCreateDto.Port+10000, "tcp") {
+			return errors.New(constant.PortIsOccupied)
+		}
+	} else if *nodeCreateDto.NodeTypeId == 3 {
 		if !util.IsPortAvailable(*nodeCreateDto.Port, "udp") {
 			return errors.New(constant.PortIsOccupied)
 		}
