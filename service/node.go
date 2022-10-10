@@ -75,6 +75,17 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 }
 
 func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
+
+	if *nodeCreateDto.NodeTypeId == 1 || *nodeCreateDto.NodeTypeId == 2 {
+		if !util.IsPortAvailable(*nodeCreateDto.Port, "tcp") {
+			return errors.New(constant.PortIsOccupied)
+		}
+	} else if *nodeCreateDto.NodeTypeId == 3 && *nodeCreateDto.HysteriaProtocol == "udp" {
+		if !util.IsPortAvailable(*nodeCreateDto.Port, "udp") {
+			return errors.New(constant.PortIsOccupied)
+		}
+	}
+
 	// 校验名称
 	countName, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
