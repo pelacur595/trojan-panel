@@ -2,11 +2,11 @@ FROM alpine:3.15
 LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
 WORKDIR /tpdata/trojan-panel/
-ENV mariadb_ip=trojan-panel-mariadb \
+ENV mariadb_ip=127.0.0.1 \
     mariadb_port=3306 \
     mariadb_user=root \
     mariadb_pas=123456 \
-    redis_host=trojan-panel-redis \
+    redis_host=127.0.0.1 \
     redis_port=6379 \
     redis_pass=123456
 ARG TARGETPLATFORM
