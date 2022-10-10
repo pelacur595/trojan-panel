@@ -15,6 +15,7 @@ type AccountVo struct {
 	Deleted    uint      `json:"deleted"`
 	ExpireTime uint      `json:"expireTime"`
 	CreateTime time.Time `json:"createTime"`
+	Roles      []string  `json:"roles"`
 }
 
 type AccountPageVo struct {

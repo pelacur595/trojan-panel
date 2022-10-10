@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"strings"
 	"time"
+	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
@@ -32,11 +33,17 @@ func Login(c *gin.Context) {
 		return
 	}
 	if account != nil {
+		roles, err := dao.SelectRoleNameByParentId(account.RoleId, true)
+		if err != nil {
+			vo.Fail(constant.SysError, c)
+			return
+		}
 		accountVo := vo.AccountVo{
 			Id:       *account.Id,
 			Username: *account.Username,
 			RoleId:   *account.RoleId,
 			Deleted:  *account.Deleted,
+			Roles:    roles,
 		}
 		tokenStr, err := util.GenToken(accountVo)
 		if err != nil {
