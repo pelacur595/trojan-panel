@@ -75,7 +75,10 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 }
 
 func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
-
+	// 校验端口范围
+	if nodeCreateDto.Port != nil && (*nodeCreateDto.Port <= 100 || *nodeCreateDto.Port >= 30000) {
+		return errors.New(constant.PortRangeError)
+	}
 	if *nodeCreateDto.NodeTypeId == 1 || *nodeCreateDto.NodeTypeId == 2 {
 		if !util.IsPortAvailable(*nodeCreateDto.Port, "tcp") {
 			return errors.New(constant.PortIsOccupied)
@@ -89,6 +92,14 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		}
 	}
 
+	countPort, err := dao.CountNodeByIpAndPort(nodeCreateDto.Ip, nodeCreateDto.Port)
+	if err != nil {
+		return err
+	}
+	if countPort > 0 {
+		return errors.New(constant.PortUsed)
+	}
+
 	// 校验名称
 	countName, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
@@ -96,15 +107,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	}
 	if countName > 0 {
 		return errors.New(constant.NodeNameExist)
-	}
-
-	// 校验端口
-	countPort, err := dao.CountNodeByIpAndPort(nodeCreateDto.Ip, nodeCreateDto.Port)
-	if err != nil {
-		return err
-	}
-	if countPort > 0 {
-		return errors.New(constant.PortUsed)
 	}
 
 	var nodeId uint

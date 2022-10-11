@@ -40,4 +40,5 @@ const (
 	LoadKeyPairError string = "加载本机密钥和证书失败"
 
 	PortIsOccupied string = "端口被占用,请检查该端口或选择其他端口"
+	PortRangeError string = "端口范围在100-30000之间"
 )
