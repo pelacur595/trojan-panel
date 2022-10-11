@@ -92,14 +92,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		}
 	}
 
-	countPort, err := dao.CountNodeByIpAndPort(nodeCreateDto.Ip, nodeCreateDto.Port)
-	if err != nil {
-		return err
-	}
-	if countPort > 0 {
-		return errors.New(constant.PortUsed)
-	}
-
 	// 校验名称
 	countName, err := dao.CountNodeByName(nodeCreateDto.Name)
 	if err != nil {
