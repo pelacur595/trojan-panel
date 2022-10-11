@@ -75,21 +75,25 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 }
 
 func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
-	// 校验端口范围
+	// 校验端口
+	var err error
 	if nodeCreateDto.Port != nil && (*nodeCreateDto.Port <= 100 || *nodeCreateDto.Port >= 30000) {
-		return errors.New(constant.PortRangeError)
+		err = errors.New(constant.PortRangeError)
 	}
 	if *nodeCreateDto.NodeTypeId == 1 || *nodeCreateDto.NodeTypeId == 2 {
 		if !util.IsPortAvailable(*nodeCreateDto.Port, "tcp") {
-			return errors.New(constant.PortIsOccupied)
+			err = errors.New(constant.PortIsOccupied)
 		}
 		if !util.IsPortAvailable(*nodeCreateDto.Port+10000, "tcp") {
-			return errors.New(constant.PortIsOccupied)
+			err = errors.New(constant.PortIsOccupied)
 		}
 	} else if *nodeCreateDto.NodeTypeId == 3 {
 		if !util.IsPortAvailable(*nodeCreateDto.Port, "udp") {
-			return errors.New(constant.PortIsOccupied)
+			err = errors.New(constant.PortIsOccupied)
 		}
+	}
+	if err != nil {
+		return err
 	}
 
 	// 校验名称
