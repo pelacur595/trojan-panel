@@ -283,10 +283,7 @@ func RemoveAccount(token string, password string) error {
 		removeDto := core.AccountRemoveDto{
 			Password: password,
 		}
-		if err := core.RemoveAccount(ip, token, &removeDto); err != nil {
-			logrus.Errorf("gRPC删除用户异常 ip: %s err: %v", ip, err)
-			continue
-		}
+		_ = core.RemoveAccount(ip, token, &removeDto)
 	}
 	return nil
 }

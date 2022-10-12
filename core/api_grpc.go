@@ -7,7 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 	"time"
 	"trojan-panel/module/constant"
 )
@@ -44,7 +43,7 @@ func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.AddNode(ctx, nodeAddDto)
 	if err != nil {
-		log.Println(err)
+		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v\n", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -62,7 +61,7 @@ func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.RemoveNode(ctx, nodeRemoveDto)
 	if err != nil {
-		log.Println(err)
+		logrus.Errorf("gRPC删除节点异常 ip: %s err: %v\n", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -80,7 +79,7 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 	client := NewApiAccountServiceClient(conn)
 	send, err := client.RemoveAccount(ctx, accountRemoveDto)
 	if err != nil {
-		log.Println(err)
+		logrus.Errorf("gRPC删除用户异常 ip: %s err: %v\n", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {

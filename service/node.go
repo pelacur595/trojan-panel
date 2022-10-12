@@ -539,18 +539,15 @@ func CountNode() (int, error) {
 
 func GrpcAddNode(token string, ip string, nodeAddDto *core.NodeAddDto) error {
 	if err := core.AddNode(token, ip, nodeAddDto); err != nil {
-		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
 		return errors.New(constant.GrpcAddNodeError)
 	}
 	return nil
 }
 
 func GrpcRemoveNode(token string, ip string, port uint, nodeType uint) error {
-	if err := core.RemoveNode(token, ip, &core.NodeRemoveDto{
+	_ = core.RemoveNode(token, ip, &core.NodeRemoveDto{
 		NodeType: uint64(nodeType),
 		Port:     uint64(port),
-	}); err != nil {
-		logrus.Errorf("gRPC移除节点异常 ip: %s err: %v", ip, err)
-	}
+	})
 	return nil
 }
