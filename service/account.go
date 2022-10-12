@@ -209,7 +209,6 @@ func DisableAccount(usernames []string) error {
 func CronScanAccounts() {
 	usernames, err := dao.SelectAccountUsernameByDeletedOrExpireTime()
 	if err != nil {
-		logrus.Errorln(err.Error())
 		return
 	}
 
@@ -226,7 +225,6 @@ func CronScanAccountExpireWarn() {
 	systemName := constant.SystemName
 	system, err := SelectSystemByName(&systemName)
 	if err != nil {
-		logrus.Errorln(err.Error())
 		return
 	}
 	if *system.EmailEnable == 0 || *system.ExpireWarnEnable == 0 {
