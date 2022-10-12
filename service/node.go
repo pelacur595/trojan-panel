@@ -112,8 +112,9 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		// Grpc添加节点
 		if err = GrpcAddNode(token, *nodeCreateDto.Ip, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
+			Port:       uint64(*nodeCreateDto.Port),
+
 			//  Xray
-			XrayPort:           uint64(*nodeCreateDto.Port),
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
 			XraySettings:       *nodeCreateDto.XraySettings,
 			XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
@@ -121,7 +122,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			XraySniffing:       *nodeCreateDto.XraySniffing,
 			XrayAllocate:       *nodeCreateDto.XrayAllocate,
 			// Trojan Go
-			TrojanGoPort:            uint64(*nodeCreateDto.Port),
 			TrojanGoIp:              *nodeCreateDto.Ip,
 			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
 			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
@@ -132,7 +132,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
 			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
 			// Hysteria
-			HysteriaPort:     uint64(*nodeCreateDto.Port),
 			HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
 			HysteriaIp:       *nodeCreateDto.Ip,
 			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
@@ -284,8 +283,9 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 			if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
 				NodeTypeId: uint64(*nodeEntity.NodeTypeId),
+				Port:       uint64(*nodeUpdateDto.Port),
+
 				//  Xray
-				XrayPort:           uint64(*nodeUpdateDto.Port),
 				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
 				XraySettings:       *nodeUpdateDto.XraySettings,
 				XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
@@ -293,7 +293,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				XraySniffing:       *nodeUpdateDto.XraySniffing,
 				XrayAllocate:       *nodeUpdateDto.XrayAllocate,
 				// Trojan Go
-				TrojanGoPort:            uint64(*nodeUpdateDto.Port),
 				TrojanGoIp:              *nodeUpdateDto.Ip,
 				TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
 				TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
@@ -304,7 +303,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
 				TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
 				// Hysteria
-				HysteriaPort:     uint64(*nodeUpdateDto.Port),
 				HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
 				HysteriaIp:       *nodeUpdateDto.Ip,
 				HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
@@ -367,8 +365,9 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 			if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
 				NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
+				Port:       uint64(*nodeUpdateDto.Port),
+
 				//  Xray
-				XrayPort:           uint64(*nodeUpdateDto.Port),
 				XrayProtocol:       *nodeUpdateDto.XrayProtocol,
 				XraySettings:       *nodeUpdateDto.XraySettings,
 				XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
@@ -376,7 +375,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				XraySniffing:       *nodeUpdateDto.XraySniffing,
 				XrayAllocate:       *nodeUpdateDto.XrayAllocate,
 				// Trojan Go
-				TrojanGoPort:            uint64(*nodeUpdateDto.Port),
 				TrojanGoIp:              *nodeUpdateDto.Ip,
 				TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
 				TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
@@ -387,7 +385,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
 				TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
 				// Hysteria
-				HysteriaPort:     uint64(*nodeUpdateDto.Port),
 				HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
 				HysteriaIp:       *nodeUpdateDto.Ip,
 				HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
