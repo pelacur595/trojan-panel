@@ -50,6 +50,11 @@ type NodeOneVo struct {
 }
 
 type XrayStreamSettingsEntity struct {
-	XrayStreamSettingsNetwork  *string `json:"network"`
-	XrayStreamSettingsSecurity *string `json:"security"`
+	Network    *string                             `json:"network"`
+	Security   *string                             `json:"security"`
+	WsSettings *XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
+}
+
+type XrayStreamSettingsWsSettingsEntity struct {
+	Path *string `json:"path"`
 }
