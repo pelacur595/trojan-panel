@@ -255,9 +255,9 @@ func UpdateAccountById(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
-// ClashSubscribe Clash for windows 参考文档：
-// 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
-// 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+//ClashSubscribe Clash for windows 参考文档：
+//1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
+//2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
 //func ClashSubscribe(c *gin.Context) {
 //	passwordHeader := c.GetHeader("password")
 //	accountVo := util.GetCurrentAccount(c)
@@ -267,18 +267,7 @@ func UpdateAccountById(c *gin.Context) {
 //			vo.Fail(err.Error(), c)
 //			return
 //		}
-//		decodePass, err := util.AesDecode(*account.Pass)
-//		if err != nil {
-//			vo.Fail(err.Error(), c)
-//			return
-//		}
-//		// 节点密码
-//		password, err := util.AesEncode(fmt.Sprintf("%s&%s", *account.Username, decodePass))
-//		if err != nil {
-//			vo.Fail(err.Error(), c)
-//			return
-//		}
-//		if passwordHeader != password {
+//		if passwordHeader != *account.Pass {
 //			vo.Fail(constant.IllegalTokenError, c)
 //			return
 //		}

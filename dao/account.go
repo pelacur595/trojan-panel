@@ -42,10 +42,7 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 
 func CreateAccount(account *module.Account) error {
 	// 密码加密
-	encryPass, err := util.AesEncode(*account.Pass)
-	if err != nil {
-		return err
-	}
+	encryPass := util.SHA224String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
 
 	accountCreate := map[string]interface{}{
 		"username": *account.Username,
@@ -201,11 +198,8 @@ func DeleteAccountById(id *uint) error {
 func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Account, error) {
 	var account module.Account
 
-	encryPass, err := util.AesEncode(*pass)
-	if err != nil {
-		return nil, err
-	}
-	where := map[string]interface{}{"username": *username, "pass": encryPass}
+	encryPass := util.SHA224String(fmt.Sprintf("%s%s", *username, *pass))
+	where := map[string]interface{}{"pass": encryPass}
 	selectFields := []string{"id", "username", "role_id", "deleted"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
@@ -237,11 +231,7 @@ func UpdateAccountProfile(oldPass *string, newPass *string, username *string, em
 	where := map[string]interface{}{"username": *username}
 	update := map[string]interface{}{}
 	if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
-		encryPass, err := util.AesEncode(*newPass)
-		if err != nil {
-			return err
-		}
-		update["pass"] = encryPass
+		update["pass"] = util.SHA224String(fmt.Sprintf("%s%s", *username, *newPass))
 	}
 	if email != nil && *email != "" {
 		update["email"] = *email
@@ -265,11 +255,7 @@ func UpdateAccountById(account *module.Account) error {
 	where := map[string]interface{}{"id": *account.Id}
 	update := map[string]interface{}{}
 	if account.Pass != nil && *account.Pass != "" {
-		encryPass, err := util.AesEncode(*account.Pass)
-		if err != nil {
-			return err
-		}
-		update["pass"] = encryPass
+		update["pass"] = util.SHA224String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
 	}
 	if account.RoleId != nil {
 		update["role_id"] = *account.RoleId
@@ -345,16 +331,7 @@ func SelectConnectPassword(id *uint, username *string) (string, error) {
 		if account.Username == nil || *account.Username == "" || account.Pass == nil || *account.Pass == "" {
 			return "", errors.New(constant.NodeQRCodeError)
 		}
-		decodePass, err := util.AesDecode(*account.Pass)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return "", errors.New(constant.SysError)
-		}
-		password, err := util.AesEncode(fmt.Sprintf("%s&%s", *account.Username, decodePass))
-		if err != nil {
-			return "", err
-		}
-		return password, nil
+		return *account.Pass, nil
 	}
 	return "", errors.New(constant.SysError)
 }
