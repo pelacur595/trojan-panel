@@ -16,7 +16,7 @@ func Ping(ip string) (int, error) {
 		return -1, errors.New(constant.SysError)
 	}
 	pingEr.Count = 1
-	pingEr.Timeout = 4 * time.Second
+	pingEr.Timeout = 3 * time.Second
 	if runtime.GOOS == "windows" {
 		pingEr.SetPrivileged(true)
 	}
