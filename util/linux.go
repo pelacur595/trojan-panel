@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net"
 	"runtime"
+	"time"
 	"trojan-panel/module/constant"
 )
 
@@ -14,8 +15,8 @@ func Ping(ip string) (int, error) {
 	if err != nil {
 		return -1, errors.New(constant.SysError)
 	}
-	pingEr.Count = 3
-	pingEr.Timeout = 3
+	pingEr.Count = 1
+	pingEr.Timeout = 4 * time.Second
 	if runtime.GOOS == "windows" {
 		pingEr.SetPrivileged(true)
 	}
