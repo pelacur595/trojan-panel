@@ -309,6 +309,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 				HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 			}); err != nil {
+				_ = GrpcRemoveNode(token, *nodeUpdateDto.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId)
 				return err
 			}
 			// 修改了节点类型
@@ -543,9 +544,11 @@ func GrpcAddNode(token string, ip string, nodeAddDto *core.NodeAddDto) error {
 }
 
 func GrpcRemoveNode(token string, ip string, port uint, nodeType uint) error {
-	_ = core.RemoveNode(token, ip, &core.NodeRemoveDto{
+	if err := core.RemoveNode(token, ip, &core.NodeRemoveDto{
 		NodeType: uint64(nodeType),
 		Port:     uint64(port),
-	})
+	}); err != nil {
+		return err
+	}
 	return nil
 }
