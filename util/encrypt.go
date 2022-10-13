@@ -18,7 +18,7 @@ func Sha1String(plain string) string {
 	buf := make([]byte, saltSize, saltSize+sha1.Size)
 	_, err := io.ReadFull(rand.Reader, buf)
 	if err != nil {
-		logrus.Errorf("random read failed err: %v\n", err)
+		logrus.Errorf("random read failed err: %v", err)
 	}
 	h := sha1.New()
 	h.Write(buf)

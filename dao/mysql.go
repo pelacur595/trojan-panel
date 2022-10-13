@@ -30,19 +30,19 @@ func InitMySQL() {
 		Port(mySQLConfig.Port).Open(true)
 
 	if err != nil {
-		logrus.Errorf("数据库连接异常 err: %v\n", err)
+		logrus.Errorf("数据库连接异常 err: %v", err)
 		panic(err)
 	}
 
 	var count int
 	if err = db.QueryRow("SELECT COUNT(1) FROM information_schema.TABLES WHERE table_schema = 'trojan_panel_db' GROUP BY table_schema;").
 		Scan(&count); err != nil && err != sql.ErrNoRows {
-		logrus.Errorf("查询数据库异常 err: %v\n", err)
+		logrus.Errorf("查询数据库异常 err: %v", err)
 		panic(err)
 	}
 	if count == 0 {
 		if err = SqlInit(sqlInitStr); err != nil {
-			logrus.Errorf("数据库导入失败 err: %v\n", err)
+			logrus.Errorf("数据库导入失败 err: %v", err)
 			panic(err)
 		}
 	}
@@ -54,7 +54,7 @@ func SqlInit(sqlStr string) error {
 		s = strings.TrimSpace(s)
 		if s != "" {
 			if _, err := db.Exec(s); err != nil {
-				logrus.Errorf("sql执行失败 err: %v\n", err)
+				logrus.Errorf("sql执行失败 err: %v", err)
 				return err
 			}
 		}

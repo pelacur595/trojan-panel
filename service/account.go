@@ -214,9 +214,9 @@ func CronScanAccounts() {
 
 	if len(usernames) > 0 {
 		if err = DisableAccount(usernames); err != nil {
-			logrus.Errorf("定时扫描用户任务禁用用户异常 usernames: %s error: %v\n", usernames, err)
+			logrus.Errorf("定时扫描用户任务禁用用户异常 usernames: %s error: %v", usernames, err)
 		}
-		logrus.Infof("定时扫描用户任务禁用用户 usernames: %s\n", usernames)
+		logrus.Infof("定时扫描用户任务禁用用户 usernames: %s", usernames)
 	}
 }
 

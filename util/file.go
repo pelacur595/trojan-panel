@@ -110,21 +110,21 @@ func InitFile() {
 	logPath := constant.LogPath
 	if !Exists(logPath) {
 		if err := os.Mkdir(logPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建logs文件夹异常 err: %v\n", err)
+			logrus.Errorf("创建logs文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
 	webFilePath := constant.WebFilePath
 	if !Exists(webFilePath) {
 		if err := os.Mkdir(webFilePath, os.ModePerm); err != nil {
-			logrus.Errorf("创建webfile文件夹异常 err: %v\n", err)
+			logrus.Errorf("创建webfile文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
 	configPath := constant.ConfigPath
 	if !Exists(configPath) {
 		if err := os.Mkdir(configPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config文件夹异常 err: %v\n", err)
+			logrus.Errorf("创建config文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
@@ -133,7 +133,7 @@ func InitFile() {
 	if !Exists(configFilePath) {
 		file, err := os.Create(configFilePath)
 		if err != nil {
-			logrus.Errorf("创建config.ini文件异常 err: %v\n", err)
+			logrus.Errorf("创建config.ini文件异常 err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
@@ -186,7 +186,7 @@ wait=%s
 `, host, user, password, port, redisHost, redisPort, redisPassword, redisDb,
 			redisMaxIdle, redisMaxIdle, redisWait))
 		if err != nil {
-			logrus.Errorf("config.ini文件写入异常 err: %v\n", err)
+			logrus.Errorf("config.ini文件写入异常 err: %v", err)
 			panic(err)
 		}
 		flag.Usage = usage
@@ -196,7 +196,7 @@ wait=%s
 	if !Exists(rbacModelConfigPath) {
 		file, err := os.Create(rbacModelConfigPath)
 		if err != nil {
-			logrus.Errorf("创建rbac_model.conf文件异常 err: %v\n", err)
+			logrus.Errorf("创建rbac_model.conf文件异常 err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
@@ -218,7 +218,7 @@ e = some(where (p.eft == allow))
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 `)
 		if err != nil {
-			logrus.Errorf("rbac_model.conf文件写入异常 err: %v\n", err)
+			logrus.Errorf("rbac_model.conf文件写入异常 err: %v", err)
 			panic(err)
 		}
 	}

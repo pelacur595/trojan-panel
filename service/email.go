@@ -39,7 +39,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 
 			var state int
 			if err := d.DialAndSend(m); err != nil {
-				logrus.Errorf("email dial and send err: %v\n", err)
+				logrus.Errorf("email dial and send err: %v", err)
 				state = -1
 			}
 			state = 1
@@ -50,7 +50,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 				State:   &state,
 			}
 			if _, err = CreateEmailRecord(emailRecord); err != nil {
-				logrus.Errorf("create email record err: %v\n", err)
+				logrus.Errorf("create email record err: %v", err)
 				return
 			}
 		}

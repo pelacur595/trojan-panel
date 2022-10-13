@@ -28,7 +28,7 @@ func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx contex
 		conn.Close()
 	}
 	if err != nil {
-		logrus.Errorf("gRPC初始化失败 err: %v\n", err)
+		logrus.Errorf("gRPC初始化失败 err: %v", err)
 		err = errors.New(constant.GrpcError)
 	}
 	return
@@ -43,7 +43,7 @@ func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.AddNode(ctx, nodeAddDto)
 	if err != nil {
-		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v\n", ip, err)
+		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -61,7 +61,7 @@ func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.RemoveNode(ctx, nodeRemoveDto)
 	if err != nil {
-		logrus.Errorf("gRPC删除节点异常 ip: %s err: %v\n", ip, err)
+		logrus.Errorf("gRPC删除节点异常 ip: %s err: %v", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -79,7 +79,7 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 	client := NewApiAccountServiceClient(conn)
 	send, err := client.RemoveAccount(ctx, accountRemoveDto)
 	if err != nil {
-		logrus.Errorf("gRPC删除用户异常 ip: %s err: %v\n", ip, err)
+		logrus.Errorf("gRPC删除用户异常 ip: %s err: %v", ip, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
