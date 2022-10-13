@@ -42,11 +42,13 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 
 func CreateAccount(account *module.Account) error {
 	// 密码加密
-	encryPass := util.SHA224String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
+	encryPass := util.Sha1String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
+	hash := util.SHA224String(encryPass)
 
 	accountCreate := map[string]interface{}{
 		"username": *account.Username,
 		"`pass`":   encryPass,
+		"`hash`":   hash,
 	}
 	if account.RoleId != nil {
 		accountCreate["`role_id`"] = *account.RoleId
@@ -195,12 +197,18 @@ func DeleteAccountById(id *uint) error {
 	return nil
 }
 
-func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Account, error) {
+func SelectAccountByUsernameOrPass(username *string, pass *string) (*module.Account, error) {
 	var account module.Account
 
-	encryPass := util.SHA224String(fmt.Sprintf("%s%s", *username, *pass))
-	where := map[string]interface{}{"pass": encryPass}
-	selectFields := []string{"id", "username", "role_id", "deleted"}
+	where := map[string]interface{}{}
+	if username != nil && *username != "" {
+		where["username"] = *username
+	}
+	if pass != nil && *pass != "" {
+		where["pass"] = *pass
+	}
+
+	selectFields := []string{"id", "username", "pass", "role_id", "deleted"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -223,15 +231,17 @@ func SelectAccountByUsernameAndPass(username *string, pass *string) (*module.Acc
 }
 
 func UpdateAccountProfile(oldPass *string, newPass *string, username *string, email *string) error {
-	_, err := SelectAccountByUsernameAndPass(username, oldPass)
-	if err != nil {
+	account, err := SelectAccountByUsernameOrPass(username, nil)
+	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
 		return errors.New(constant.OriPassError)
 	}
 
 	where := map[string]interface{}{"username": *username}
 	update := map[string]interface{}{}
 	if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
-		update["pass"] = util.SHA224String(fmt.Sprintf("%s%s", *username, *newPass))
+		sha1String := util.Sha1String(fmt.Sprintf("%s%s", *username, *newPass))
+		update["pass"] = sha1String
+		update["hash"] = util.SHA224String(sha1String)
 	}
 	if email != nil && *email != "" {
 		update["email"] = *email
@@ -255,7 +265,9 @@ func UpdateAccountById(account *module.Account) error {
 	where := map[string]interface{}{"id": *account.Id}
 	update := map[string]interface{}{}
 	if account.Pass != nil && *account.Pass != "" {
-		update["pass"] = util.SHA224String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
+		sha1String := util.Sha1String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
+		update["pass"] = sha1String
+		update["hash"] = util.SHA224String(sha1String)
 	}
 	if account.RoleId != nil {
 		update["role_id"] = *account.RoleId

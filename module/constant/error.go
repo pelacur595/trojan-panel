@@ -17,7 +17,6 @@ const (
 
 	UsernameExist    string = "用户名已存在"
 	NodeNameExist    string = "节点名称名已存在"
-	PortUsed         string = "端口已经被使用"
 	NodeNotExist     string = "不存在该节点"
 	NodeTypeNotExist string = "不存在该节点类型"
 	RoleNotExist     string = "不存在该角色"
@@ -37,7 +36,7 @@ const (
 
 	GrpcError        string = "远程服务连接失败"
 	GrpcAddNodeError string = "远程服务添加节点异常"
-	LoadKeyPairError string = "加载本机密钥和证书失败"
+	LoadKeyPairError string = "加载本地密钥和证书失败"
 
 	PortIsOccupied string = "端口被占用,请检查该端口或选择其他端口"
 	PortRangeError string = "端口范围在100-30000之间"

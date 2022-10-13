@@ -137,6 +137,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
 		}); err != nil {
+			_ = GrpcRemoveNode(token, *nodeCreateDto.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
 			return err
 		}
 		// 数据插入到数据库中

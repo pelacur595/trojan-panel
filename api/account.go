@@ -1,10 +1,8 @@
 package api
 
 import (
-	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"strings"
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -23,9 +21,13 @@ func Login(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	account, err := service.SelectAccountByUsernameAndPass(accountLoginDto.Username, accountLoginDto.Pass)
+	account, err := service.SelectAccountByUsernameOrPass(accountLoginDto.Username, accountLoginDto.Pass)
 	if err != nil {
 		vo.Fail(err.Error(), c)
+		return
+	}
+	if !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass)) {
+		vo.Fail(constant.UsernameOrPassError, c)
 		return
 	}
 	if *account.Deleted != 0 {
@@ -63,36 +65,6 @@ func Login(c *gin.Context) {
 		return
 	}
 	vo.Fail(constant.UsernameOrPassError, c)
-}
-
-// HysteriaApi hysteria api
-func HysteriaApi(c *gin.Context) {
-	var hysteriaAutoDto dto.HysteriaAutoDto
-	_ = c.ShouldBindJSON(&hysteriaAutoDto)
-	if err := validate.Struct(&hysteriaAutoDto); err != nil {
-		vo.HysteriaApiFail(constant.ValidateFailed, c)
-		return
-	}
-	decodeString, err := base64.StdEncoding.DecodeString(*hysteriaAutoDto.Payload)
-	if err != nil {
-		vo.HysteriaApiFail(constant.ValidateFailed, c)
-		return
-	}
-	usernameAndPass := strings.Split(string(decodeString), "&")
-	account, err := service.SelectAccountByUsernameAndPass(&usernameAndPass[0], &usernameAndPass[1])
-	if err != nil {
-		vo.HysteriaApiFail(err.Error(), c)
-		return
-	}
-	if *account.Deleted != 0 {
-		vo.HysteriaApiFail(constant.AccountDisabled, c)
-		return
-	}
-	if account != nil {
-		vo.HysteriaApiSuccess(*account.Username, c)
-		return
-	}
-	vo.HysteriaApiFail(constant.UsernameOrPassError, c)
 }
 
 // GenerateCaptcha 验证码
