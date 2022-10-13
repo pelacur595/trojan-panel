@@ -21,7 +21,8 @@ func Login(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	account, err := service.SelectAccountByUsernameOrPass(accountLoginDto.Username, accountLoginDto.Pass)
+	pass := util.Sha1String(fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass))
+	account, err := service.SelectAccountByUsernameOrPass(accountLoginDto.Username, &pass)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
