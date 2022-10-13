@@ -77,8 +77,8 @@ func DeleteAccountById(token string, id *uint) error {
 	return nil
 }
 
-func SelectAccountByUsernameOrPass(username *string, pass *string) (*module.Account, error) {
-	return dao.SelectAccountByUsernameOrPass(username, pass)
+func SelectAccountByUsername(username *string) (*module.Account, error) {
+	return dao.SelectAccountByUsername(username)
 }
 
 func UpdateAccountProfile(token string, oldPass *string, newPass *string, username *string, email *string) error {

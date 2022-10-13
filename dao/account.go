@@ -197,16 +197,10 @@ func DeleteAccountById(id *uint) error {
 	return nil
 }
 
-func SelectAccountByUsernameOrPass(username *string, pass *string) (*module.Account, error) {
+func SelectAccountByUsername(username *string) (*module.Account, error) {
 	var account module.Account
 
-	where := map[string]interface{}{}
-	if username != nil && *username != "" {
-		where["username"] = *username
-	}
-	if pass != nil && *pass != "" {
-		where["pass"] = *pass
-	}
+	where := map[string]interface{}{"username": *username}
 
 	selectFields := []string{"id", "username", "pass", "role_id", "deleted"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
@@ -231,7 +225,7 @@ func SelectAccountByUsernameOrPass(username *string, pass *string) (*module.Acco
 }
 
 func UpdateAccountProfile(oldPass *string, newPass *string, username *string, email *string) error {
-	account, err := SelectAccountByUsernameOrPass(username, nil)
+	account, err := SelectAccountByUsername(username)
 	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
 		return errors.New(constant.OriPassError)
 	}
