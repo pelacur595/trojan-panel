@@ -22,7 +22,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	account, err := service.SelectAccountByUsername(accountLoginDto.Username)
-	if err != nil || !util.Sha1Match(*account.Pass, util.Sha1String(fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass))) {
+	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass)) {
 		vo.Fail(err.Error(), c)
 		return
 	}
