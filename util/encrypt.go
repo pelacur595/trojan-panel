@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 )
 
@@ -17,13 +18,11 @@ func Sha1String(plain string) string {
 	buf := make([]byte, saltSize, saltSize+sha1.Size)
 	_, err := io.ReadFull(rand.Reader, buf)
 	if err != nil {
-		fmt.Println("random read failed ->", err)
+		logrus.Errorf("random read failed err: %v\n", err)
 	}
-
 	h := sha1.New()
 	h.Write(buf)
 	h.Write([]byte(plain))
-
 	return base64.URLEncoding.EncodeToString(h.Sum(buf))
 }
 
@@ -31,7 +30,7 @@ func Sha1String(plain string) string {
 func Sha1Match(secret, plain string) bool {
 	data, _ := base64.URLEncoding.DecodeString(secret)
 	if len(data) != saltSize+sha1.Size {
-		fmt.Println("wrong length of data")
+		logrus.Errorf("wrong length of data\n")
 		return false
 	}
 	h := sha1.New()
