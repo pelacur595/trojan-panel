@@ -30,31 +30,31 @@ type NodeOneVo struct {
 	Port       uint      `json:"port"`
 	CreateTime time.Time `json:"createTime"`
 
-	XrayProtocol             *string                   `json:"xrayProtocol"`
-	XraySettings             *string                   `json:"xraySettings"`
-	XrayStreamSettingsEntity *XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`
-	XrayTag                  *string                   `json:"xrayTag"`
-	XraySniffing             *string                   `json:"xraySniffing"`
-	XrayAllocate             *string                   `json:"xrayAllocate"`
-	TrojanGoSni              *string                   `json:"trojanGoSni"`
-	TrojanGoMuxEnable        *uint                     `json:"trojanGoMuxEnable"`
-	TrojanGoWebsocketEnable  *uint                     `json:"trojanGoWebsocketEnable"`
-	TrojanGoWebsocketPath    *string                   `json:"trojanGoWebsocketPath"`
-	TrojanGoWebsocketHost    *string                   `json:"trojanGoWebsocketHost"`
-	TrojanGoSsEnable         *uint                     `json:"trojanGoSsEnable"`
-	TrojanGoSsMethod         *string                   `json:"trojanGoSsMethod"`
-	TrojanGoSsPassword       *string                   `json:"trojanGoSsPassword"`
-	HysteriaProtocol         *string                   `json:"hysteriaProtocol"`
-	HysteriaUpMbps           *int                      `json:"hysteriaUpMbps"`
-	HysteriaDownMbps         *int                      `json:"hysteriaDownMbps"`
+	XrayProtocol             string                   `json:"xrayProtocol"`
+	XraySettings             string                   `json:"xraySettings"`
+	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`
+	XrayTag                  string                   `json:"xrayTag"`
+	XraySniffing             string                   `json:"xraySniffing"`
+	XrayAllocate             string                   `json:"xrayAllocate"`
+	TrojanGoSni              string                   `json:"trojanGoSni"`
+	TrojanGoMuxEnable        uint                     `json:"trojanGoMuxEnable"`
+	TrojanGoWebsocketEnable  uint                     `json:"trojanGoWebsocketEnable"`
+	TrojanGoWebsocketPath    string                   `json:"trojanGoWebsocketPath"`
+	TrojanGoWebsocketHost    string                   `json:"trojanGoWebsocketHost"`
+	TrojanGoSsEnable         uint                     `json:"trojanGoSsEnable"`
+	TrojanGoSsMethod         string                   `json:"trojanGoSsMethod"`
+	TrojanGoSsPassword       string                   `json:"trojanGoSsPassword"`
+	HysteriaProtocol         string                   `json:"hysteriaProtocol"`
+	HysteriaUpMbps           int                      `json:"hysteriaUpMbps"`
+	HysteriaDownMbps         int                      `json:"hysteriaDownMbps"`
 }
 
 type XrayStreamSettingsEntity struct {
-	Network    *string                             `json:"network"`
-	Security   *string                             `json:"security"`
-	WsSettings *XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
+	Network    string                             `json:"network"`
+	Security   string                             `json:"security"`
+	WsSettings XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {
-	Path *string `json:"path"`
+	Path string `json:"path"`
 }

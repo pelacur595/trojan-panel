@@ -40,34 +40,34 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			if err != nil {
 				return nil, err
 			}
-			nodeOneVo.XrayProtocol = nodeXray.Protocol
+			nodeOneVo.XrayProtocol = *nodeXray.Protocol
 			xrayStreamSettingsEntity := vo.XrayStreamSettingsEntity{}
 			if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettingsEntity); err != nil {
 				logrus.Errorln(fmt.Sprintf("StreamSettings JSON反转失败 err: %v", err))
 				return nil, errors.New(constant.SysError)
 			}
-			nodeOneVo.XrayStreamSettingsEntity = &xrayStreamSettingsEntity
+			nodeOneVo.XrayStreamSettingsEntity = xrayStreamSettingsEntity
 		case 2:
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 			if err != nil {
 				return nil, err
 			}
-			nodeOneVo.TrojanGoSni = nodeTrojanGo.Sni
-			nodeOneVo.TrojanGoMuxEnable = nodeTrojanGo.MuxEnable
-			nodeOneVo.TrojanGoWebsocketEnable = nodeTrojanGo.WebsocketEnable
-			nodeOneVo.TrojanGoWebsocketPath = nodeTrojanGo.WebsocketPath
-			nodeOneVo.TrojanGoWebsocketHost = nodeTrojanGo.WebsocketHost
-			nodeOneVo.TrojanGoSsEnable = nodeTrojanGo.SsEnable
-			nodeOneVo.TrojanGoSsMethod = nodeTrojanGo.SsMethod
-			nodeOneVo.TrojanGoSsPassword = nodeTrojanGo.SsPassword
+			nodeOneVo.TrojanGoSni = *nodeTrojanGo.Sni
+			nodeOneVo.TrojanGoMuxEnable = *nodeTrojanGo.MuxEnable
+			nodeOneVo.TrojanGoWebsocketEnable = *nodeTrojanGo.WebsocketEnable
+			nodeOneVo.TrojanGoWebsocketPath = *nodeTrojanGo.WebsocketPath
+			nodeOneVo.TrojanGoWebsocketHost = *nodeTrojanGo.WebsocketHost
+			nodeOneVo.TrojanGoSsEnable = *nodeTrojanGo.SsEnable
+			nodeOneVo.TrojanGoSsMethod = *nodeTrojanGo.SsMethod
+			nodeOneVo.TrojanGoSsPassword = *nodeTrojanGo.SsPassword
 		case 3:
 			nodeHysteria, err := dao.SelectNodeHysteriaById(node.NodeSubId)
 			if err != nil {
 				return nil, err
 			}
-			nodeOneVo.HysteriaProtocol = nodeHysteria.Protocol
-			nodeOneVo.HysteriaUpMbps = nodeHysteria.UpMbps
-			nodeOneVo.HysteriaDownMbps = nodeHysteria.DownMbps
+			nodeOneVo.HysteriaProtocol = *nodeHysteria.Protocol
+			nodeOneVo.HysteriaUpMbps = *nodeHysteria.UpMbps
+			nodeOneVo.HysteriaDownMbps = *nodeHysteria.DownMbps
 		}
 		return &nodeOneVo, nil
 	}
