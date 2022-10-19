@@ -154,7 +154,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			}
 			nodeId, err = dao.CreateNodeXray(&nodeXray)
 			if err != nil {
-				return nil
+				return err
 			}
 		} else if *nodeCreateDto.NodeTypeId == 2 {
 			trojanGo := module.NodeTrojanGo{
@@ -169,7 +169,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			}
 			nodeId, err = dao.CreateNodeTrojanGo(&trojanGo)
 			if err != nil {
-				return nil
+				return err
 			}
 		} else if *nodeCreateDto.NodeTypeId == 3 {
 			hysteria := module.NodeHysteria{
@@ -179,7 +179,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			}
 			nodeId, err = dao.CreateNodeHysteria(&hysteria)
 			if err != nil {
-				return nil
+				return err
 			}
 		}
 
