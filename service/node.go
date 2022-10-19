@@ -280,11 +280,11 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			return err
 		}
 		// Grpc的操作
-		if err = GrpcRemoveNode(token, *nodeUpdateDto.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
+		if err = GrpcRemoveNode(token, *nodeEntity.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
 			return err
 		}
 		if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
-			NodeTypeId: uint64(*nodeEntity.NodeTypeId),
+			NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 			Port:       uint64(*nodeUpdateDto.Port),
 
 			//  Xray
@@ -310,13 +310,15 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 		}); err != nil {
-			_ = GrpcRemoveNode(token, *nodeUpdateDto.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId)
+			_ = GrpcRemoveNode(token, *nodeEntity.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId)
 			return err
 		}
+
 		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
+			// 没有修改节点类型的情况
 			if *nodeEntity.NodeTypeId == 1 {
 				nodeXray := module.NodeXray{
-					Id:             nodeUpdateDto.NodeSubId,
+					Id:             nodeEntity.NodeSubId,
 					Protocol:       nodeUpdateDto.XrayProtocol,
 					Settings:       nodeUpdateDto.XraySettings,
 					StreamSettings: nodeUpdateDto.XrayStreamSettings,
@@ -329,7 +331,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				}
 			} else if *nodeEntity.NodeTypeId == 2 {
 				nodeTrojanGo := module.NodeTrojanGo{
-					Id:              nodeUpdateDto.NodeSubId,
+					Id:              nodeEntity.NodeSubId,
 					Sni:             nodeUpdateDto.TrojanGoSni,
 					MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
 					WebsocketEnable: nodeUpdateDto.TrojanGoWebsocketEnable,
@@ -343,7 +345,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				}
 			} else if *nodeEntity.NodeTypeId == 3 {
 				nodeHysteria := module.NodeHysteria{
-					Id:       nodeUpdateDto.NodeSubId,
+					Id:       nodeEntity.NodeSubId,
 					Protocol: nodeUpdateDto.HysteriaProtocol,
 					UpMbps:   nodeUpdateDto.HysteriaUpMbps,
 					DownMbps: nodeUpdateDto.HysteriaDownMbps,
@@ -366,7 +368,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				}
 			}
 		} else {
-			// 修改了节点类型需要删除分库的数据，然后重新再插入
+			// 修改了节点类型的情况 需要删除分库的数据，然后重新再插入
 			if *nodeEntity.NodeTypeId == 1 {
 				if err = dao.DeleteNodeXrayById(nodeEntity.NodeSubId); err != nil {
 					return err
