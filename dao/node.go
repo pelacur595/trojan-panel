@@ -127,6 +127,12 @@ func DeleteNodeById(id *uint) error {
 func UpdateNodeById(node *module.Node) error {
 	where := map[string]interface{}{"id": *node.Id}
 	update := map[string]interface{}{}
+	if node.NodeSubId != nil {
+		update["node_sub_id"] = *node.NodeSubId
+	}
+	if node.NodeTypeId != nil {
+		update["node_type_id"] = *node.NodeTypeId
+	}
 	if node.Name != nil {
 		update["name"] = *node.Name
 	}
@@ -152,7 +158,7 @@ func UpdateNodeById(node *module.Node) error {
 }
 
 func CountNode() (int, error) {
-	return CountNodeByName(nil)
+	return CountNodeByName(nil, nil)
 }
 
 func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
@@ -180,10 +186,13 @@ func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
 	return count, nil
 }
 
-func CountNodeByName(queryName *string) (int, error) {
+func CountNodeByName(id *uint, queryName *string) (int, error) {
 	var count int
 
 	var whereCount = map[string]interface{}{}
+	if id != nil {
+		whereCount["id <>"] = *id
+	}
 	if queryName != nil {
 		whereCount["name"] = *queryName
 	}
