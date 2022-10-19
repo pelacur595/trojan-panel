@@ -233,6 +233,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 	return &nodePageVo, nil
 }
 
+// DeleteNodeById 删除远程节点 删除分表 删除主表
 func DeleteNodeById(token string, id *uint) error {
 	var mutex sync.Mutex
 	defer mutex.TryLock()
@@ -242,9 +243,6 @@ func DeleteNodeById(token string, id *uint) error {
 			return err
 		}
 		if err = GrpcRemoveNode(token, *node.Ip, *node.Port, *node.NodeTypeId); err != nil {
-			return err
-		}
-		if err = dao.DeleteNodeById(id); err != nil {
 			return err
 		}
 		if *node.NodeTypeId == 1 {
@@ -259,6 +257,9 @@ func DeleteNodeById(token string, id *uint) error {
 			if err := dao.DeleteNodeHysteriaById(node.NodeSubId); err != nil {
 				return err
 			}
+		}
+		if err = dao.DeleteNodeById(id); err != nil {
+			return err
 		}
 	}
 	return nil
