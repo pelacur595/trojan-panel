@@ -242,9 +242,7 @@ func DeleteNodeById(token string, id *uint) error {
 		if err != nil {
 			return err
 		}
-		if err = GrpcRemoveNode(token, *node.Ip, *node.Port, *node.NodeTypeId); err != nil {
-			return err
-		}
+		_ = GrpcRemoveNode(token, *node.Ip, *node.Port, *node.NodeTypeId)
 		if *node.NodeTypeId == 1 {
 			if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
 				return err
