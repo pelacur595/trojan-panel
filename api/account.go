@@ -3,10 +3,12 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/yaml.v3"
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
 	"trojan-panel/module"
+	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
@@ -230,30 +232,75 @@ func UpdateAccountById(c *gin.Context) {
 //ClashSubscribe Clash for windows 参考文档：
 //1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
 //2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
-//func ClashSubscribe(c *gin.Context) {
-//	passwordHeader := c.GetHeader("password")
-//	accountVo := util.GetCurrentAccount(c)
-//	if accountVo != nil && accountVo.Username != "" {
-//		account, nodeOneVos, err := service.ClashSubscribe(accountVo.Username)
-//		if err != nil {
-//			vo.Fail(err.Error(), c)
-//			return
-//		}
-//		if passwordHeader != *account.Pass {
-//			vo.Fail(constant.IllegalTokenError, c)
-//			return
-//		}
-//		userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
-//			*account.Upload,
-//			*account.Download,
-//			*account.Quota,
-//			*account.ExpireTime/1000)
-//
-//		c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
-//		c.Header("profile-update-interval", "12")
-//		c.Header("subscription-userinfo", userInfo)
-//		c.String(200, result)
-//		return
-//	}
-//	vo.Fail(constant.IllegalTokenError, c)
-//}
+func ClashSubscribe(c *gin.Context) {
+	passwordHeader := c.GetHeader("password")
+	accountVo := util.GetCurrentAccount(c)
+	if accountVo != nil && accountVo.Username != "" {
+		account, nodeOneVos, err := service.ClashSubscribe(accountVo.Username)
+		if err != nil {
+			vo.Fail(err.Error(), c)
+			return
+		}
+		if passwordHeader != *account.Pass {
+			vo.Fail(constant.IllegalTokenError, c)
+			return
+		}
+		userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
+			*account.Upload,
+			*account.Download,
+			*account.Quota,
+			*account.ExpireTime/1000)
+
+		clashConfig := bo.ClashConfig{}
+		var ClashConfigInterface []interface{}
+		var proxies []string
+		for _, item := range nodeOneVos {
+			if item.NodeTypeId == 1 {
+				nodeXray, err := service.SelectNodeXrayById(&item.NodeTypeId)
+				if err != nil {
+					vo.Fail(err.Error(), c)
+					return
+				}
+				if *nodeXray.Protocol == "vless" {
+					vless := bo.Vless{}
+					ClashConfigInterface = append(ClashConfigInterface, vless)
+				} else if *nodeXray.Protocol == "vmess" {
+					vmess := bo.Vmess{}
+					ClashConfigInterface = append(ClashConfigInterface, vmess)
+				} else if *nodeXray.Protocol == "trojan" {
+					trojan := bo.Trojan{}
+					ClashConfigInterface = append(ClashConfigInterface, trojan)
+				}
+
+			} else if item.NodeTypeId == 2 {
+				trojanGo := bo.TrojanGo{}
+				ClashConfigInterface = append(ClashConfigInterface, trojanGo)
+			} else if item.NodeTypeId == 3 {
+				hysteria := bo.Hysteria{}
+				ClashConfigInterface = append(ClashConfigInterface, hysteria)
+			}
+			proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
+		}
+		clashConfig.ProxyGroups.Name = "PROXY"
+		clashConfig.ProxyGroups.ProxyType = "select"
+		clashConfig.ProxyGroups.Proxies = proxies
+		clashConfig.Proxies = ClashConfigInterface
+
+		clashConfigYaml, err := yaml.Marshal(&clashConfig)
+		if err != nil {
+			vo.Fail(constant.SysError, c)
+			return
+		}
+
+		result := fmt.Sprintf(`%s
+
+%s`, string(clashConfigYaml), constant.ClashRules)
+
+		c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
+		c.Header("profile-update-interval", "12")
+		c.Header("subscription-userinfo", userInfo)
+		c.String(200, result)
+		return
+	}
+	vo.Fail(constant.IllegalTokenError, c)
+}
