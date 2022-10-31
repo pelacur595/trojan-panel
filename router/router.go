@@ -45,6 +45,8 @@ func Router(router *gin.Engine) {
 			account.POST("/updateAccountProfile", api.UpdateAccountProfile)
 			// 修改账户
 			account.POST("/updateAccountById", api.UpdateAccountById)
+			// Clash订阅
+			account.GET("/clashSubscribe", api.ClashSubscribe)
 		}
 		role := trojan.Group("/role")
 		{
