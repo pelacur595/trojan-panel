@@ -12,6 +12,7 @@ import (
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
+	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
@@ -453,6 +454,10 @@ func NodeQRCode(accountId *uint, id *uint) ([]byte, error) {
 	return qrCode, nil
 }
 
+// NodeURL
+// xray: https://github.com/XTLS/Xray-core/issues/91
+// trojan-go: https://p4gefau1t.github.io/trojan-go/developer/url/
+// hysteria:https://github.com/HyNetwork/hysteria/wiki/URI-Scheme
 func NodeURL(accountId *uint, id *uint) (string, error) {
 
 	node, err := dao.SelectNodeById(id)
@@ -474,7 +479,42 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 	var headBuilder strings.Builder
 
 	if *nodeType.Name == constant.XrayName {
-		// todo
+		nodeXray, err := dao.SelectNodeXrayById(node.NodeSubId)
+		if err != nil {
+			return "", errors.New(constant.NodeURLError)
+		}
+		streamSettings := bo.StreamSettings{}
+		if err := json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+			return "", errors.New(constant.NodeURLError)
+		}
+		settings := bo.Settings{}
+		if err := json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+			return "", errors.New(constant.NodeURLError)
+		}
+		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
+			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
+				url.PathEscape(util.GenerateUUID(password)),
+				*node.Ip, *node.Port, streamSettings.Network, streamSettings.Security))
+
+			if *nodeXray.Protocol == "vmess" && settings.Encryption == "none" {
+				headBuilder.WriteString("&encryption=none")
+			}
+			if streamSettings.Network == "ws" {
+				if streamSettings.WsSettings.Path != "" {
+					headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
+				}
+				if streamSettings.WsSettings.Host != "" {
+					headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
+				}
+			}
+			if streamSettings.Security != "xlts" {
+				headBuilder.WriteString("&flow=xtls-rprx-direct")
+			}
+		}
+		if *nodeXray.Protocol == "trojan" {
+			headBuilder.WriteString(fmt.Sprintf("trojan://%s@%s:%d?", url.PathEscape(password),
+				*node.Ip, *node.Port))
+		}
 	} else if *nodeType.Name == constant.TrojanGoName {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 		if err != nil {
