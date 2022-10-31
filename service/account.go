@@ -25,16 +25,16 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 	}
 	toByte := util.ToByte(*accountCreateDto.Quota)
 	account := module.Account{
-		Username:           accountCreateDto.Username,
-		Pass:               accountCreateDto.Pass,
-		RoleId:             accountCreateDto.RoleId,
-		Email:              accountCreateDto.Email,
-		ExpireTime:         accountCreateDto.ExpireTime,
-		Deleted:            accountCreateDto.Deleted,
-		Quota:              &toByte,
-		IpLimit:            accountCreateDto.IpLimit,
-		DownloadSpeedLimit: accountCreateDto.DownloadSpeedLimit,
-		UploadSpeedLimit:   accountCreateDto.UploadSpeedLimit,
+		Username:   accountCreateDto.Username,
+		Pass:       accountCreateDto.Pass,
+		RoleId:     accountCreateDto.RoleId,
+		Email:      accountCreateDto.Email,
+		ExpireTime: accountCreateDto.ExpireTime,
+		Deleted:    accountCreateDto.Deleted,
+		Quota:      &toByte,
+		//IpLimit:            accountCreateDto.IpLimit,
+		//DownloadSpeedLimit: accountCreateDto.DownloadSpeedLimit,
+		//UploadSpeedLimit:   accountCreateDto.UploadSpeedLimit,
 	}
 	if err = dao.CreateAccount(&account); err != nil {
 		return err

@@ -17,30 +17,30 @@ type AccountUpdateProfileDto struct {
 }
 
 type AccountCreateDto struct {
-	Username           *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
-	Pass               *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
-	RoleId             *uint   `json:"roleId" form:"roleId" validate:"required,oneof=2 3"`
-	Email              *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
-	ExpireTime         *uint   `json:"expireTime" form:"expireTime" validate:"required"`
-	Deleted            *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
-	Quota              *int    `json:"quota" form:"quota" validate:"required,gte=-1,lte=1024000"`
-	IpLimit            *uint   `json:"ipLimit" form:"ipLimit" validate:"required,gt=0"`
-	UploadSpeedLimit   *uint   `json:"uploadSpeedLimit" form:"uploadSpeedLimit" validate:"required"`
-	DownloadSpeedLimit *uint   `json:"downloadSpeedLimit" form:"downloadSpeedLimit" validate:"required"`
+	Username   *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
+	Pass       *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
+	RoleId     *uint   `json:"roleId" form:"roleId" validate:"required,oneof=2 3"`
+	Email      *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
+	ExpireTime *uint   `json:"expireTime" form:"expireTime" validate:"required"`
+	Deleted    *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
+	Quota      *int    `json:"quota" form:"quota" validate:"required,gte=-1,lte=1024000"`
+	//IpLimit            *uint   `json:"ipLimit" form:"ipLimit" validate:"required,gt=0"`
+	//UploadSpeedLimit   *uint   `json:"uploadSpeedLimit" form:"uploadSpeedLimit" validate:"required"`
+	//DownloadSpeedLimit *uint   `json:"downloadSpeedLimit" form:"downloadSpeedLimit" validate:"required"`
 }
 
 type AccountUpdateDto struct {
 	RequiredIdDto
-	Quota              *int    `json:"quota" form:"quota" validate:"required,gte=-1,lte=1024000"`
-	Username           *string `json:"username" form:"username" validate:"required,min=0,max=20,validateStr"`
-	Pass               *string `json:"pass" form:"pass" validate:"omitempty,min=6,max=20,validateStr"`
-	RoleId             *uint   `json:"roleId" form:"roleId" validate:"required,oneof=1 2 3"`
-	Deleted            *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
-	ExpireTime         *uint   `json:"expireTime" form:"expireTime" validate:"required,gte=0"`
-	Email              *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
-	IpLimit            *uint   `json:"ipLimit" form:"ipLimit" validate:"required,gt=0"`
-	UploadSpeedLimit   *uint   `json:"uploadSpeedLimit" form:"uploadSpeedLimit" validate:"required"`
-	DownloadSpeedLimit *uint   `json:"downloadSpeedLimit" form:"downloadSpeedLimit" validate:"required"`
+	Quota      *int    `json:"quota" form:"quota" validate:"required,gte=-1,lte=1024000"`
+	Username   *string `json:"username" form:"username" validate:"required,min=0,max=20,validateStr"`
+	Pass       *string `json:"pass" form:"pass" validate:"omitempty,min=6,max=20,validateStr"`
+	RoleId     *uint   `json:"roleId" form:"roleId" validate:"required,oneof=1 2 3"`
+	Deleted    *uint   `json:"deleted" form:"deleted" validate:"required,oneof=0 1"`
+	ExpireTime *uint   `json:"expireTime" form:"expireTime" validate:"required,gte=0"`
+	Email      *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
+	//IpLimit            *uint   `json:"ipLimit" form:"ipLimit" validate:"required,gt=0"`
+	//UploadSpeedLimit   *uint   `json:"uploadSpeedLimit" form:"uploadSpeedLimit" validate:"required"`
+	//DownloadSpeedLimit *uint   `json:"downloadSpeedLimit" form:"downloadSpeedLimit" validate:"required"`
 }
 
 type AccountLoginDto struct {
