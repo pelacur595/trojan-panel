@@ -12,7 +12,6 @@ const (
 
 	OriPassError        string = "原密码输入错误"
 	UsernameOrPassError string = "用户名或密码错误"
-	NodeQRCodeError     string = "二维码生成失败"
 	NodeURLError        string = "URL生成失败"
 
 	UsernameExist    string = "用户名已存在"

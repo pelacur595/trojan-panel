@@ -16,6 +16,8 @@ func Router(router *gin.Engine) {
 		trojanAuth.POST("/register", api.Register)
 		// 系统默认设置
 		trojanAuth.GET("/setting", api.Setting)
+		// Clash订阅
+		trojanAuth.GET("/clash/:token", api.Clash)
 	}
 	router.Use(middleware.JWTHandler(), middleware.CasbinHandler())
 	trojan := router.Group("/api")
@@ -45,7 +47,7 @@ func Router(router *gin.Engine) {
 			account.POST("/updateAccountProfile", api.UpdateAccountProfile)
 			// 修改账户
 			account.POST("/updateAccountById", api.UpdateAccountById)
-			// Clash订阅
+			// 获取Clash订阅地址
 			account.GET("/clashSubscribe", api.ClashSubscribe)
 		}
 		role := trojan.Group("/role")

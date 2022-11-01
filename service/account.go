@@ -255,8 +255,8 @@ func CronScanAccountExpireWarn() {
 }
 
 // ClashSubscribe 导出Clash配置
-func ClashSubscribe(username string) (*module.Account, []vo.NodeOneVo, error) {
-	account, err := dao.SelectAccountClashSubscribe(username)
+func ClashSubscribe(pass string) (*module.Account, []vo.NodeOneVo, error) {
+	account, err := dao.SelectAccountClashSubscribe(pass)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -284,4 +284,8 @@ func RemoveAccount(token string, password string) error {
 		_ = core.RemoveAccount(ip, token, &removeDto)
 	}
 	return nil
+}
+
+func SelectConnectPassword(id *uint, username *string) (string, error) {
+	return dao.SelectConnectPassword(id, username)
 }

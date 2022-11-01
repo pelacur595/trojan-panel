@@ -335,7 +335,7 @@ func SelectConnectPassword(id *uint, username *string) (string, error) {
 		}
 
 		if account.Username == nil || *account.Username == "" || account.Pass == nil || *account.Pass == "" {
-			return "", errors.New(constant.NodeQRCodeError)
+			return "", errors.New(constant.SysError)
 		}
 		return *account.Pass, nil
 	}
@@ -465,10 +465,10 @@ func UpdateAccountQuota() error {
 	return nil
 }
 
-func SelectAccountClashSubscribe(username string) (*module.Account, error) {
+func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
 	var account module.Account
 
-	where := map[string]interface{}{"username": username}
+	where := map[string]interface{}{"pass": pass}
 	selectFields := []string{"id", "username", "pass", "expire_time", "quota", "download", "upload"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {

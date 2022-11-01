@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -231,118 +232,127 @@ func UpdateAccountById(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
-//ClashSubscribe Clash for windows 参考文档：
-//1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
-//2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
 func ClashSubscribe(c *gin.Context) {
-	passwordHeader := c.GetHeader("password")
 	accountVo := util.GetCurrentAccount(c)
-	if accountVo != nil && accountVo.Username != "" {
-		account, nodeOneVos, err := service.ClashSubscribe(accountVo.Username)
-		if err != nil {
-			vo.Fail(err.Error(), c)
-			return
-		}
-		if passwordHeader != *account.Pass {
-			vo.Fail(constant.IllegalTokenError, c)
-			return
-		}
-		userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
-			*account.Upload,
-			*account.Download,
-			*account.Quota,
-			*account.ExpireTime/1000)
+	password, err := service.SelectConnectPassword(&accountVo.Id, &accountVo.Username)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(fmt.Sprintf("/api/auth/clash/%s", base64.StdEncoding.EncodeToString([]byte(password))), c)
+}
 
-		clashConfig := bo.ClashConfig{}
-		var ClashConfigInterface []interface{}
-		var proxies []string
-		for _, item := range nodeOneVos {
-			if item.NodeTypeId == 1 {
-				nodeXray, err := service.SelectNodeXrayById(&item.NodeSubId)
-				if err != nil {
-					vo.Fail(err.Error(), c)
-					return
-				}
-				if *nodeXray.Protocol == "vmess" {
-					streamSettings := bo.StreamSettings{}
-					if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
-						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-						vo.Fail(constant.SysError, c)
-						return
-					}
-					settings := bo.Settings{}
-					if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
-						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-						vo.Fail(constant.SysError, c)
-						return
-					}
-					vmess := bo.Vmess{}
-					vmess.Name = item.Name
-					vmess.Server = item.Ip
-					vmess.Port = item.Port
-					vmess.VmessType = "vmess"
-					vmess.Uuid = util.GenerateUUID(passwordHeader)
-					vmess.AlterId = 0
-					vmess.Cipher = settings.Encryption
-					vmess.Udp = true
-					vmess.Network = streamSettings.Network
-					if streamSettings.Security == "tls" {
-						vmess.Tls = "tls"
-					}
-					if streamSettings.Network == "ws" {
-						vmess.WsOpts.Path = streamSettings.WsSettings.Path
-						vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
-					}
-					ClashConfigInterface = append(ClashConfigInterface, vmess)
-				} else if *nodeXray.Protocol == "trojan" {
-					trojan := bo.Trojan{}
-					trojan.Name = item.Name
-					trojan.Server = item.Ip
-					trojan.Port = item.Port
-					trojan.TrojanType = "trojan"
-					trojan.Password = passwordHeader
-					trojan.Udp = true
-					ClashConfigInterface = append(ClashConfigInterface, trojan)
-				}
+// Clash
+// Clash for windows 参考文档：
+// 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
+// 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+func Clash(c *gin.Context) {
+	token := c.Query("token")
+	tokenDecode, err := base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	pass := string(tokenDecode)
+	account, nodeOneVos, err := service.ClashSubscribe(pass)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
+		*account.Upload,
+		*account.Download,
+		*account.Quota,
+		*account.ExpireTime/1000)
 
-			} else if item.NodeTypeId == 2 {
-				nodeXrayTrojanGo, err := service.SelectNodeTrojanGoById(&item.NodeSubId)
-				if err != nil {
-					vo.Fail(err.Error(), c)
-					return
-				}
-				trojanGo := bo.TrojanGo{}
-				trojanGo.Name = item.Name
-				trojanGo.Server = item.Ip
-				trojanGo.Port = item.Port
-				trojanGo.TrojanType = "trojan"
-				trojanGo.Password = passwordHeader
-				trojanGo.SNI = *nodeXrayTrojanGo.Sni
-				trojanGo.Udp = true
-				ClashConfigInterface = append(ClashConfigInterface, trojanGo)
+	clashConfig := bo.ClashConfig{}
+	var ClashConfigInterface []interface{}
+	var proxies []string
+	for _, item := range nodeOneVos {
+		if item.NodeTypeId == 1 {
+			nodeXray, err := service.SelectNodeXrayById(&item.NodeSubId)
+			if err != nil {
+				vo.Fail(err.Error(), c)
+				return
 			}
-			proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
-		}
-		clashConfig.ProxyGroups.Name = "PROXY"
-		clashConfig.ProxyGroups.ProxyType = "select"
-		clashConfig.ProxyGroups.Proxies = proxies
-		clashConfig.Proxies = ClashConfigInterface
+			if *nodeXray.Protocol == "vmess" {
+				streamSettings := bo.StreamSettings{}
+				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					vo.Fail(constant.SysError, c)
+					return
+				}
+				settings := bo.Settings{}
+				if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					vo.Fail(constant.SysError, c)
+					return
+				}
+				vmess := bo.Vmess{}
+				vmess.Name = item.Name
+				vmess.Server = item.Ip
+				vmess.Port = item.Port
+				vmess.VmessType = "vmess"
+				vmess.Uuid = util.GenerateUUID(pass)
+				vmess.AlterId = 0
+				vmess.Cipher = settings.Encryption
+				vmess.Udp = true
+				vmess.Network = streamSettings.Network
+				if streamSettings.Security == "tls" {
+					vmess.Tls = "tls"
+				}
+				if streamSettings.Network == "ws" {
+					vmess.WsOpts.Path = streamSettings.WsSettings.Path
+					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				}
+				ClashConfigInterface = append(ClashConfigInterface, vmess)
+			} else if *nodeXray.Protocol == "trojan" {
+				trojan := bo.Trojan{}
+				trojan.Name = item.Name
+				trojan.Server = item.Ip
+				trojan.Port = item.Port
+				trojan.TrojanType = "trojan"
+				trojan.Password = pass
+				trojan.Udp = true
+				ClashConfigInterface = append(ClashConfigInterface, trojan)
+			}
 
-		clashConfigYaml, err := yaml.Marshal(&clashConfig)
-		if err != nil {
-			vo.Fail(constant.SysError, c)
-			return
+		} else if item.NodeTypeId == 2 {
+			nodeXrayTrojanGo, err := service.SelectNodeTrojanGoById(&item.NodeSubId)
+			if err != nil {
+				vo.Fail(err.Error(), c)
+				return
+			}
+			trojanGo := bo.TrojanGo{}
+			trojanGo.Name = item.Name
+			trojanGo.Server = item.Ip
+			trojanGo.Port = item.Port
+			trojanGo.TrojanType = "trojan"
+			trojanGo.Password = pass
+			trojanGo.SNI = *nodeXrayTrojanGo.Sni
+			trojanGo.Udp = true
+			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 		}
+		proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
+	}
+	clashConfig.ProxyGroups.Name = "PROXY"
+	clashConfig.ProxyGroups.ProxyType = "select"
+	clashConfig.ProxyGroups.Proxies = proxies
+	clashConfig.Proxies = ClashConfigInterface
 
-		result := fmt.Sprintf(`%s
+	clashConfigYaml, err := yaml.Marshal(&clashConfig)
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+
+	result := fmt.Sprintf(`%s
 
 %s`, string(clashConfigYaml), constant.ClashRules)
 
-		c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
-		c.Header("profile-update-interval", "12")
-		c.Header("subscription-userinfo", userInfo)
-		c.String(200, result)
-		return
-	}
-	vo.Fail(constant.IllegalTokenError, c)
+	c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
+	c.Header("profile-update-interval", "12")
+	c.Header("subscription-userinfo", userInfo)
+	c.String(200, result)
+	return
 }
