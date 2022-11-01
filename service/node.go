@@ -144,7 +144,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			go func() {
 				for {
 					select {
-					case <-time.After(10 * time.Second):
+					case <-time.After(8 * time.Second):
 						_ = GrpcRemoveNode(token, *nodeCreateDto.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
 						return
 					}
