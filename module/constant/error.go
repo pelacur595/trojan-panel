@@ -31,11 +31,11 @@ const (
 
 	SystemEmailError string = "系统邮箱未设置"
 
-	BlackListError   string = "由于您近期异常请求过于频繁,已限制访问,如需取消限制,请联系管理员"
+	BlackListError   string = "由于您近期异常操作过于频繁,已限制访问,如需取消限制,请联系管理员"
 	RateLimiterError string = "点的太快啦"
 
-	GrpcError        string = "远程服务连接失败"
-	GrpcAddNodeError string = "远程服务添加节点异常"
+	GrpcError        string = "远程服务连接失败,请检查远程服务配置"
+	GrpcAddNodeError string = "远程服务添加节点失败,请稍后再试"
 	LoadKeyPairError string = "加载本地密钥和证书失败"
 
 	PortIsOccupied string = "端口被占用,请检查该端口或选择其他端口"
