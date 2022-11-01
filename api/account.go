@@ -247,7 +247,7 @@ func ClashSubscribe(c *gin.Context) {
 // 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
 // 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
 func Clash(c *gin.Context) {
-	token := c.Query("token")
+	token := c.Param("token")
 	tokenDecode, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
 		vo.Fail(constant.SysError, c)
