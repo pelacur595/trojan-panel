@@ -347,7 +347,6 @@ func Clash(c *gin.Context) {
 	}
 
 	result := fmt.Sprintf(`%s
-
 %s`, string(clashConfigYaml), constant.ClashRules)
 
 	c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
