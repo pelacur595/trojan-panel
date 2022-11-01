@@ -34,6 +34,6 @@ type AccountInfo struct {
 }
 
 type AccountTrafficRankVo struct {
-	Username    string `json:"username"`
-	TrafficUsed string `json:"trafficUsed"`
+	Username    string `json:"username" ddb:"username"`
+	TrafficUsed string `json:"trafficUsed" ddb:"trafficUsed"`
 }
