@@ -1,8 +1,10 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"time"
 	"trojan-panel/dao"
@@ -256,28 +258,68 @@ func ClashSubscribe(c *gin.Context) {
 		var proxies []string
 		for _, item := range nodeOneVos {
 			if item.NodeTypeId == 1 {
-				nodeXray, err := service.SelectNodeXrayById(&item.NodeTypeId)
+				nodeXray, err := service.SelectNodeXrayById(&item.NodeSubId)
 				if err != nil {
 					vo.Fail(err.Error(), c)
 					return
 				}
-				if *nodeXray.Protocol == "vless" {
-					vless := bo.Vless{}
-					ClashConfigInterface = append(ClashConfigInterface, vless)
-				} else if *nodeXray.Protocol == "vmess" {
+				if *nodeXray.Protocol == "vmess" {
+					streamSettings := bo.StreamSettings{}
+					if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+						vo.Fail(constant.SysError, c)
+						return
+					}
+					settings := bo.Settings{}
+					if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+						vo.Fail(constant.SysError, c)
+						return
+					}
 					vmess := bo.Vmess{}
+					vmess.Name = item.Name
+					vmess.Server = item.Ip
+					vmess.Port = item.Port
+					vmess.VmessType = "vmess"
+					vmess.Uuid = util.GenerateUUID(passwordHeader)
+					vmess.AlterId = 0
+					vmess.Cipher = settings.Encryption
+					vmess.Udp = true
+					vmess.Network = streamSettings.Network
+					if streamSettings.Security == "tls" {
+						vmess.Tls = "tls"
+					}
+					if streamSettings.Network == "ws" {
+						vmess.WsOpts.Path = streamSettings.WsSettings.Path
+						vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+					}
 					ClashConfigInterface = append(ClashConfigInterface, vmess)
 				} else if *nodeXray.Protocol == "trojan" {
 					trojan := bo.Trojan{}
+					trojan.Name = item.Name
+					trojan.Server = item.Ip
+					trojan.Port = item.Port
+					trojan.TrojanType = "trojan"
+					trojan.Password = passwordHeader
+					trojan.Udp = true
 					ClashConfigInterface = append(ClashConfigInterface, trojan)
 				}
 
 			} else if item.NodeTypeId == 2 {
+				nodeXrayTrojanGo, err := service.SelectNodeTrojanGoById(&item.NodeSubId)
+				if err != nil {
+					vo.Fail(err.Error(), c)
+					return
+				}
 				trojanGo := bo.TrojanGo{}
+				trojanGo.Name = item.Name
+				trojanGo.Server = item.Ip
+				trojanGo.Port = item.Port
+				trojanGo.TrojanType = "trojan"
+				trojanGo.Password = passwordHeader
+				trojanGo.SNI = *nodeXrayTrojanGo.Sni
+				trojanGo.Udp = true
 				ClashConfigInterface = append(ClashConfigInterface, trojanGo)
-			} else if item.NodeTypeId == 3 {
-				hysteria := bo.Hysteria{}
-				ClashConfigInterface = append(ClashConfigInterface, hysteria)
 			}
 			proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
 		}
