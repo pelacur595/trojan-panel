@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
@@ -140,7 +141,16 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
 		}); err != nil {
-			_ = GrpcRemoveNode(token, *nodeCreateDto.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+			go func() {
+				for {
+					select {
+					case <-time.After(15 * time.Second):
+						_ = GrpcRemoveNode(token, *nodeCreateDto.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+						return
+					}
+				}
+			}()
+
 			return err
 		}
 		// 数据插入到数据库中
