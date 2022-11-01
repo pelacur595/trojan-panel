@@ -22,7 +22,7 @@ func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx contex
 	}
 	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, 8100),
 		opts...)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	clo = func() {
 		cancel()
 		conn.Close()
