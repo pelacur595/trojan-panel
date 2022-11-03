@@ -502,7 +502,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			return "", errors.New(constant.NodeURLError)
 		}
 		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
-			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
+			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?alterId=0&type=%s&security=%s", *nodeXray.Protocol,
 				url.PathEscape(util.GenerateUUID(password)),
 				*node.Ip, *node.Port, streamSettings.Network, streamSettings.Security))
 
