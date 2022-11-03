@@ -27,7 +27,6 @@ type Trojan struct {
 	Port       uint   `yaml:"port"`
 	TrojanType string `yaml:"type"`
 	Password   string `yaml:"password"`
-	SNI        string `yaml:"sni"`
 	Udp        bool   `yaml:"udp"`
 	Network    string `yaml:"network"`
 	WsOpts     WsOpts `yaml:"ws-opts"`

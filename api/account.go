@@ -246,6 +246,7 @@ func ClashSubscribe(c *gin.Context) {
 // Clash for windows 参考文档：
 // 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
 // 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+// 3. https://github.com/Dreamacro/clash/wiki/Configuration
 func Clash(c *gin.Context) {
 	token := c.Param("token")
 	tokenDecode, err := base64.StdEncoding.DecodeString(token)
@@ -275,23 +276,24 @@ func Clash(c *gin.Context) {
 				vo.Fail(err.Error(), c)
 				return
 			}
+
+			streamSettings := bo.StreamSettings{}
+			if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					vo.Fail(constant.SysError, c)
+					return
+				}
+			}
+			settings := bo.Settings{}
+			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+				if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					vo.Fail(constant.SysError, c)
+					return
+				}
+			}
 			if *nodeXray.Protocol == "vmess" {
-				streamSettings := bo.StreamSettings{}
-				if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
-					if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
-						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-						vo.Fail(constant.SysError, c)
-						return
-					}
-				}
-				settings := bo.Settings{}
-				if nodeXray.Settings != nil && *nodeXray.Settings != "" {
-					if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
-						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-						vo.Fail(constant.SysError, c)
-						return
-					}
-				}
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
 				vmess.Server = item.Ip
@@ -325,6 +327,11 @@ func Clash(c *gin.Context) {
 				trojan.TrojanType = "trojan"
 				trojan.Password = pass
 				trojan.Udp = true
+				trojan.Network = streamSettings.Network
+				if streamSettings.Network == "ws" {
+					trojan.WsOpts.Path = streamSettings.WsSettings.Path
+					trojan.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				}
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
 				proxies = append(proxies, item.Name)
 			}

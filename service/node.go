@@ -506,31 +506,30 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			}
 		}
 
+		connectPass := password
 		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
-			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?alterId=0&type=%s&security=%s", *nodeXray.Protocol,
-				url.PathEscape(util.GenerateUUID(password)),
-				*node.Ip, *node.Port, streamSettings.Network, streamSettings.Security))
-
-			if *nodeXray.Protocol == "vmess" && settings.Encryption != "none" {
-				headBuilder.WriteString("&encryption=auto")
-			} else {
+			connectPass = util.GenerateUUID(password)
+		}
+		headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
+			url.PathEscape(connectPass), *node.Ip, *node.Port,
+			streamSettings.Network, streamSettings.Security))
+		if *nodeXray.Protocol == "vmess" {
+			headBuilder.WriteString("&alterId=0")
+			if settings.Encryption == "none" {
 				headBuilder.WriteString("&encryption=none")
 			}
-			if streamSettings.Network == "ws" {
-				if streamSettings.WsSettings.Path != "" {
-					headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
-				}
-				if streamSettings.WsSettings.Host != "" {
-					headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
-				}
-			}
-			if streamSettings.Security != "xlts" {
-				headBuilder.WriteString("&flow=xtls-rprx-direct")
-			}
 		}
-		if *nodeXray.Protocol == "trojan" {
-			headBuilder.WriteString(fmt.Sprintf("trojan://%s@%s:%d?", url.PathEscape(password),
-				*node.Ip, *node.Port))
+
+		if streamSettings.Security == "xlts" {
+			headBuilder.WriteString("&flow=xtls-rprx-direct")
+		}
+		if streamSettings.Network == "ws" {
+			if streamSettings.WsSettings.Path != "" {
+				headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
+			}
+			if streamSettings.WsSettings.Host != "" {
+				headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
+			}
 		}
 	} else if *nodeType.Name == constant.TrojanGoName {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
