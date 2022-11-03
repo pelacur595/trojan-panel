@@ -348,8 +348,13 @@ func Clash(c *gin.Context) {
 			trojanGo.Port = item.Port
 			trojanGo.TrojanType = "trojan"
 			trojanGo.Password = pass
-			trojanGo.SNI = *nodeXrayTrojanGo.Sni
 			trojanGo.Udp = true
+			trojanGo.SNI = *nodeXrayTrojanGo.Sni
+			if *nodeXrayTrojanGo.WebsocketEnable == 1 {
+				trojanGo.Network = "ws"
+				trojanGo.WsOpts.Path = *nodeXrayTrojanGo.WebsocketPath
+				trojanGo.WsOpts.WsOptsHeaders.Host = *nodeXrayTrojanGo.WebsocketHost
+			}
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 			proxies = append(proxies, item.Name)
 		}
