@@ -520,7 +520,7 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			}
 		}
 
-		if streamSettings.Security == "xlts" {
+		if streamSettings.Security == "xtls" {
 			headBuilder.WriteString("&flow=xtls-rprx-direct")
 		}
 		if streamSettings.Network == "ws" {
