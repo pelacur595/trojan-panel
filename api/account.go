@@ -299,10 +299,10 @@ func Clash(c *gin.Context) {
 				vmess.VmessType = "vmess"
 				vmess.Uuid = util.GenerateUUID(pass)
 				vmess.AlterId = 0
-				if settings.Encryption == "none" {
-					vmess.Cipher = "none"
-				} else {
+				if settings.Encryption != "none" {
 					vmess.Cipher = "auto"
+				} else {
+					vmess.Cipher = "none"
 				}
 				vmess.Udp = true
 				vmess.Network = streamSettings.Network
