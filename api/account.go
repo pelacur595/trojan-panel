@@ -289,7 +289,7 @@ func Clash(c *gin.Context) {
 					return
 				}
 				vmess := bo.Vmess{}
-				vmess.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
+				vmess.Name = item.Name
 				vmess.Server = item.Ip
 				vmess.Port = item.Port
 				vmess.VmessType = "vmess"
@@ -308,7 +308,7 @@ func Clash(c *gin.Context) {
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 			} else if *nodeXray.Protocol == "trojan" {
 				trojan := bo.Trojan{}
-				trojan.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
+				trojan.Name = item.Name
 				trojan.Server = item.Ip
 				trojan.Port = item.Port
 				trojan.TrojanType = "trojan"
@@ -324,7 +324,7 @@ func Clash(c *gin.Context) {
 				return
 			}
 			trojanGo := bo.TrojanGo{}
-			trojanGo.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
+			trojanGo.Name = item.Name
 			trojanGo.Server = item.Ip
 			trojanGo.Port = item.Port
 			trojanGo.TrojanType = "trojan"
@@ -333,7 +333,7 @@ func Clash(c *gin.Context) {
 			trojanGo.Udp = true
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 		}
-		proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
+		proxies = append(proxies, item.Name)
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
 	proxyGroup := bo.ProxyGroup{
