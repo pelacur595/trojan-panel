@@ -339,7 +339,7 @@ func Clash(c *gin.Context) {
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
 	proxyGroup := bo.ProxyGroup{
-		Name:      "Proxy",
+		Name:      "PROXY",
 		ProxyType: "select",
 		Proxies:   proxies,
 	}
