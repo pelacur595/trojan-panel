@@ -508,6 +508,8 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 
 			if *nodeXray.Protocol == "vmess" && settings.Encryption == "none" {
 				headBuilder.WriteString("&encryption=none")
+			} else {
+				headBuilder.WriteString("&encryption=auto")
 			}
 			if streamSettings.Network == "ws" {
 				if streamSettings.WsSettings.Path != "" {
