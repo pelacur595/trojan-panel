@@ -51,6 +51,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 				}
 			}
 			nodeOneVo.XrayStreamSettingsEntity = xrayStreamSettingsEntity
+			nodeOneVo.XrayTag = *nodeXray.Tag
 		case 2:
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 			if err != nil {
