@@ -511,10 +511,10 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 				url.PathEscape(util.GenerateUUID(password)),
 				*node.Ip, *node.Port, streamSettings.Network, streamSettings.Security))
 
-			if *nodeXray.Protocol == "vmess" && settings.Encryption == "none" {
-				headBuilder.WriteString("&encryption=none")
-			} else {
+			if *nodeXray.Protocol == "vmess" && settings.Encryption != "none" {
 				headBuilder.WriteString("&encryption=auto")
+			} else {
+				headBuilder.WriteString("&encryption=none")
 			}
 			if streamSettings.Network == "ws" {
 				if streamSettings.WsSettings.Path != "" {
