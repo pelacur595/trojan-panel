@@ -306,6 +306,7 @@ func Clash(c *gin.Context) {
 					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
+				proxies = append(proxies, item.Name)
 			} else if *nodeXray.Protocol == "trojan" {
 				trojan := bo.Trojan{}
 				trojan.Name = item.Name
@@ -315,6 +316,7 @@ func Clash(c *gin.Context) {
 				trojan.Password = pass
 				trojan.Udp = true
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
+				proxies = append(proxies, item.Name)
 			}
 
 		} else if item.NodeTypeId == 2 {
@@ -332,8 +334,8 @@ func Clash(c *gin.Context) {
 			trojanGo.SNI = *nodeXrayTrojanGo.Sni
 			trojanGo.Udp = true
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
+			proxies = append(proxies, item.Name)
 		}
-		proxies = append(proxies, item.Name)
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
 	proxyGroup := bo.ProxyGroup{
