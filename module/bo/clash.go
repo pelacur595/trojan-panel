@@ -16,7 +16,7 @@ type Vmess struct {
 	AlterId   uint   `yaml:"alterId"`
 	Cipher    string `yaml:"cipher"`
 	Udp       bool   `yaml:"udp"`
-	Tls       string `yaml:"tls"`
+	Tls       bool   `yaml:"tls"`
 	Network   string `yaml:"network"`
 	WsOpts    WsOpts `yaml:"ws-opts"`
 }

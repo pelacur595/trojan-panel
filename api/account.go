@@ -299,7 +299,9 @@ func Clash(c *gin.Context) {
 				vmess.Udp = true
 				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
-					vmess.Tls = "tls"
+					vmess.Tls = true
+				} else {
+					vmess.Tls = false
 				}
 				if streamSettings.Network == "ws" {
 					vmess.WsOpts.Path = streamSettings.WsSettings.Path
