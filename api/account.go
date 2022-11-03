@@ -277,16 +277,20 @@ func Clash(c *gin.Context) {
 			}
 			if *nodeXray.Protocol == "vmess" {
 				streamSettings := bo.StreamSettings{}
-				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
-					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-					vo.Fail(constant.SysError, c)
-					return
+				if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+					if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+						vo.Fail(constant.SysError, c)
+						return
+					}
 				}
 				settings := bo.Settings{}
-				if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
-					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-					vo.Fail(constant.SysError, c)
-					return
+				if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+					if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+						logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+						vo.Fail(constant.SysError, c)
+						return
+					}
 				}
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name

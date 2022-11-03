@@ -494,13 +494,18 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			return "", errors.New(constant.NodeURLError)
 		}
 		streamSettings := bo.StreamSettings{}
-		if err := json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
-			return "", errors.New(constant.NodeURLError)
+		if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+			if err := json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+				return "", errors.New(constant.NodeURLError)
+			}
 		}
 		settings := bo.Settings{}
-		if err := json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
-			return "", errors.New(constant.NodeURLError)
+		if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+			if err := json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+				return "", errors.New(constant.NodeURLError)
+			}
 		}
+
 		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
 			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?alterId=0&type=%s&security=%s", *nodeXray.Protocol,
 				url.PathEscape(util.GenerateUUID(password)),
