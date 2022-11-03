@@ -38,22 +38,22 @@ func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
 	nodeXrayCreate := map[string]interface{}{}
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
-		nodeXrayCreate["protocol"] = nodeXray.Protocol
+		nodeXrayCreate["protocol"] = *nodeXray.Protocol
 	}
 	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
-		nodeXrayCreate["settings"] = nodeXray.Settings
+		nodeXrayCreate["settings"] = *nodeXray.Settings
 	}
 	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
-		nodeXrayCreate["stream_settings"] = nodeXray.StreamSettings
+		nodeXrayCreate["stream_settings"] = *nodeXray.StreamSettings
 	}
 	if nodeXray.Tag != nil && *nodeXray.Tag != "" {
-		nodeXrayCreate["tag"] = nodeXray.Tag
+		nodeXrayCreate["tag"] = *nodeXray.Tag
 	}
 	if nodeXray.Sniffing != nil && *nodeXray.Sniffing != "" {
-		nodeXrayCreate["sniffing"] = nodeXray.Sniffing
+		nodeXrayCreate["sniffing"] = *nodeXray.Sniffing
 	}
 	if nodeXray.Allocate != nil && *nodeXray.Allocate != "" {
-		nodeXrayCreate["allocate"] = nodeXray.Allocate
+		nodeXrayCreate["allocate"] = *nodeXray.Allocate
 	}
 	if len(nodeXrayCreate) > 0 {
 		var data []map[string]interface{}

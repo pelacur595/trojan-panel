@@ -37,13 +37,13 @@ func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
 	nodeHysteriaCreate := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {
-		nodeHysteriaCreate["protocol"] = nodeHysteria.Protocol
+		nodeHysteriaCreate["protocol"] = *nodeHysteria.Protocol
 	}
 	if nodeHysteria.UpMbps != nil {
-		nodeHysteriaCreate["up_mbps"] = nodeHysteria.UpMbps
+		nodeHysteriaCreate["up_mbps"] = *nodeHysteria.UpMbps
 	}
 	if nodeHysteria.DownMbps != nil {
-		nodeHysteriaCreate["down_mbps"] = nodeHysteria.DownMbps
+		nodeHysteriaCreate["down_mbps"] = *nodeHysteria.DownMbps
 	}
 	if len(nodeHysteriaCreate) > 0 {
 		var data []map[string]interface{}
