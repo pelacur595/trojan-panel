@@ -57,7 +57,7 @@ type WsOptsHeaders struct {
 	Host string `yaml:"Host"`
 }
 
-type ProxyGroups struct {
+type ProxyGroup struct {
 	Name      string   `yaml:"name"`
 	ProxyType string   `yaml:"type"`
 	Proxies   []string `yaml:"proxies"`
@@ -65,5 +65,5 @@ type ProxyGroups struct {
 
 type ClashConfig struct {
 	Proxies     []interface{} `yaml:"proxies"`
-	ProxyGroups ProxyGroups   `yaml:"proxy-groups"`
+	ProxyGroups []ProxyGroup  `yaml:"proxy-groups"`
 }

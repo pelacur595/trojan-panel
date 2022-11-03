@@ -289,7 +289,7 @@ func Clash(c *gin.Context) {
 					return
 				}
 				vmess := bo.Vmess{}
-				vmess.Name = item.Name
+				vmess.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
 				vmess.Server = item.Ip
 				vmess.Port = item.Port
 				vmess.VmessType = "vmess"
@@ -308,7 +308,7 @@ func Clash(c *gin.Context) {
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 			} else if *nodeXray.Protocol == "trojan" {
 				trojan := bo.Trojan{}
-				trojan.Name = item.Name
+				trojan.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
 				trojan.Server = item.Ip
 				trojan.Port = item.Port
 				trojan.TrojanType = "trojan"
@@ -324,7 +324,7 @@ func Clash(c *gin.Context) {
 				return
 			}
 			trojanGo := bo.TrojanGo{}
-			trojanGo.Name = item.Name
+			trojanGo.Name = fmt.Sprintf("%s:%d", item.Name, item.Port)
 			trojanGo.Server = item.Ip
 			trojanGo.Port = item.Port
 			trojanGo.TrojanType = "trojan"
@@ -335,9 +335,14 @@ func Clash(c *gin.Context) {
 		}
 		proxies = append(proxies, fmt.Sprintf("%s:%d", item.Name, item.Port))
 	}
-	clashConfig.ProxyGroups.Name = "PROXY"
-	clashConfig.ProxyGroups.ProxyType = "select"
-	clashConfig.ProxyGroups.Proxies = proxies
+	proxyGroups := make([]bo.ProxyGroup, 0)
+	proxyGroup := bo.ProxyGroup{
+		Name:      "Proxy",
+		ProxyType: "select",
+		Proxies:   proxies,
+	}
+	proxyGroups = append(proxyGroups, proxyGroup)
+	clashConfig.ProxyGroups = proxyGroups
 	clashConfig.Proxies = ClashConfigInterface
 
 	clashConfigYaml, err := yaml.Marshal(&clashConfig)
