@@ -2,9 +2,9 @@ package service
 
 import (
 	"fmt"
-	"trojan/dao"
-	"trojan/dao/redis"
-	"trojan/module/vo"
+	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/vo"
 )
 
 func DeleteBlackListByIp(ip *string) error {

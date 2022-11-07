@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option go_package = ".;core";
+
+service ApiNodeService {
+  rpc AddNode(NodeAddDto) returns (Response) {}
+  rpc RemoveNode(NodeRemoveDto) returns (Response) {}
+}
+
+service ApiAccountService {
+  rpc RemoveAccount(AccountRemoveDto) returns (Response) {}
+}
+
+message NodeAddDto {
+  uint64 nodeTypeId = 1;
+  uint64 port = 2;
+
+  string xrayProtocol = 3;
+  string xraySettings = 4;
+  string xrayStreamSettings = 5;
+  string xrayTag = 6;
+  string xraySniffing = 7;
+  string xrayAllocate = 8;
+
+  string trojanGoIp = 9;
+  string trojanGoSni = 10;
+  uint64 trojanGoMuxEnable = 11;
+  uint64 trojanGoWebsocketEnable = 12;
+  string trojanGoWebsocketPath = 13;
+  string trojanGoWebsocketHost = 14;
+  uint64 trojanGoSSEnable = 15;
+  string trojanGoSSMethod = 16;
+  string trojanGoSSPassword = 17;
+
+  string hysteriaProtocol = 18;
+  string hysteriaIp = 19;
+  int64 hysteriaUpMbps = 20;
+  int64 hysteriaDownMbps = 21;
+}
+
+message NodeRemoveDto {
+  uint64 nodeType = 1;
+  uint64 port = 2;
+}
+
+message AccountRemoveDto {
+  string password = 1;
+}
+
+message Response {
+  bool success = 1;
+  string msg = 2;
+}

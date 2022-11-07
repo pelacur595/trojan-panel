@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func PanelGroup(c *gin.Context) {
@@ -21,7 +21,7 @@ func PanelGroup(c *gin.Context) {
 	vo.Success(panelGroup, c)
 }
 
-// 流量排行榜
+// TrafficRank 流量排行榜
 func TrafficRank(c *gin.Context) {
 	bytes, err := redis.Client.String.Get("trojan-panel:trafficRank").Bytes()
 	if err != nil && err != redisgo.ErrNil {
@@ -29,13 +29,13 @@ func TrafficRank(c *gin.Context) {
 		return
 	}
 	if len(bytes) > 0 {
-		var usersTrafficRankVo []vo.UsersTrafficRankVo
-		if err := json.Unmarshal(bytes, &usersTrafficRankVo); err != nil {
-			logrus.Errorln(fmt.Sprintf("UsersTrafficRankVo JSON反转失败 err: %v", err))
+		var accountTrafficRankVo []vo.AccountTrafficRankVo
+		if err := json.Unmarshal(bytes, &accountTrafficRankVo); err != nil {
+			logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo JSON反转失败 err: %v", err))
 			vo.Fail(constant.SysError, c)
 			return
 		}
-		vo.Success(usersTrafficRankVo, c)
+		vo.Success(accountTrafficRankVo, c)
 	} else {
 		trafficRank, err := service.TrafficRank()
 		if err != nil {

@@ -2,28 +2,59 @@ package vo
 
 import "time"
 
+// NodeVo 查询分页Node对象
 type NodeVo struct {
-	Id               uint      `json:"id"`
-	Name             string    `json:"name"`
-	Ip               string    `json:"ip"`
-	Port             uint      `json:"port"`
-	Sni              string    `json:"sni"`
-	Type             uint      `json:"type"`
-	WebsocketEnable  uint      `json:"websocketEnable"`
-	WebsocketPath    string    `json:"websocketPath"`
-	SsEnable         uint      `json:"ssEnable"`
-	SsMethod         string    `json:"ssMethod"`
-	SsPassword       string    `json:"ssPassword"`
-	HysteriaProtocol string    `json:"hysteriaProtocol"`
-	HysteriaUpMbps   int       `json:"hysteriaUpMbps"`
-	HysteriaDownMbps int       `json:"hysteriaDownMbps"`
-	CreateTime       time.Time `json:"createTime"`
+	Id         uint      `json:"id"`
+	NodeSubId  uint      `json:"nodeSubId"`
+	NodeTypeId uint      `json:"nodeTypeId"`
+	Name       string    `json:"name"`
+	Ip         string    `json:"ip"`
+	Port       uint      `json:"port"`
+	CreateTime time.Time `json:"createTime"`
 
-	Ping   int `json:"ping"`
-	OnLine int `json:"onLine"`
+	Ping int `json:"ping"`
 }
 
 type NodePageVo struct {
 	Nodes []NodeVo `json:"nodes"`
 	BaseVoPage
+}
+
+// NodeOneVo 查询单个Node对象
+type NodeOneVo struct {
+	Id         uint      `json:"id"`
+	NodeSubId  uint      `json:"nodeSubId"`
+	NodeTypeId uint      `json:"nodeTypeId"`
+	Name       string    `json:"name"`
+	Ip         string    `json:"ip"`
+	Port       uint      `json:"port"`
+	CreateTime time.Time `json:"createTime"`
+
+	XrayProtocol             string                   `json:"xrayProtocol"`
+	XraySettings             string                   `json:"xraySettings"`
+	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`
+	XrayTag                  string                   `json:"xrayTag"`
+	XraySniffing             string                   `json:"xraySniffing"`
+	XrayAllocate             string                   `json:"xrayAllocate"`
+	TrojanGoSni              string                   `json:"trojanGoSni"`
+	TrojanGoMuxEnable        uint                     `json:"trojanGoMuxEnable"`
+	TrojanGoWebsocketEnable  uint                     `json:"trojanGoWebsocketEnable"`
+	TrojanGoWebsocketPath    string                   `json:"trojanGoWebsocketPath"`
+	TrojanGoWebsocketHost    string                   `json:"trojanGoWebsocketHost"`
+	TrojanGoSsEnable         uint                     `json:"trojanGoSsEnable"`
+	TrojanGoSsMethod         string                   `json:"trojanGoSsMethod"`
+	TrojanGoSsPassword       string                   `json:"trojanGoSsPassword"`
+	HysteriaProtocol         string                   `json:"hysteriaProtocol"`
+	HysteriaUpMbps           int                      `json:"hysteriaUpMbps"`
+	HysteriaDownMbps         int                      `json:"hysteriaDownMbps"`
+}
+
+type XrayStreamSettingsEntity struct {
+	Network    string                             `json:"network"`
+	Security   string                             `json:"security"`
+	WsSettings XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
+}
+
+type XrayStreamSettingsWsSettingsEntity struct {
+	Path string `json:"path"`
 }

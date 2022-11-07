@@ -2,10 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func SelectRoleList(c *gin.Context) {
@@ -15,10 +15,18 @@ func SelectRoleList(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	roleListVos, err := service.SelectRoleList(roleDto)
+	roles, err := service.SelectRoleList(roleDto)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
+	}
+	var roleListVos []vo.RoleListVo
+	for _, item := range roles {
+		roleListVos = append(roleListVos, vo.RoleListVo{
+			Id:   *item.Id,
+			Name: *item.Name,
+			Desc: *item.Desc,
+		})
 	}
 	vo.Success(roleListVos, c)
 }

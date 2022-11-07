@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"time"
-	"trojan/core"
+	"trojan-panel/core"
 )
 
 // 日志初始化
@@ -20,9 +20,10 @@ func InitLog() {
 		Compress:   logConfig.Compress,
 		LocalTime:  true,
 	})
+	//logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: "2006-01-02 15:04:05"})
 	// 设置日志记录级别
-	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetLevel(logrus.WarnLevel)
 }
 
 func LogHandler() gin.HandlerFunc {

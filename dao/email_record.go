@@ -6,9 +6,9 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/vo"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
 )
 
 func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint, pageSize *uint) (*vo.EmailRecordPageVo, error) {

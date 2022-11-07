@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/api"
-	"trojan/core"
-	"trojan/dao"
-	"trojan/dao/redis"
-	"trojan/middleware"
-	"trojan/router"
-	"trojan/util"
+	"trojan-panel/api"
+	"trojan-panel/core"
+	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
+	"trojan-panel/middleware"
+	"trojan-panel/router"
+	"trojan-panel/util"
 )
 
 func main() {

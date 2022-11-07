@@ -6,51 +6,18 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
-	"trojan/module/vo"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
 )
 
-func SelectMenuListByRoleId(roleId *uint) ([]vo.MenuListVo, error) {
-	var menuLists []module.MenuList
-	buildSelect, values, err := builder.NamedQuery(
-		"select ml.id, ml.name, ml.icon, ml.route, ml.parent_id from role_menu_list rml left join menu_list ml on rml.menu_list_id = ml.id where rml.role_id = {{role_id}}",
-		map[string]interface{}{"role_id": *roleId})
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	rows, err := db.Query(buildSelect, values...)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-	defer rows.Close()
-
-	if err := scanner.Scan(rows, &menuLists); err != nil {
-		logrus.Errorln(err.Error())
-		return nil, errors.New(constant.SysError)
-	}
-
-	var menuListVos []vo.MenuListVo
-	for _, item := range menuLists {
-		menuListVos = append(menuListVos, vo.MenuListVo{
-			Id:       *item.Id,
-			Name:     *item.Name,
-			Icon:     *item.Icon,
-			Route:    *item.Route,
-			ParentId: *item.ParentId,
-		})
-	}
-	return menuListVos, nil
-}
-
-func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
+func SelectRoleList(roleDto dto.RoleDto) ([]module.Role, error) {
 	var roles []module.Role
 
-	where := map[string]interface{}{}
-	where["_orderby"] = "create_time desc"
+	where := map[string]interface{}{
+		"_orderby": "create_time desc",
+	}
 	if roleDto.Name != nil && *roleDto.Name != "" {
 		where["name"] = *roleDto.Name
 	}
@@ -70,20 +37,12 @@ func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
 	}
 	defer rows.Close()
 
-	if err := scanner.Scan(rows, &roles); err != nil {
+	if err = scanner.Scan(rows, &roles); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
-	var roleListVos []vo.RoleListVo
-	for _, item := range roles {
-		roleListVos = append(roleListVos, vo.RoleListVo{
-			Id:   *item.Id,
-			Name: *item.Name,
-			Desc: *item.Desc,
-		})
-	}
-	return &roleListVos, nil
+	return roles, nil
 }
 
 func SelectRoleNameByParentId(id *uint, includeSelf bool) ([]string, error) {

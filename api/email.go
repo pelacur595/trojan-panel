@@ -2,9 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan/module/dto"
-	"trojan/module/vo"
-	"trojan/service"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/service"
 )
 
 func SendEmail(c *gin.Context) {

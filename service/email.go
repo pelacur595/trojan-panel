@@ -5,21 +5,21 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/dto"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
 )
 
 func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 	name := constant.SystemName
-	systemVo, err := SelectSystemByName(&name)
+	system, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
 	}
-	if systemVo.EmailEnable == 0 {
+	if *system.EmailEnable == 0 {
 		return errors.New(constant.SystemEmailError)
 	}
-	d := gomail.NewDialer(systemVo.EmailHost, int(systemVo.EmailPort), systemVo.EmailUsername, systemVo.EmailPassword)
+	d := gomail.NewDialer(*system.EmailHost, int(*system.EmailPort), *system.EmailUsername, *system.EmailPassword)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	go func() {
@@ -29,17 +29,17 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			// 发送消息
 			m := gomail.NewMessage()
 			m.SetHeaders(map[string][]string{
-				"From":    {m.FormatAddress(systemVo.EmailUsername, sendEmailDto.FromEmailName)},
+				"From":    {m.FormatAddress(*system.EmailUsername, sendEmailDto.FromEmailName)},
 				"To":      {toEmail},
 				"Subject": {sendEmailDto.Subject},
 			})
 			m.SetBody("text/html", sendEmailDto.Content)
 			// 附件选项
-			// m.Attach("/home/Alex/lolcat.jpg")
+			// m.Attach("/home/demo.jpg")
 
 			var state int
 			if err := d.DialAndSend(m); err != nil {
-				logrus.Errorf("email dial and send err: %v\n", err)
+				logrus.Errorf("email dial and send err: %v", err)
 				state = -1
 			}
 			state = 1
@@ -49,9 +49,8 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 				Content: &sendEmailDto.Content,
 				State:   &state,
 			}
-			_, err := CreateEmailRecord(emailRecord)
-			if err != nil {
-				logrus.Errorf("create email record err: %v\n", err)
+			if _, err = CreateEmailRecord(emailRecord); err != nil {
+				logrus.Errorf("create email record err: %v", err)
 				return
 			}
 		}

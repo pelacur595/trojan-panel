@@ -1,4 +1,4 @@
-# trojan-panel
+# Trojan Panel
 
 Trojan Panel后端
 
@@ -6,11 +6,17 @@ Trojan Panel后端
 
 [compile.bat](./compile.bat)
 
-# Telegram讨论组
+# Author
 
-[Trojan Panel交流群](https://t.me/TrojanPanelGroup)
+[@jonssonyan](https://twitter.com/jonssonyan)
 
-# 致谢
+# Community
+
+- Telegram Channel: [Trojan Panel](https://t.me/TrojanPanel)
+- Telegram Group: [Trojan Panel交流群](https://t.me/TrojanPanelGroup)
+
+# Thanks
 
 - [trojan-gfw](https://github.com/trojan-gfw/trojan)
 - [trojan-go](https://github.com/p4gefau1t/trojan-go)
+- [hysteria](https://github.com/HyNetwork/hysteria)

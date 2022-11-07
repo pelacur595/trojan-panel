@@ -1,15 +1,11 @@
 package service
 
 import (
-	"trojan/dao"
-	"trojan/module/dto"
-	"trojan/module/vo"
+	"trojan-panel/dao"
+	"trojan-panel/module"
+	"trojan-panel/module/dto"
 )
 
-func SelectRoleList(roleDto dto.RoleDto) (*[]vo.RoleListVo, error) {
-	roleListVos, err := dao.SelectRoleList(roleDto)
-	if err != nil {
-		return nil, err
-	}
-	return roleListVos, nil
+func SelectRoleList(roleDto dto.RoleDto) ([]module.Role, error) {
+	return dao.SelectRoleList(roleDto)
 }

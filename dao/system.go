@@ -5,12 +5,11 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan/module"
-	"trojan/module/constant"
-	"trojan/module/vo"
+	"trojan-panel/module"
+	"trojan-panel/module/constant"
 )
 
-func SelectSystemByName(name *string) (*vo.SystemVo, error) {
+func SelectSystemByName(name *string) (*module.System, error) {
 	var system module.System
 	buildSelect, values, err := builder.NamedQuery(
 		"select id,open_register,register_quota,register_expire_days,expire_warn_enable,expire_warn_day,email_enable,email_host,email_port,email_username,email_password from `system` where name = {{name}}",
@@ -27,28 +26,14 @@ func SelectSystemByName(name *string) (*vo.SystemVo, error) {
 	}
 	defer rows.Close()
 
-	err = scanner.Scan(rows, &system)
-	if err == scanner.ErrEmptyResult {
+	if err = scanner.Scan(rows, &system); err == scanner.ErrEmptyResult {
 		return nil, errors.New(constant.SystemNotExist)
 	} else if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
 	}
 
-	systemVo := vo.SystemVo{
-		Id:                 *system.Id,
-		OpenRegister:       *system.OpenRegister,
-		RegisterQuota:      *system.RegisterQuota,
-		RegisterExpireDays: *system.RegisterExpireDays,
-		ExpireWarnEnable:   *system.ExpireWarnEnable,
-		ExpireWarnDay:      *system.ExpireWarnDay,
-		EmailEnable:        *system.EmailEnable,
-		EmailHost:          *system.EmailHost,
-		EmailPort:          *system.EmailPort,
-		EmailUsername:      *system.EmailUsername,
-		EmailPassword:      *system.EmailPassword,
-	}
-	return &systemVo, nil
+	return &system, nil
 }
 
 func UpdateSystemById(system *module.System) error {
@@ -90,8 +75,7 @@ func UpdateSystemById(system *module.System) error {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
-
-		if _, err := db.Exec(buildUpdate, values...); err != nil {
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}

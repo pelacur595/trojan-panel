@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan/dao/redis"
-	"trojan/module/constant"
-	"trojan/module/vo"
-	"trojan/util"
+	"trojan-panel/dao/redis"
+	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 // jwt认证中间件
@@ -34,8 +34,13 @@ func JWTHandler() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		if myClaims.AccountVo.Deleted != 0 {
+			vo.Fail(constant.AccountDisabled, c)
+			c.Abort()
+			return
+		}
 		get := redis.Client.String.
-			Get(fmt.Sprintf("trojan-panel:token:%s", myClaims.UserVo.Username))
+			Get(fmt.Sprintf("trojan-panel:token:%s", myClaims.AccountVo.Username))
 		result, err := get.String()
 		if err != nil || result == "" {
 			vo.Fail(constant.IllegalTokenError, c)

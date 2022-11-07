@@ -3,8 +3,10 @@ package util
 import (
 	"errors"
 	"github.com/go-ping/ping"
-	"runtime"
-	"trojan/module/constant"
+	"github.com/sirupsen/logrus"
+	"net"
+	"time"
+	"trojan-panel/module/constant"
 )
 
 func Ping(ip string) (int, error) {
@@ -12,15 +14,40 @@ func Ping(ip string) (int, error) {
 	if err != nil {
 		return -1, errors.New(constant.SysError)
 	}
-	pingEr.Count = 3
-	pingEr.Timeout = 3
-	if runtime.GOOS == "windows" {
-		pingEr.SetPrivileged(true)
-	}
+	pingEr.Count = 1
+	pingEr.Timeout = 2 * time.Second
+	pingEr.SetPrivileged(true)
 	err = pingEr.Run()
 	if err != nil {
 		return -1, errors.New(constant.SysError)
 	}
 	milliseconds := pingEr.Statistics().AvgRtt.Milliseconds()
 	return int(milliseconds), nil
+}
+
+// IsPortAvailable 判断端口是否可用
+func IsPortAvailable(port uint, network string) bool {
+	if network == "tcp" {
+		listener, err := net.ListenTCP(network, &net.TCPAddr{
+			IP:   net.IPv4(0, 0, 0, 0),
+			Port: int(port),
+		})
+		defer listener.Close()
+		if err != nil {
+			logrus.Errorf("port %d is taken err: %s", port, err)
+			return false
+		}
+	}
+	if network == "udp" {
+		listener, err := net.ListenUDP("udp", &net.UDPAddr{
+			IP:   net.IPv4(0, 0, 0, 0),
+			Port: int(port),
+		})
+		defer listener.Close()
+		if err != nil {
+			logrus.Errorf("port %d is taken err: %s", port, err)
+			return false
+		}
+	}
+	return true
 }
