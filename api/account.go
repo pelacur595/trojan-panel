@@ -371,6 +371,8 @@ func Clash(c *gin.Context) {
 			hysteria.Password = pass
 			hysteria.UpMbps = *nodeHysteria.UpMbps
 			hysteria.DownMbps = *nodeHysteria.DownMbps
+			ClashConfigInterface = append(ClashConfigInterface, hysteria)
+			proxies = append(proxies, item.Name)
 		}
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
