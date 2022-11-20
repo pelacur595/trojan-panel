@@ -45,6 +45,14 @@ type TrojanGo struct {
 }
 
 type Hysteria struct {
+	Name         string `yaml:"name"`
+	Server       string `yaml:"server"`
+	Port         uint   `yaml:"port"`
+	HysteriaType string `yaml:"type"`
+	Password     string `yaml:"password"`
+	Protocol     string `yaml:"protocol"`
+	UpMbps       int    `yaml:"upmbps"`
+	DownMbps     int    `yaml:"downmbps"`
 }
 
 type WsOpts struct {

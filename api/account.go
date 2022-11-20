@@ -337,7 +337,7 @@ func Clash(c *gin.Context) {
 			}
 
 		} else if item.NodeTypeId == 2 {
-			nodeXrayTrojanGo, err := service.SelectNodeTrojanGoById(&item.NodeSubId)
+			nodeTrojanGo, err := service.SelectNodeTrojanGoById(&item.NodeSubId)
 			if err != nil {
 				vo.Fail(err.Error(), c)
 				return
@@ -349,14 +349,28 @@ func Clash(c *gin.Context) {
 			trojanGo.TrojanType = "trojan"
 			trojanGo.Password = pass
 			trojanGo.Udp = true
-			trojanGo.SNI = *nodeXrayTrojanGo.Sni
-			if *nodeXrayTrojanGo.WebsocketEnable == 1 {
+			trojanGo.SNI = *nodeTrojanGo.Sni
+			if *nodeTrojanGo.WebsocketEnable == 1 {
 				trojanGo.Network = "ws"
-				trojanGo.WsOpts.Path = *nodeXrayTrojanGo.WebsocketPath
-				trojanGo.WsOpts.WsOptsHeaders.Host = *nodeXrayTrojanGo.WebsocketHost
+				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath
+				trojanGo.WsOpts.WsOptsHeaders.Host = *nodeTrojanGo.WebsocketHost
 			}
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 			proxies = append(proxies, item.Name)
+		} else if item.NodeTypeId == 3 {
+			nodeHysteria, err := service.SelectNodeHysteriaById(&item.NodeSubId)
+			if err != nil {
+				vo.Fail(err.Error(), c)
+				return
+			}
+			hysteria := bo.Hysteria{}
+			hysteria.Name = item.Name
+			hysteria.Server = item.Ip
+			hysteria.Port = item.Port
+			hysteria.HysteriaType = "hysteria"
+			hysteria.Password = pass
+			hysteria.UpMbps = *nodeHysteria.UpMbps
+			hysteria.DownMbps = *nodeHysteria.DownMbps
 		}
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
