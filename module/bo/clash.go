@@ -51,8 +51,8 @@ type Hysteria struct {
 	HysteriaType string `yaml:"type"`
 	Password     string `yaml:"password"`
 	Protocol     string `yaml:"protocol"`
-	UpMbps       int    `yaml:"upmbps"`
-	DownMbps     int    `yaml:"downmbps"`
+	Up           int    `yaml:"up"`
+	Down         int    `yaml:"down"`
 }
 
 type WsOpts struct {

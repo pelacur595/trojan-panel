@@ -370,8 +370,8 @@ func Clash(c *gin.Context) {
 			hysteria.HysteriaType = "hysteria"
 			hysteria.Password = pass
 			hysteria.Protocol = *nodeHysteria.Protocol
-			hysteria.UpMbps = *nodeHysteria.UpMbps
-			hysteria.DownMbps = *nodeHysteria.DownMbps
+			hysteria.Up = *nodeHysteria.UpMbps
+			hysteria.Down = *nodeHysteria.DownMbps
 			ClashConfigInterface = append(ClashConfigInterface, hysteria)
 			proxies = append(proxies, item.Name)
 		}
