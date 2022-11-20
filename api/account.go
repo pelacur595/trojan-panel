@@ -369,6 +369,7 @@ func Clash(c *gin.Context) {
 			hysteria.Port = item.Port
 			hysteria.HysteriaType = "hysteria"
 			hysteria.Password = pass
+			hysteria.Protocol = *nodeHysteria.Protocol
 			hysteria.UpMbps = *nodeHysteria.UpMbps
 			hysteria.DownMbps = *nodeHysteria.DownMbps
 			ClashConfigInterface = append(ClashConfigInterface, hysteria)
