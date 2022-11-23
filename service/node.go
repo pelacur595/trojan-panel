@@ -102,6 +102,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		if err = GrpcAddNode(token, *nodeCreateDto.Ip, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
 			Port:       uint64(*nodeCreateDto.Port),
+			Ip:         *nodeCreateDto.Ip,
 
 			//  Xray
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
@@ -111,7 +112,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			XraySniffing:       *nodeCreateDto.XraySniffing,
 			XrayAllocate:       *nodeCreateDto.XrayAllocate,
 			// Trojan Go
-			TrojanGoIp:              *nodeCreateDto.Ip,
 			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
 			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
 			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
@@ -122,7 +122,6 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
 			// Hysteria
 			HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
-			HysteriaIp:       *nodeCreateDto.Ip,
 			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
 		}); err != nil {
@@ -281,6 +280,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 			Port:       uint64(*nodeUpdateDto.Port),
+			Ip:         *nodeUpdateDto.Ip,
 
 			//  Xray
 			XrayProtocol:       *nodeUpdateDto.XrayProtocol,
@@ -290,7 +290,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			XraySniffing:       *nodeUpdateDto.XraySniffing,
 			XrayAllocate:       *nodeUpdateDto.XrayAllocate,
 			// Trojan Go
-			TrojanGoIp:              *nodeUpdateDto.Ip,
 			TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
 			TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
 			TrojanGoWebsocketEnable: uint64(*nodeUpdateDto.TrojanGoWebsocketEnable),
@@ -301,7 +300,6 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
 			// Hysteria
 			HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
-			HysteriaIp:       *nodeUpdateDto.Ip,
 			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 		}); err != nil {

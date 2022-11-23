@@ -10,7 +10,7 @@ func TestGrpcAddNode(t *testing.T) {
 	dto := core.NodeAddDto{
 		NodeTypeId:              2,
 		Port:                    443,
-		TrojanGoIp:              "127.0.0.1",
+		Ip:                      "127.0.0.1",
 		TrojanGoSni:             "",
 		TrojanGoMuxEnable:       0,
 		TrojanGoWebsocketEnable: 0,
