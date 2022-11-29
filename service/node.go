@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -434,8 +435,8 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 	return nil
 }
 
-func NodeQRCode(accountId *uint, id *uint) ([]byte, error) {
-	nodeUrl, err := NodeURL(accountId, id)
+func NodeQRCode(accountId *uint, username *string, id *uint) ([]byte, error) {
+	nodeUrl, err := NodeURL(accountId, username, id)
 	if err != nil {
 		return nil, err
 	}
@@ -451,7 +452,7 @@ func NodeQRCode(accountId *uint, id *uint) ([]byte, error) {
 // xray: https://github.com/XTLS/Xray-core/issues/91
 // trojan-go: https://p4gefau1t.github.io/trojan-go/developer/url/
 // hysteria:https://github.com/HyNetwork/hysteria/wiki/URI-Scheme
-func NodeURL(accountId *uint, id *uint) (string, error) {
+func NodeURL(accountId *uint, username *string, id *uint) (string, error) {
 
 	node, err := dao.SelectNodeById(id)
 	if err != nil {
@@ -552,6 +553,9 @@ func NodeURL(accountId *uint, id *uint) (string, error) {
 			password,
 			*nodeHysteria.UpMbps,
 			*nodeHysteria.DownMbps))
+	} else if *nodeType.Name == constant.NaiveProxyName {
+		urlBase64 := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s@%s:%d", *username, password, *node.Ip, *node.Port)))
+		headBuilder.WriteString(fmt.Sprintf("https://%s", urlBase64))
 	}
 
 	if node.Name != nil && *node.Name != "" {

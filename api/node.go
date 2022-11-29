@@ -94,7 +94,7 @@ func NodeQRCode(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	qrCode, err := service.NodeQRCode(&accountInfo.Id, requiredIdDto.Id)
+	qrCode, err := service.NodeQRCode(&accountInfo.Id, &accountInfo.Username, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
@@ -115,7 +115,7 @@ func NodeURL(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	url, err := service.NodeURL(&accountInfo.Id, requiredIdDto.Id)
+	url, err := service.NodeURL(&accountInfo.Id, &accountInfo.Username, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
