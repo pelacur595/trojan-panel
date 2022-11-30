@@ -147,11 +147,11 @@ func UpdateAccountById(token string, account *module.Account) error {
 
 func Register(accountRegisterDto dto.AccountRegisterDto) error {
 	name := constant.SystemName
-	system, err := SelectSystemByName(&name)
+	systemVo, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
 	}
-	if *system.OpenRegister == 0 {
+	if systemVo.OpenRegister == 0 {
 		return errors.New(constant.AccountRegisterClosed)
 	}
 
@@ -163,8 +163,8 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 		return errors.New(constant.UsernameExist)
 	}
 	u := constant.USER
-	milli := util.DayToMilli(*system.RegisterExpireDays)
-	registerQuota := util.ToByte(*system.RegisterQuota)
+	milli := util.DayToMilli(systemVo.RegisterExpireDays)
+	registerQuota := util.ToByte(systemVo.RegisterQuota)
 	account := module.Account{
 		Quota:      &registerQuota,
 		Username:   accountRegisterDto.Username,
@@ -223,15 +223,15 @@ func CronScanAccounts() {
 // CronScanAccountExpireWarn 定时任务：到期警告
 func CronScanAccountExpireWarn() {
 	systemName := constant.SystemName
-	system, err := SelectSystemByName(&systemName)
+	systemVo, err := SelectSystemByName(&systemName)
 	if err != nil {
 		return
 	}
-	if *system.EmailEnable == 0 || *system.ExpireWarnEnable == 0 {
+	if systemVo.EmailEnable == 0 || systemVo.ExpireWarnEnable == 0 {
 		return
 	}
-	expireWarnDay := system.ExpireWarnDay
-	accounts, err := dao.SelectAccountsByExpireTime(util.DayToMilli(*expireWarnDay))
+	expireWarnDay := systemVo.ExpireWarnDay
+	accounts, err := dao.SelectAccountsByExpireTime(util.DayToMilli(expireWarnDay))
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return

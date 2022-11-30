@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan-panel/module"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
@@ -14,39 +13,26 @@ import (
 
 func SelectSystemByName(c *gin.Context) {
 	name := constant.SystemName
-	system, err := service.SelectSystemByName(&name)
+	systemVo, err := service.SelectSystemByName(&name)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
-	}
-	systemVo := vo.SystemVo{
-		Id:                 *system.Id,
-		OpenRegister:       *system.OpenRegister,
-		RegisterQuota:      *system.RegisterQuota,
-		RegisterExpireDays: *system.RegisterExpireDays,
-		ExpireWarnEnable:   *system.ExpireWarnEnable,
-		ExpireWarnDay:      *system.ExpireWarnDay,
-		EmailEnable:        *system.EmailEnable,
-		EmailHost:          *system.EmailHost,
-		EmailPort:          *system.EmailPort,
-		EmailUsername:      *system.EmailUsername,
-		EmailPassword:      *system.EmailPassword,
 	}
 	vo.Success(systemVo, c)
 }
 
 func Setting(c *gin.Context) {
 	name := constant.SystemName
-	system, err := service.SelectSystemByName(&name)
+	systemVo, err := service.SelectSystemByName(&name)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
 	settingVo := vo.SettingVo{
-		OpenRegister:       *system.OpenRegister,
-		RegisterQuota:      *system.RegisterQuota,
-		RegisterExpireDays: *system.RegisterExpireDays,
-		EmailEnable:        *system.EmailEnable,
+		OpenRegister:       systemVo.OpenRegister,
+		RegisterQuota:      systemVo.RegisterQuota,
+		RegisterExpireDays: systemVo.RegisterExpireDays,
+		EmailEnable:        systemVo.EmailEnable,
 	}
 	vo.Success(settingVo, c)
 }
@@ -58,20 +44,7 @@ func UpdateSystemById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	system := module.System{
-		Id:                 systemUpdateDto.Id,
-		OpenRegister:       systemUpdateDto.OpenRegister,
-		RegisterQuota:      systemUpdateDto.RegisterQuota,
-		RegisterExpireDays: systemUpdateDto.RegisterExpireDays,
-		ExpireWarnEnable:   systemUpdateDto.ExpireWarnEnable,
-		ExpireWarnDay:      systemUpdateDto.ExpireWarnDay,
-		EmailEnable:        systemUpdateDto.EmailEnable,
-		EmailHost:          systemUpdateDto.EmailHost,
-		EmailPort:          systemUpdateDto.EmailPort,
-		EmailUsername:      systemUpdateDto.EmailUsername,
-		EmailPassword:      systemUpdateDto.EmailPassword,
-	}
-	if err := service.UpdateSystemById(&system); err != nil {
+	if err := service.UpdateSystemById(systemUpdateDto); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}

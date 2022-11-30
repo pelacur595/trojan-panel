@@ -12,7 +12,7 @@ import (
 func SelectSystemByName(name *string) (*module.System, error) {
 	var system module.System
 	buildSelect, values, err := builder.NamedQuery(
-		"select id,open_register,register_quota,register_expire_days,expire_warn_enable,expire_warn_day,email_enable,email_host,email_port,email_username,email_password from `system` where name = {{name}}",
+		"select id,register_config,email_config from `system` where name = {{name}}",
 		map[string]interface{}{"name": *name})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -39,35 +39,11 @@ func SelectSystemByName(name *string) (*module.System, error) {
 func UpdateSystemById(system *module.System) error {
 	where := map[string]interface{}{"id": *system.Id}
 	update := map[string]interface{}{}
-	if system.OpenRegister != nil {
-		update["open_register"] = *system.OpenRegister
+	if system.RegisterConfig != nil {
+		update["register_config"] = *system.RegisterConfig
 	}
-	if system.RegisterQuota != nil {
-		update["register_quota"] = *system.RegisterQuota
-	}
-	if system.RegisterExpireDays != nil {
-		update["register_expire_days"] = *system.RegisterExpireDays
-	}
-	if system.ExpireWarnEnable != nil {
-		update["expire_warn_enable"] = *system.ExpireWarnEnable
-	}
-	if system.ExpireWarnDay != nil {
-		update["expire_warn_day"] = *system.ExpireWarnDay
-	}
-	if system.EmailEnable != nil {
-		update["email_enable"] = *system.EmailEnable
-	}
-	if system.EmailHost != nil && *system.EmailHost != "" {
-		update["email_host"] = *system.EmailHost
-	}
-	if system.EmailPort != nil {
-		update["email_port"] = *system.EmailPort
-	}
-	if system.EmailUsername != nil && *system.EmailUsername != "" {
-		update["email_username"] = *system.EmailUsername
-	}
-	if system.EmailPassword != nil && *system.EmailPassword != "" {
-		update["email_password"] = *system.EmailPassword
+	if system.EmailConfig != nil {
+		update["email_config"] = *system.EmailConfig
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("`system`", where, update)

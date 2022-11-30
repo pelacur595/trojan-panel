@@ -12,14 +12,14 @@ import (
 
 func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 	name := constant.SystemName
-	system, err := SelectSystemByName(&name)
+	systemVo, err := SelectSystemByName(&name)
 	if err != nil {
 		return err
 	}
-	if *system.EmailEnable == 0 {
+	if systemVo.EmailEnable == 0 {
 		return errors.New(constant.SystemEmailError)
 	}
-	d := gomail.NewDialer(*system.EmailHost, int(*system.EmailPort), *system.EmailUsername, *system.EmailPassword)
+	d := gomail.NewDialer(systemVo.EmailHost, int(systemVo.EmailPort), systemVo.EmailUsername, systemVo.EmailPassword)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	go func() {
@@ -29,7 +29,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 			// 发送消息
 			m := gomail.NewMessage()
 			m.SetHeaders(map[string][]string{
-				"From":    {m.FormatAddress(*system.EmailUsername, sendEmailDto.FromEmailName)},
+				"From":    {m.FormatAddress(systemVo.EmailUsername, sendEmailDto.FromEmailName)},
 				"To":      {toEmail},
 				"Subject": {sendEmailDto.Subject},
 			})

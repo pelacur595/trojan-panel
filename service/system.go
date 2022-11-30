@@ -10,38 +10,118 @@ import (
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
 	"trojan-panel/module"
+	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
 )
 
-func SelectSystemByName(name *string) (*module.System, error) {
+func SelectSystemByName(name *string) (vo.SystemVo, error) {
+	var systemVo vo.SystemVo
 	bytes, err := redis.Client.String.Get("trojan-panel:system").Bytes()
 	if err != nil && err != redisgo.ErrNil {
-		return nil, errors.New(constant.SysError)
+		return systemVo, errors.New(constant.SysError)
 	}
 	if len(bytes) > 0 {
-		var system module.System
-		if err = json.Unmarshal(bytes, &system); err != nil {
-			logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
-			return nil, errors.New(constant.SysError)
+		if err = json.Unmarshal(bytes, &systemVo); err != nil {
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo 反序列化失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
 		}
-		return &system, nil
+		return systemVo, nil
 	} else {
 		system, err := dao.SelectSystemByName(name)
 		if err != nil {
-			return nil, err
+			return systemVo, err
 		}
-		systemJson, err := json.Marshal(system)
+
+		systemRegisterConfigBo := bo.SystemRegisterConfigBo{}
+		if err = json.Unmarshal([]byte(*system.RegisterConfig), &systemRegisterConfigBo); err != nil {
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemRegisterConfigBo 反序列化失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
+		}
+		systemEmailConfigBo := bo.SystemEmailConfigBo{}
+		if err = json.Unmarshal([]byte(*system.EmailConfig), &systemEmailConfigBo); err != nil {
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemEmailConfigBo 反序列化失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
+		}
+
+		systemVo = vo.SystemVo{
+			Id:                 *system.Id,
+			OpenRegister:       systemRegisterConfigBo.OpenRegister,
+			RegisterQuota:      systemRegisterConfigBo.RegisterQuota,
+			RegisterExpireDays: systemRegisterConfigBo.RegisterExpireDays,
+			ExpireWarnEnable:   systemEmailConfigBo.ExpireWarnEnable,
+			ExpireWarnDay:      systemEmailConfigBo.ExpireWarnDay,
+			EmailEnable:        systemEmailConfigBo.EmailEnable,
+			EmailHost:          systemEmailConfigBo.EmailHost,
+			EmailPort:          systemEmailConfigBo.EmailPort,
+			EmailUsername:      systemEmailConfigBo.EmailUsername,
+			EmailPassword:      systemEmailConfigBo.EmailPassword,
+		}
+
+		systemVoJson, err := json.Marshal(systemVo)
 		if err != nil {
-			logrus.Errorln(fmt.Sprintf("SystemVo JSON转换失败 err: %v", err))
-			return nil, errors.New(constant.SysError)
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo 序列化失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
 		}
-		redis.Client.String.Set("trojan-panel:system", systemJson, time.Minute.Milliseconds()*30/1000)
-		return system, nil
+		redis.Client.String.Set("trojan-panel:system", systemVoJson, time.Minute.Milliseconds()*30/1000)
+
+		return systemVo, nil
 	}
 }
 
-func UpdateSystemById(system *module.System) error {
-	if err := dao.UpdateSystemById(system); err != nil {
+func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
+	registerConfigBo := bo.SystemRegisterConfigBo{}
+	if systemDto.OpenRegister != nil {
+		registerConfigBo.OpenRegister = *systemDto.OpenRegister
+	}
+	if systemDto.RegisterQuota != nil {
+		registerConfigBo.RegisterQuota = *systemDto.RegisterQuota
+	}
+	if systemDto.RegisterExpireDays != nil {
+		registerConfigBo.RegisterExpireDays = *systemDto.RegisterExpireDays
+	}
+	registerConfigBoByte, err := json.Marshal(registerConfigBo)
+	if err != nil {
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemRegisterConfigBo 序列化异常err: %v", err))
+	}
+	registerConfigBoJsonStr := string(registerConfigBoByte)
+
+	systemEmailConfigBo := bo.SystemEmailConfigBo{}
+	if systemDto.ExpireWarnEnable != nil {
+		systemEmailConfigBo.ExpireWarnEnable = *systemDto.ExpireWarnEnable
+	}
+	if systemDto.ExpireWarnDay != nil {
+		systemEmailConfigBo.ExpireWarnDay = *systemDto.ExpireWarnDay
+	}
+	if systemDto.EmailEnable != nil {
+		systemEmailConfigBo.EmailEnable = *systemDto.EmailEnable
+	}
+	if systemDto.EmailHost != nil {
+		systemEmailConfigBo.EmailHost = *systemDto.EmailHost
+	}
+	if systemDto.EmailPort != nil {
+		systemEmailConfigBo.EmailPort = *systemDto.EmailPort
+	}
+	if systemDto.EmailUsername != nil {
+		systemEmailConfigBo.EmailUsername = *systemDto.EmailUsername
+	}
+	if systemDto.EmailPassword != nil {
+		systemEmailConfigBo.EmailPassword = *systemDto.EmailPassword
+	}
+	systemEmailConfigBoByte, err := json.Marshal(systemEmailConfigBo)
+	if err != nil {
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemEmailConfigBo 序列化异常err: %v", err))
+	}
+	systemEmailConfigBoStr := string(systemEmailConfigBoByte)
+
+	system := module.System{
+		Id:             systemDto.Id,
+		RegisterConfig: &registerConfigBoJsonStr,
+		EmailConfig:    &systemEmailConfigBoStr,
+	}
+
+	if err := dao.UpdateSystemById(&system); err != nil {
 		return err
 	}
 	redis.Client.Key.Del("trojan-panel:system")
