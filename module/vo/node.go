@@ -11,8 +11,6 @@ type NodeVo struct {
 	Ip         string    `json:"ip"`
 	Port       uint      `json:"port"`
 	CreateTime time.Time `json:"createTime"`
-
-	Ping int `json:"ping"`
 }
 
 type NodePageVo struct {

@@ -210,12 +210,6 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 			Port:       *item.Port,
 			CreateTime: *item.CreateTime,
 		}
-
-		ttl, err := util.Ping(*item.Ip)
-		if err != nil {
-			ttl = -1
-		}
-		nodeVo.Ping = ttl
 		nodeVos = append(nodeVos, nodeVo)
 	}
 	nodePageVo := vo.NodePageVo{
