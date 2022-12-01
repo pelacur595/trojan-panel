@@ -214,29 +214,30 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, token stri
 	}
 
 	splitNodeVos := util.SplitArr(nodeVos, 2)
-	var nodeMpa sync.Map
+	var nodeMap sync.Map
 	var wg sync.WaitGroup
 	for i := range splitNodeVos {
-		wg.Add(1)
 		indexI := i
+		wg.Add(1)
 		go func() {
-			for j, nodeVo := range splitNodeVos[indexI] {
-				status, ok := nodeMpa.Load(nodeVo.Ip)
+			for j := range splitNodeVos[indexI] {
+				var ip = splitNodeVos[indexI][j].Ip
+				status, ok := nodeMap.Load(ip)
 				if ok {
 					splitNodeVos[indexI][j].Status = status.(int)
-					continue
-				}
-				success, err := core.Ping(token, nodeVo.Ip)
-				if err != nil {
-					splitNodeVos[indexI][j].Status = -1
 				} else {
-					if success {
-						splitNodeVos[indexI][j].Status = 1
+					var status = 0
+					success, err := core.Ping(token, ip)
+					if err != nil {
+						status = -1
 					} else {
-						splitNodeVos[indexI][j].Status = 0
+						if success {
+							status = 1
+						}
 					}
+					splitNodeVos[indexI][j].Status = status
+					nodeMap.Store(ip, status)
 				}
-				nodeMpa.Store(nodeVo.Ip, splitNodeVos[indexI][j].Status)
 			}
 			wg.Done()
 		}()

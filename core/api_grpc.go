@@ -11,7 +11,7 @@ import (
 	"trojan-panel/module/constant"
 )
 
-func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
+func newGrpcInstance(token string, ip string, timeout time.Duration) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
 	tokenParam := TokenValidateParam{
 		Token: token,
 	}
@@ -22,7 +22,7 @@ func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx contex
 	}
 	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, 8100),
 		opts...)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*4)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	clo = func() {
 		cancel()
 		conn.Close()
@@ -35,7 +35,7 @@ func newGrpcInstance(token string, ip string) (conn *grpc.ClientConn, ctx contex
 }
 
 func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
 }
 
 func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
 }
 
 func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 }
 
 func Ping(token string, ip string) (bool, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, time.Second)
 	defer clo()
 	if err != nil {
 		return false, err
