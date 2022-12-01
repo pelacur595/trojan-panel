@@ -87,3 +87,22 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 	}
 	return errors.New(send.Msg)
 }
+
+func Ping(token string, ip string) (bool, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip)
+	defer clo()
+	if err != nil {
+		return false, err
+	}
+	client := NewApiStateServiceClient(conn)
+	stateDto := StateDto{}
+	send, err := client.Ping(ctx, &stateDto)
+	if err != nil {
+		logrus.Errorf("gRPC ping 异常 ip: %s err: %v", ip, err)
+		return false, errors.New(constant.GrpcError)
+	}
+	if send.Success {
+		return true, nil
+	}
+	return false, errors.New(send.Msg)
+}
