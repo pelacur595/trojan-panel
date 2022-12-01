@@ -194,7 +194,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodePageVo, error) {
+func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, token string) (*vo.NodePageVo, error) {
 	nodePage, total, err := dao.SelectNodePage(queryName, pageNum, pageSize)
 	if err != nil {
 		return nil, err
@@ -212,6 +212,37 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*vo.NodeP
 		}
 		nodeVos = append(nodeVos, nodeVo)
 	}
+
+	splitNodeVos := util.SplitArr(nodeVos, 2)
+	var nodeMpa sync.Map
+	var wg sync.WaitGroup
+	for i := range splitNodeVos {
+		wg.Add(1)
+		indexI := i
+		go func() {
+			for j, nodeVo := range splitNodeVos[indexI] {
+				status, ok := nodeMpa.Load(nodeVo.Ip)
+				if ok {
+					splitNodeVos[indexI][j].Status = status.(int)
+					continue
+				}
+				success, err := core.Ping(token, nodeVo.Ip)
+				if err != nil {
+					splitNodeVos[indexI][j].Status = -1
+				} else {
+					if success {
+						splitNodeVos[indexI][j].Status = 1
+					} else {
+						splitNodeVos[indexI][j].Status = 0
+					}
+				}
+				nodeMpa.Store(nodeVo.Ip, splitNodeVos[indexI][j].Status)
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
 	nodePageVo := vo.NodePageVo{
 		BaseVoPage: vo.BaseVoPage{
 			PageNum:  *pageNum,
