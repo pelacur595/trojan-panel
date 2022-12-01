@@ -448,10 +448,16 @@ order by trafficUsed desc limit 15`, nil)
 	return accountTrafficRankVos, nil
 }
 
-// UpdateAccountQuota 重设流量 设置角色为普通用户流量为0
-func UpdateAccountQuota() error {
-	where := map[string]interface{}{"role_id": 3}
-	update := map[string]interface{}{"quota": 0}
+// ResetAccountDownloadAndUpload 重设下载和上传流量
+func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
+	where := map[string]interface{}{}
+	if id != nil {
+		where["id"] = *id
+	}
+	if roleIds != nil && len(*roleIds) > 0 {
+		where["role_id in"] = *roleIds
+	}
+	update := map[string]interface{}{"download": 0, "upload": 0}
 	buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 	if err != nil {
 		logrus.Errorln(err.Error())

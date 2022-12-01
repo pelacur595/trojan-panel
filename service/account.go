@@ -289,3 +289,8 @@ func RemoveAccount(token string, password string) error {
 func SelectConnectPassword(id *uint, username *string) (string, error) {
 	return dao.SelectConnectPassword(id, username)
 }
+
+// ResetAccountDownloadAndUpload 重设下载和上传流量
+func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
+	return dao.ResetAccountDownloadAndUpload(id, roleIds)
+}

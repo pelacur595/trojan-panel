@@ -401,3 +401,18 @@ func Clash(c *gin.Context) {
 	c.String(200, result)
 	return
 }
+
+// ResetAccountDownloadAndUpload 重设下载和上传流量
+func ResetAccountDownloadAndUpload(c *gin.Context) {
+	var accountRequiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&accountRequiredIdDto)
+	if err := validate.Struct(&accountRequiredIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	if err := service.ResetAccountDownloadAndUpload(accountRequiredIdDto.Id, nil); err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
+}
