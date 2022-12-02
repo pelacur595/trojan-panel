@@ -38,7 +38,7 @@ type NodeCreateDto struct {
 
 type NodeUpdateDto struct {
 	RequiredIdDto
-	NodeSubId  *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gt=0"`
+	NodeSubId  *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gte=0"`
 	NodeTypeId *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
 	Name       *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Ip         *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
