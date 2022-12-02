@@ -3,11 +3,11 @@ LABEL maintainer="jonsosnyan <https://jonssonyan.com>"
 RUN mkdir -p /tpdata/trojan-panel/
 WORKDIR /tpdata/trojan-panel/
 ENV mariadb_ip=127.0.0.1 \
-    mariadb_port=3306 \
+    mariadb_port=9507 \
     mariadb_user=root \
     mariadb_pas=123456 \
     redis_host=127.0.0.1 \
-    redis_port=6379 \
+    redis_port=6378 \
     redis_pass=123456
 ARG TARGETOS
 ARG TARGETARCH
