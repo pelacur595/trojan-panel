@@ -334,7 +334,7 @@ CREATE TABLE `system` (
 
 LOCK TABLES `system` WRITE;
 /*!40000 ALTER TABLE `system` DISABLE KEYS */;
-INSERT INTO `system` VALUES (1,'trojan-panel','{\"openRegister\":1,\"registerQuota\":0,\"registerExpireDays\":0,\"resetDownloadAndUploadMonth\":0,\"trafficRankEnable\":1}','{\"expireWarnEnable\":0,\"expireWarnDay\":0,\"emailEnable\":0,\"emailHost\":\"\",\"emailPort\":0,\"emailUsername\":\"\",\"emailPassword\":\"\"}','2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `system` VALUES (1,'trojan-panel','{\"registerEnable\":1,\"registerQuota\":0,\"registerExpireDays\":0,\"resetDownloadAndUploadMonth\":0,\"trafficRankEnable\":1}','{\"expireWarnEnable\":0,\"expireWarnDay\":0,\"emailEnable\":0,\"emailHost\":\"\",\"emailPort\":0,\"emailUsername\":\"\",\"emailPassword\":\"\"}','2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `system` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
