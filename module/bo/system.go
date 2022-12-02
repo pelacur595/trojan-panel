@@ -1,6 +1,6 @@
 package bo
 
-type SystemRegisterConfigBo struct {
+type SystemAccountConfigBo struct {
 	RegisterEnable              uint `json:"registerEnable"`              // 是否开放注册
 	RegisterQuota               int  `json:"registerQuota"`               // 注册用户默认配额 单位/MB
 	RegisterExpireDays          uint `json:"registerExpireDays"`          // 注册用户过期天数 单位/天

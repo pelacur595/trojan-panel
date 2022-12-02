@@ -34,9 +34,9 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			return systemVo, err
 		}
 
-		systemRegisterConfigBo := bo.SystemRegisterConfigBo{}
-		if err = json.Unmarshal([]byte(*system.RegisterConfig), &systemRegisterConfigBo); err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemRegisterConfigBo 反序列化失败 err: %v", err))
+		systemAccountConfigBo := bo.SystemAccountConfigBo{}
+		if err = json.Unmarshal([]byte(*system.AccountConfig), &systemAccountConfigBo); err != nil {
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemAccountConfigBo 反序列化失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		systemEmailConfigBo := bo.SystemEmailConfigBo{}
@@ -47,11 +47,11 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 
 		systemVo = vo.SystemVo{
 			Id:                          *system.Id,
-			RegisterEnable:              systemRegisterConfigBo.RegisterEnable,
-			RegisterQuota:               systemRegisterConfigBo.RegisterQuota,
-			RegisterExpireDays:          systemRegisterConfigBo.RegisterExpireDays,
-			ResetDownloadAndUploadMonth: systemRegisterConfigBo.ResetDownloadAndUploadMonth,
-			TrafficRankEnable:           systemRegisterConfigBo.TrafficRankEnable,
+			RegisterEnable:              systemAccountConfigBo.RegisterEnable,
+			RegisterQuota:               systemAccountConfigBo.RegisterQuota,
+			RegisterExpireDays:          systemAccountConfigBo.RegisterExpireDays,
+			ResetDownloadAndUploadMonth: systemAccountConfigBo.ResetDownloadAndUploadMonth,
+			TrafficRankEnable:           systemAccountConfigBo.TrafficRankEnable,
 			ExpireWarnEnable:            systemEmailConfigBo.ExpireWarnEnable,
 			ExpireWarnDay:               systemEmailConfigBo.ExpireWarnDay,
 			EmailEnable:                 systemEmailConfigBo.EmailEnable,
@@ -73,27 +73,27 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 }
 
 func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
-	registerConfigBo := bo.SystemRegisterConfigBo{}
+	accountConfigBo := bo.SystemAccountConfigBo{}
 	if systemDto.RegisterEnable != nil {
-		registerConfigBo.RegisterEnable = *systemDto.RegisterEnable
+		accountConfigBo.RegisterEnable = *systemDto.RegisterEnable
 	}
 	if systemDto.RegisterQuota != nil {
-		registerConfigBo.RegisterQuota = *systemDto.RegisterQuota
+		accountConfigBo.RegisterQuota = *systemDto.RegisterQuota
 	}
 	if systemDto.RegisterExpireDays != nil {
-		registerConfigBo.RegisterExpireDays = *systemDto.RegisterExpireDays
+		accountConfigBo.RegisterExpireDays = *systemDto.RegisterExpireDays
 	}
 	if systemDto.ResetDownloadAndUploadMonth != nil {
-		registerConfigBo.ResetDownloadAndUploadMonth = *systemDto.ResetDownloadAndUploadMonth
+		accountConfigBo.ResetDownloadAndUploadMonth = *systemDto.ResetDownloadAndUploadMonth
 	}
 	if systemDto.TrafficRankEnable != nil {
-		registerConfigBo.TrafficRankEnable = *systemDto.TrafficRankEnable
+		accountConfigBo.TrafficRankEnable = *systemDto.TrafficRankEnable
 	}
-	registerConfigBoByte, err := json.Marshal(registerConfigBo)
+	accountConfigBoByte, err := json.Marshal(accountConfigBo)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemRegisterConfigBo 序列化异常err: %v", err))
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemAccountConfigBo 序列化异常err: %v", err))
 	}
-	registerConfigBoJsonStr := string(registerConfigBoByte)
+	accountConfigBoJsonStr := string(accountConfigBoByte)
 
 	systemEmailConfigBo := bo.SystemEmailConfigBo{}
 	if systemDto.ExpireWarnEnable != nil {
@@ -124,9 +124,9 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	systemEmailConfigBoStr := string(systemEmailConfigBoByte)
 
 	system := module.System{
-		Id:             systemDto.Id,
-		RegisterConfig: &registerConfigBoJsonStr,
-		EmailConfig:    &systemEmailConfigBoStr,
+		Id:            systemDto.Id,
+		AccountConfig: &accountConfigBoJsonStr,
+		EmailConfig:   &systemEmailConfigBoStr,
 	}
 
 	if err := dao.UpdateSystemById(&system); err != nil {

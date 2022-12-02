@@ -12,7 +12,7 @@ import (
 func SelectSystemByName(name *string) (*module.System, error) {
 	var system module.System
 	buildSelect, values, err := builder.NamedQuery(
-		"select id,register_config,email_config from `system` where name = {{name}}",
+		"select id,account_config,email_config from `system` where name = {{name}}",
 		map[string]interface{}{"name": *name})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -39,8 +39,8 @@ func SelectSystemByName(name *string) (*module.System, error) {
 func UpdateSystemById(system *module.System) error {
 	where := map[string]interface{}{"id": *system.Id}
 	update := map[string]interface{}{}
-	if system.RegisterConfig != nil {
-		update["register_config"] = *system.RegisterConfig
+	if system.AccountConfig != nil {
+		update["account_config"] = *system.AccountConfig
 	}
 	if system.EmailConfig != nil {
 		update["email_config"] = *system.EmailConfig

@@ -320,7 +320,7 @@ DROP TABLE IF EXISTS `system`;
 CREATE TABLE `system` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `name` varchar(16) NOT NULL DEFAULT '' COMMENT '系统名称',
-  `register_config` varchar(512) NOT NULL DEFAULT '' COMMENT '新用户设置',
+  `account_config` varchar(512) NOT NULL DEFAULT '' COMMENT '用户设置',
   `email_config` varchar(512) NOT NULL DEFAULT '' COMMENT '系统邮箱设置',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -334,7 +334,7 @@ CREATE TABLE `system` (
 
 LOCK TABLES `system` WRITE;
 /*!40000 ALTER TABLE `system` DISABLE KEYS */;
-INSERT INTO `system` VALUES (1,'trojan-panel','{\"openRegister\":1,\"registerQuota\":0,\"registerExpireDays\":0}','{\"expireWarnEnable\":0,\"expireWarnDay\":0,\"emailEnable\":0,\"emailHost\":\"\",\"emailPort\":0,\"emailUsername\":\"\",\"emailPassword\":\"\"}','2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `system` VALUES (1,'trojan-panel','{\"openRegister\":1,\"registerQuota\":0,\"registerExpireDays\":0,\"resetDownloadAndUploadMonth\":0,\"trafficRankEnable\":1}','{\"expireWarnEnable\":0,\"expireWarnDay\":0,\"emailEnable\":0,\"emailHost\":\"\",\"emailPort\":0,\"emailUsername\":\"\",\"emailPassword\":\"\"}','2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `system` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
