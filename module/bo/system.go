@@ -1,11 +1,11 @@
 package bo
 
 type SystemRegisterConfigBo struct {
-	RegisterEnable     uint `json:"registerEnable"`     // 是否开放注册
-	RegisterQuota      int  `json:"registerQuota"`      // 注册用户默认配额 单位/MB
-	RegisterExpireDays uint `json:"registerExpireDays"` // 注册用户过期天数 单位/天
-	ResetQuotaMonth    uint `json:"resetQuotaMonth"`    // 是否每月重设总流量
-	TrafficRankEnable  uint `json:"trafficRankEnable"`  // 是否开启流量排行
+	RegisterEnable              uint `json:"registerEnable"`              // 是否开放注册
+	RegisterQuota               int  `json:"registerQuota"`               // 注册用户默认配额 单位/MB
+	RegisterExpireDays          uint `json:"registerExpireDays"`          // 注册用户过期天数 单位/天
+	ResetDownloadAndUploadMonth uint `json:"resetDownloadAndUploadMonth"` // 是否每月重设下载和上传流量
+	TrafficRankEnable           uint `json:"trafficRankEnable"`           // 是否开启流量排行
 }
 
 type SystemEmailConfigBo struct {

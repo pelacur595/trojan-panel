@@ -46,19 +46,19 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 		}
 
 		systemVo = vo.SystemVo{
-			Id:                 *system.Id,
-			RegisterEnable:     systemRegisterConfigBo.RegisterEnable,
-			RegisterQuota:      systemRegisterConfigBo.RegisterQuota,
-			RegisterExpireDays: systemRegisterConfigBo.RegisterExpireDays,
-			ResetQuotaMonth:    systemRegisterConfigBo.ResetQuotaMonth,
-			TrafficRankEnable:  systemRegisterConfigBo.TrafficRankEnable,
-			ExpireWarnEnable:   systemEmailConfigBo.ExpireWarnEnable,
-			ExpireWarnDay:      systemEmailConfigBo.ExpireWarnDay,
-			EmailEnable:        systemEmailConfigBo.EmailEnable,
-			EmailHost:          systemEmailConfigBo.EmailHost,
-			EmailPort:          systemEmailConfigBo.EmailPort,
-			EmailUsername:      systemEmailConfigBo.EmailUsername,
-			EmailPassword:      systemEmailConfigBo.EmailPassword,
+			Id:                          *system.Id,
+			RegisterEnable:              systemRegisterConfigBo.RegisterEnable,
+			RegisterQuota:               systemRegisterConfigBo.RegisterQuota,
+			RegisterExpireDays:          systemRegisterConfigBo.RegisterExpireDays,
+			ResetDownloadAndUploadMonth: systemRegisterConfigBo.ResetDownloadAndUploadMonth,
+			TrafficRankEnable:           systemRegisterConfigBo.TrafficRankEnable,
+			ExpireWarnEnable:            systemEmailConfigBo.ExpireWarnEnable,
+			ExpireWarnDay:               systemEmailConfigBo.ExpireWarnDay,
+			EmailEnable:                 systemEmailConfigBo.EmailEnable,
+			EmailHost:                   systemEmailConfigBo.EmailHost,
+			EmailPort:                   systemEmailConfigBo.EmailPort,
+			EmailUsername:               systemEmailConfigBo.EmailUsername,
+			EmailPassword:               systemEmailConfigBo.EmailPassword,
 		}
 
 		systemVoJson, err := json.Marshal(systemVo)
@@ -83,8 +83,8 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	if systemDto.RegisterExpireDays != nil {
 		registerConfigBo.RegisterExpireDays = *systemDto.RegisterExpireDays
 	}
-	if systemDto.ResetQuotaMonth != nil {
-		registerConfigBo.ResetQuotaMonth = *systemDto.ResetQuotaMonth
+	if systemDto.ResetDownloadAndUploadMonth != nil {
+		registerConfigBo.ResetDownloadAndUploadMonth = *systemDto.ResetDownloadAndUploadMonth
 	}
 	if systemDto.TrafficRankEnable != nil {
 		registerConfigBo.TrafficRankEnable = *systemDto.TrafficRankEnable

@@ -254,6 +254,22 @@ func CronScanAccountExpireWarn() {
 	}
 }
 
+// CronResetDownloadAndUploadMonth 定时任务：每月重设除管理员之外的用户下载和上传流量
+func CronResetDownloadAndUploadMonth() {
+	name := constant.SystemName
+	systemConfig, err := SelectSystemByName(&name)
+	if err != nil {
+		logrus.Errorf("每月重设除管理员之外的用户下载和上传流量 查询系统设置异常 error: %v", err)
+		return
+	}
+	if systemConfig.ResetDownloadAndUploadMonth == 1 {
+		roleIds := []uint{constant.USER}
+		if err := dao.ResetAccountDownloadAndUpload(nil, &roleIds); err != nil {
+			logrus.Errorf("每月重设除管理员之外的用户下载和上传流量异常 roleIds: %v error: %v", roleIds, err)
+		}
+	}
+}
+
 // ClashSubscribe 导出Clash配置
 func ClashSubscribe(pass string) (*module.Account, []vo.NodeOneVo, error) {
 	account, err := dao.SelectAccountClashSubscribe(pass)

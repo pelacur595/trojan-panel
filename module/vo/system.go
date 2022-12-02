@@ -1,12 +1,12 @@
 package vo
 
 type SystemVo struct {
-	Id                 uint `json:"id" redis:"id"`
-	RegisterEnable     uint `json:"registerEnable" redis:"registerEnable"`
-	RegisterQuota      int  `json:"registerQuota" redis:"registerQuota"`
-	RegisterExpireDays uint `json:"registerExpireDays" redis:"registerExpireDays"`
-	ResetQuotaMonth    uint `json:"resetQuotaMonth" redis:"resetQuotaMonth"`
-	TrafficRankEnable  uint `json:"trafficRankEnable" redis:"trafficRankEnable"`
+	Id                          uint `json:"id" redis:"id"`
+	RegisterEnable              uint `json:"registerEnable" redis:"registerEnable"`
+	RegisterQuota               int  `json:"registerQuota" redis:"registerQuota"`
+	RegisterExpireDays          uint `json:"registerExpireDays" redis:"registerExpireDays"`
+	ResetDownloadAndUploadMonth uint `json:"resetDownloadAndUploadMonth" redis:"resetDownloadAndUploadMonth"`
+	TrafficRankEnable           uint `json:"trafficRankEnable" redis:"trafficRankEnable"`
 
 	ExpireWarnEnable uint   `json:"expireWarnEnable" redis:"expireWarnEnable"`
 	ExpireWarnDay    uint   `json:"expireWarnDay" redis:"expireWarnDay"`
