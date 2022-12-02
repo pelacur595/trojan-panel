@@ -47,9 +47,11 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 
 		systemVo = vo.SystemVo{
 			Id:                 *system.Id,
-			OpenRegister:       systemRegisterConfigBo.OpenRegister,
+			RegisterEnable:     systemRegisterConfigBo.RegisterEnable,
 			RegisterQuota:      systemRegisterConfigBo.RegisterQuota,
 			RegisterExpireDays: systemRegisterConfigBo.RegisterExpireDays,
+			ResetQuotaMonth:    systemRegisterConfigBo.ResetQuotaMonth,
+			TrafficRankEnable:  systemRegisterConfigBo.TrafficRankEnable,
 			ExpireWarnEnable:   systemEmailConfigBo.ExpireWarnEnable,
 			ExpireWarnDay:      systemEmailConfigBo.ExpireWarnDay,
 			EmailEnable:        systemEmailConfigBo.EmailEnable,
@@ -72,14 +74,20 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 
 func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	registerConfigBo := bo.SystemRegisterConfigBo{}
-	if systemDto.OpenRegister != nil {
-		registerConfigBo.OpenRegister = *systemDto.OpenRegister
+	if systemDto.RegisterEnable != nil {
+		registerConfigBo.RegisterEnable = *systemDto.RegisterEnable
 	}
 	if systemDto.RegisterQuota != nil {
 		registerConfigBo.RegisterQuota = *systemDto.RegisterQuota
 	}
 	if systemDto.RegisterExpireDays != nil {
 		registerConfigBo.RegisterExpireDays = *systemDto.RegisterExpireDays
+	}
+	if systemDto.ResetQuotaMonth != nil {
+		registerConfigBo.ResetQuotaMonth = *systemDto.ResetQuotaMonth
+	}
+	if systemDto.TrafficRankEnable != nil {
+		registerConfigBo.TrafficRankEnable = *systemDto.TrafficRankEnable
 	}
 	registerConfigBoByte, err := json.Marshal(registerConfigBo)
 	if err != nil {

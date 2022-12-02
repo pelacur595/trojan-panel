@@ -151,7 +151,7 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 	if err != nil {
 		return err
 	}
-	if systemVo.OpenRegister == 0 {
+	if systemVo.RegisterEnable == 0 {
 		return errors.New(constant.AccountRegisterClosed)
 	}
 
