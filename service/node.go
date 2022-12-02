@@ -596,7 +596,7 @@ func CountNode() (int, error) {
 
 func GrpcAddNode(token string, ip string, nodeAddDto *core.NodeAddDto) error {
 	if err := core.AddNode(token, ip, nodeAddDto); err != nil {
-		return errors.New(constant.GrpcAddNodeError)
+		return err
 	}
 	return nil
 }
