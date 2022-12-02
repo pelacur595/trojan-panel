@@ -424,12 +424,15 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 }
 
 // TrafficRank 流量排行 前15名
-func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
+func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
-	buildSelect, values, err := builder.NamedQuery(`select username, upload + download as trafficUsed
-from account
-where quota != 0 and username not like '%admin%'
-order by trafficUsed desc limit 15`, nil)
+	where := map[string]interface{}{"quota <>": 0}
+	if roleIds != nil && len(*roleIds) > 0 {
+		where["role_id in"] = *roleIds
+	}
+	where["_orderby"] = "trafficUsed desc limit 15"
+	selectFields := []string{"username", "upload + download as trafficUsed"}
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
