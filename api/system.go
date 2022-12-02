@@ -32,6 +32,7 @@ func Setting(c *gin.Context) {
 		RegisterEnable:     systemVo.RegisterEnable,
 		RegisterQuota:      systemVo.RegisterQuota,
 		RegisterExpireDays: systemVo.RegisterExpireDays,
+		TrafficRankEnable:  systemVo.TrafficRankEnable,
 		EmailEnable:        systemVo.EmailEnable,
 	}
 	vo.Success(settingVo, c)
