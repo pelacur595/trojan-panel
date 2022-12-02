@@ -115,7 +115,7 @@ func NodeURL(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	url, err := service.NodeURL(&accountInfo.Id, &accountInfo.Username, requiredIdDto.Id)
+	url, _, err := service.NodeURL(&accountInfo.Id, &accountInfo.Username, requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
