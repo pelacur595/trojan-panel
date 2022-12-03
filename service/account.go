@@ -297,7 +297,7 @@ func RemoveAccount(token string, password string) error {
 		removeDto := core.AccountRemoveDto{
 			Password: password,
 		}
-		_ = core.RemoveAccount(ip, token, &removeDto)
+		_ = core.RemoveAccount(token, ip, &removeDto)
 	}
 	return nil
 }
