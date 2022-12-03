@@ -462,11 +462,11 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 }
 
 func NodeQRCode(accountId *uint, username *string, id *uint) ([]byte, error) {
-	nodeUrl, nodeName, err := NodeURL(accountId, username, id)
+	nodeUrl, nodeTypeName, err := NodeURL(accountId, username, id)
 	if err != nil {
 		return nil, err
 	}
-	if nodeName == constant.NaiveProxyName {
+	if nodeTypeName == constant.NaiveProxyName {
 		nodeUrl = strings.TrimPrefix(nodeUrl, "naive+https://")
 		nodeUrl = fmt.Sprintf("https://%s", base64.StdEncoding.EncodeToString([]byte(nodeUrl)))
 	}
@@ -590,7 +590,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 	if node.Name != nil && *node.Name != "" {
 		headBuilder.WriteString(fmt.Sprintf("#%s", url.PathEscape(*node.Name)))
 	}
-	return headBuilder.String(), *node.Name, nil
+	return headBuilder.String(), *nodeType.Name, nil
 }
 
 func CountNode() (int, error) {
