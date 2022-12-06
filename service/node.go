@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"net/url"
@@ -194,7 +195,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, token string) (*vo.NodePageVo, error) {
+func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodePageVo, error) {
 	nodePage, total, err := dao.SelectNodePage(queryName, pageNum, pageSize)
 	if err != nil {
 		return nil, err
@@ -213,36 +214,40 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, token stri
 		nodeVos = append(nodeVos, nodeVo)
 	}
 
-	splitNodeVos := util.SplitArr(nodeVos, 2)
-	var nodeMap sync.Map
-	var wg sync.WaitGroup
-	for i := range splitNodeVos {
-		indexI := i
-		wg.Add(1)
-		go func() {
-			for j := range splitNodeVos[indexI] {
-				var ip = splitNodeVos[indexI][j].Ip
-				status, ok := nodeMap.Load(ip)
-				if ok {
-					splitNodeVos[indexI][j].Status = status.(int)
-				} else {
-					var status = 0
-					success, err := core.Ping(token, ip)
-					if err != nil {
-						status = -1
+	account := util.GetCurrentAccount(c)
+	if util.IsAdmin(account.Roles) {
+		token := util.GetToken(c)
+		splitNodeVos := util.SplitArr(nodeVos, 2)
+		var nodeMap sync.Map
+		var wg sync.WaitGroup
+		for i := range splitNodeVos {
+			indexI := i
+			wg.Add(1)
+			go func() {
+				for j := range splitNodeVos[indexI] {
+					var ip = splitNodeVos[indexI][j].Ip
+					status, ok := nodeMap.Load(ip)
+					if ok {
+						splitNodeVos[indexI][j].Status = status.(int)
 					} else {
-						if success {
-							status = 1
+						var status = 0
+						success, err := core.Ping(token, ip)
+						if err != nil {
+							status = -1
+						} else {
+							if success {
+								status = 1
+							}
 						}
+						splitNodeVos[indexI][j].Status = status
+						nodeMap.Store(ip, status)
 					}
-					splitNodeVos[indexI][j].Status = status
-					nodeMap.Store(ip, status)
 				}
-			}
-			wg.Done()
-		}()
+				wg.Done()
+			}()
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 
 	nodePageVo := vo.NodePageVo{
 		BaseVoPage: vo.BaseVoPage{
