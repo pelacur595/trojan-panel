@@ -6,10 +6,6 @@ Trojan Panel后端
 
 [compile.bat](./compile.bat)
 
-# Author
-
-[@jonssonyan](https://twitter.com/jonssonyan)
-
 # Community
 
 - Telegram Channel: [Trojan Panel](https://t.me/TrojanPanel)
