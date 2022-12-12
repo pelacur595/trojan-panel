@@ -8,7 +8,8 @@ ENV mariadb_ip=127.0.0.1 \
     mariadb_pas=123456 \
     redis_host=127.0.0.1 \
     redis_port=6378 \
-    redis_pass=123456
+    redis_pass=123456 \
+    TZ=Asia/Shanghai
 ARG TARGETOS
 ARG TARGETARCH
 COPY build/trojan-panel-${TARGETOS}-${TARGETARCH} trojan-panel
