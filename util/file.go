@@ -150,6 +150,7 @@ func InitFile() {
 			redisMaxIdle   string
 			redisMaxActive string
 			redisWait      string
+			version        bool
 		)
 		flag.StringVar(&host, "host", "localhost", "数据库地址")
 		flag.StringVar(&user, "user", "root", "数据库用户名")
@@ -162,7 +163,12 @@ func InitFile() {
 		flag.StringVar(&redisMaxIdle, "redisMaxIdle", "2", "Redis最大空闲连接数")
 		flag.StringVar(&redisMaxActive, "redisMaxActive", "2", "Redis最大连接数")
 		flag.StringVar(&redisWait, "redisWait", "true", "Redis是否等待")
+		flag.BoolVar(&version, "version", false, "print trojan panel version")
 		flag.Parse()
+		if version {
+			println(constant.TrojanPanelVersion)
+			os.Exit(0)
+		}
 		_, err = file.WriteString(fmt.Sprintf(
 			`[mysql]
 host=%s
@@ -226,7 +232,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 
 func usage() {
 	_, _ = fmt.Fprintf(os.Stderr, `trojan panel help
-Usage: trojanpanel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait] [-h]
+Usage: trojanpanel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait] [-h] [-version]
 
 Options:
 	-host			database host
@@ -241,5 +247,6 @@ Options:
 	-redisMaxActive	redis redisMaxActive
 	-redisWait		redis redisWait
 	-h				help
+	-version        trojan panel version
 `)
 }
