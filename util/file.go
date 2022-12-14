@@ -148,7 +148,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 }
 
 func usage() {
-	_, _ = fmt.Fprint(os.Stdout, `trojan panel help
+	_, _ = fmt.Fprintln(os.Stdout, `trojan panel help
 Usage: trojan-panel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait] [-h] [-version]`)
 	flag.PrintDefaults()
 }
