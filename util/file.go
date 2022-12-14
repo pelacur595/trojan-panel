@@ -149,7 +149,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 
 func usage() {
 	_, _ = fmt.Fprint(os.Stdout, `trojan panel help
-Usage: trojanpanel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait] [-h] [-version]`)
+Usage: trojan-panel [-host] [-password] [-port] [-redisHost] [-redisPort] [-redisPassword] [-redisDb] [-redisMaxIdle] [-redisMaxActive] [-redisWait] [-h] [-version]`)
 	flag.PrintDefaults()
 }
 
