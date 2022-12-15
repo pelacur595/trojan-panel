@@ -12,7 +12,7 @@ ENV mariadb_ip=127.0.0.1 \
     TZ=Asia/Shanghai
 ARG TARGETOS
 ARG TARGETARCH
-COPY build/trojan-panel-${TARGETOS}-${TARGETARCH} trojan-panel
+COPY build/trojan-panel-${TARGETOS}-${TARGETARCH}${TARGETPLATFORM} trojan-panel
 # 国内环境开启以下注释 设置apk国内镜像
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add bash tzdata ca-certificates && \
