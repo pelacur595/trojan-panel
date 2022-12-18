@@ -13,7 +13,7 @@ import (
 func SelectNodeById(id *uint) (*module.Node, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "`node_sub_id`", "node_type_id", "name", "ip", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "ip", "domain", "port", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -37,10 +37,12 @@ func SelectNodeById(id *uint) (*module.Node, error) {
 
 func CreateNode(node *module.Node) error {
 	nodeEntity := map[string]interface{}{
-		"node_sub_id":  *node.NodeSubId,
-		"node_type_id": *node.NodeTypeId,
-		"name":         *node.Name,
-		"ip":           *node.Ip,
+		"node_server_id": *node.NodeServerId,
+		"node_sub_id":    *node.NodeSubId,
+		"node_type_id":   *node.NodeTypeId,
+		"name":           *node.Name,
+		"ip":             *node.Ip,
+		"domain":         *node.Domain,
 	}
 	if node.Port != nil && *node.Port != 0 {
 		nodeEntity["port"] = *node.Port
@@ -89,7 +91,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*[]module
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
-	selectFields := []string{"id", "`node_sub_id`", "node_type_id", "name", "ip", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "domain", "port", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -127,6 +129,9 @@ func DeleteNodeById(id *uint) error {
 func UpdateNodeById(node *module.Node) error {
 	where := map[string]interface{}{"id": *node.Id}
 	update := map[string]interface{}{}
+	if node.NodeServerId != nil {
+		update["node_server_id"] = *node.NodeServerId
+	}
 	if node.NodeSubId != nil {
 		update["node_sub_id"] = *node.NodeSubId
 	}
@@ -138,6 +143,9 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.Ip != nil {
 		update["ip"] = *node.Ip
+	}
+	if node.Domain != nil {
+		update["domain"] = *node.Domain
 	}
 	if node.Port != nil {
 		update["port"] = *node.Port

@@ -57,6 +57,21 @@ func Router(router *gin.Engine) {
 			// 查询角色列表
 			role.GET("/selectRoleList", api.SelectRoleList)
 		}
+		nodeServer := trojan.Group("/nodeServer")
+		{
+			// 根据id查询服务器
+			nodeServer.GET("/selectNodeServerById", api.SelectNodeServerById)
+			// 创建服务器
+			nodeServer.POST("/createNodeServer", api.CreateNodeServer)
+			// 分页查询服务器
+			nodeServer.GET("/selectNodeServerPage", api.SelectNodeServerPage)
+			// 删除服务器
+			nodeServer.POST("/deleteNodeServerById", api.DeleteNodeServerById)
+			// 更新服务器
+			nodeServer.POST("/updateNodeServerById", api.UpdateNodeServerById)
+			// 更新服务器列表
+			nodeServer.GET("/selectNodeServerList", api.SelectNodeServerList)
+		}
 		node := trojan.Group("/node")
 		{
 			// 根据id查询节点

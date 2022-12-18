@@ -29,13 +29,14 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 	}
 	if node != nil {
 		nodeOneVo := vo.NodeOneVo{
-			Id:         *node.Id,
-			NodeSubId:  *node.NodeSubId,
-			NodeTypeId: *node.NodeTypeId,
-			Name:       *node.Name,
-			Ip:         *node.Ip,
-			Port:       *node.Port,
-			CreateTime: *node.CreateTime,
+			Id:           *node.Id,
+			NodeServerId: *node.NodeServerId,
+			NodeSubId:    *node.NodeSubId,
+			NodeTypeId:   *node.NodeTypeId,
+			Name:         *node.Name,
+			Domain:       *node.Domain,
+			Port:         *node.Port,
+			CreateTime:   *node.CreateTime,
 		}
 		nodeTypeId := node.NodeTypeId
 		switch *nodeTypeId {
@@ -182,11 +183,13 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 
 		// 在主表中插入数据
 		node := module.Node{
-			NodeSubId:  &nodeId,
-			NodeTypeId: nodeCreateDto.NodeTypeId,
-			Name:       nodeCreateDto.Name,
-			Ip:         nodeCreateDto.Ip,
-			Port:       nodeCreateDto.Port,
+			NodeServerId: nodeCreateDto.NodeServerId,
+			NodeSubId:    &nodeId,
+			NodeTypeId:   nodeCreateDto.NodeTypeId,
+			Name:         nodeCreateDto.Name,
+			Ip:           nodeCreateDto.Ip,
+			Domain:       nodeCreateDto.Domain,
+			Port:         nodeCreateDto.Port,
 		}
 		if err = dao.CreateNode(&node); err != nil {
 			return err
@@ -203,13 +206,14 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Con
 	nodeVos := make([]vo.NodeVo, 0)
 	for _, item := range *nodePage {
 		nodeVo := vo.NodeVo{
-			Id:         *item.Id,
-			NodeSubId:  *item.NodeSubId,
-			NodeTypeId: *item.NodeTypeId,
-			Name:       *item.Name,
-			Ip:         *item.Ip,
-			Port:       *item.Port,
-			CreateTime: *item.CreateTime,
+			Id:           *item.Id,
+			NodeServerId: *item.NodeServerId,
+			NodeSubId:    *item.NodeSubId,
+			NodeTypeId:   *item.NodeTypeId,
+			Name:         *item.Name,
+			Domain:       *item.Domain,
+			Port:         *item.Port,
+			CreateTime:   *item.CreateTime,
 		}
 		nodeVos = append(nodeVos, nodeVo)
 	}
@@ -383,10 +387,12 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				*nodeEntity.Ip != *nodeUpdateDto.Ip ||
 				*nodeEntity.Port != *nodeUpdateDto.Port {
 				node := module.Node{
-					Id:   nodeUpdateDto.Id,
-					Name: nodeUpdateDto.Name,
-					Ip:   nodeUpdateDto.Ip,
-					Port: nodeUpdateDto.Port,
+					Id:           nodeUpdateDto.Id,
+					NodeServerId: nodeUpdateDto.NodeServerId,
+					Name:         nodeUpdateDto.Name,
+					Ip:           nodeUpdateDto.Ip,
+					Domain:       nodeUpdateDto.Domain,
+					Port:         nodeUpdateDto.Port,
 				}
 				if err = dao.UpdateNodeById(&node); err != nil {
 					return err
@@ -451,12 +457,14 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 
 			node := module.Node{
-				Id:         nodeUpdateDto.Id,
-				NodeSubId:  &nodeId,
-				NodeTypeId: nodeUpdateDto.NodeTypeId,
-				Name:       nodeUpdateDto.Name,
-				Ip:         nodeUpdateDto.Ip,
-				Port:       nodeUpdateDto.Port,
+				Id:           nodeUpdateDto.Id,
+				NodeServerId: nodeUpdateDto.NodeServerId,
+				NodeSubId:    &nodeId,
+				NodeTypeId:   nodeUpdateDto.NodeTypeId,
+				Name:         nodeUpdateDto.Name,
+				Ip:           nodeUpdateDto.Ip,
+				Domain:       nodeUpdateDto.Domain,
+				Port:         nodeUpdateDto.Port,
 			}
 			if err = dao.UpdateNodeById(&node); err != nil {
 				return err
@@ -530,7 +538,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 			connectPass = util.GenerateUUID(password)
 		}
 		headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
-			url.PathEscape(connectPass), *node.Ip, *node.Port,
+			url.PathEscape(connectPass), *node.Domain, *node.Port,
 			streamSettings.Network, streamSettings.Security))
 		if *nodeXray.Protocol == "vmess" {
 			headBuilder.WriteString("&alterId=0")
@@ -556,12 +564,12 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 			return "", "", errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("trojan-go://%s@%s:%d?", url.PathEscape(password),
-			*node.Ip, *node.Port))
+			*node.Domain, *node.Port))
 		var sni string
 		if nodeTrojanGo.Sni != nil && *nodeTrojanGo.Sni != "" {
 			sni = *nodeTrojanGo.Sni
 		} else {
-			sni = *node.Ip
+			sni = *node.Domain
 		}
 		headBuilder.WriteString(fmt.Sprintf("sni=%s", url.PathEscape(sni)))
 		if nodeTrojanGo.WebsocketEnable != nil && *nodeTrojanGo.WebsocketEnable != 0 &&
@@ -582,14 +590,14 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 			return "", "", errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("hysteria://%s:%d?protocol=%s&auth=%s&upmbps=%d&downmbps=%d",
-			*node.Ip,
+			*node.Domain,
 			*node.Port,
 			*nodeHysteria.Protocol,
 			password,
 			*nodeHysteria.UpMbps,
 			*nodeHysteria.DownMbps))
 	} else if *nodeType.Name == constant.NaiveProxyName {
-		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Ip, *node.Port))
+		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))
 	}
 
 	if node.Name != nil && *node.Name != "" {

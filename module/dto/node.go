@@ -10,10 +10,12 @@ type NodeDto struct {
 }
 
 type NodeCreateDto struct {
-	NodeTypeId *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
-	Name       *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip         *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
-	Port       *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	NodeServerId *uint   `json:"nodeServerId" form:"nodeServerId" validate:"required,gt=0"`
+	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
+	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
+	Ip           *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
+	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
@@ -38,11 +40,13 @@ type NodeCreateDto struct {
 
 type NodeUpdateDto struct {
 	RequiredIdDto
-	NodeSubId  *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gte=0"`
-	NodeTypeId *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
-	Name       *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip         *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
-	Port       *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	NodeServerId *uint   `json:"nodeServerId" form:"nodeServerId" validate:"required,gt=0"`
+	NodeSubId    *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gte=0"`
+	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
+	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
+	Ip           *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
+	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`

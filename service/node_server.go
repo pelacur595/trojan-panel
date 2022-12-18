@@ -1,0 +1,122 @@
+package service
+
+import (
+	"github.com/gin-gonic/gin"
+	"sync"
+	"trojan-panel/core"
+	"trojan-panel/dao"
+	"trojan-panel/module"
+	"trojan-panel/module/dto"
+	"trojan-panel/module/vo"
+	"trojan-panel/util"
+)
+
+func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
+	return dao.SelectNodeServerById(id)
+}
+
+func CreateNodeServer(nodeServer *module.NodeServer) error {
+	return dao.CreateNodeServer(nodeServer)
+}
+
+func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodeServerPageVo, error) {
+	nodeServerPage, total, err := dao.SelectNodeServerPage(queryName, pageNum, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	nodeServerVos := make([]vo.NodeServerVo, 0)
+	for _, item := range *nodeServerPage {
+		nodeServerVo := vo.NodeServerVo{
+			Id:         *item.Id,
+			Name:       *item.Name,
+			Ip:         *item.Ip,
+			CreateTime: *item.CreateTime,
+		}
+		nodeServerVos = append(nodeServerVos, nodeServerVo)
+	}
+
+	account := util.GetCurrentAccount(c)
+	if util.IsAdmin(account.Roles) {
+		token := util.GetToken(c)
+		splitNodeServerVos := util.SplitArr(nodeServerVos, 2)
+		var nodeMap sync.Map
+		var wg sync.WaitGroup
+		for i := range splitNodeServerVos {
+			indexI := i
+			wg.Add(1)
+			go func() {
+				for j := range splitNodeServerVos[indexI] {
+					var ip = splitNodeServerVos[indexI][j].Ip
+					status, ok := nodeMap.Load(ip)
+					if ok {
+						splitNodeServerVos[indexI][j].Status = status.(int)
+					} else {
+						var status = 0
+						success, err := core.Ping(token, ip)
+						if err != nil {
+							status = -1
+						} else {
+							if success {
+								status = 1
+							}
+						}
+						splitNodeServerVos[indexI][j].Status = status
+						nodeMap.Store(ip, status)
+					}
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+	}
+
+	nodeServerPageVo := vo.NodeServerPageVo{
+		BaseVoPage: vo.BaseVoPage{
+			PageNum:  *pageNum,
+			PageSize: *pageSize,
+			Total:    total,
+		},
+		NodeServers: nodeServerVos,
+	}
+	return &nodeServerPageVo, nil
+}
+
+func DeleteNodeServerById(id *uint) error {
+	return dao.DeleteNodeServerById(id)
+}
+
+func UpdateNodeServerById(dto *dto.NodeServerUpdateDto) error {
+	nodeServer := module.NodeServer{
+		Id:   dto.Id,
+		Ip:   dto.Ip,
+		Name: dto.Name,
+	}
+	return dao.UpdateNodeServerById(&nodeServer)
+}
+
+func CountNodeServer() (int, error) {
+	return dao.CountNodeServer()
+}
+
+func CountNodeServerByName(id *uint, queryName *string) (int, error) {
+	return dao.CountNodeServerByName(id, queryName)
+}
+
+func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerVo, error) {
+	nodeServerList, err := dao.SelectNodeServerList(dto.Ip, dto.Name)
+	if err != nil {
+		return nil, err
+	}
+	nodeServerVos := make([]vo.NodeServerVo, 0)
+	for _, item := range nodeServerList {
+		nodeServerVo := vo.NodeServerVo{
+			Id:         *item.Id,
+			Name:       *item.Name,
+			Ip:         *item.Ip,
+			CreateTime: *item.CreateTime,
+		}
+		nodeServerVos = append(nodeServerVos, nodeServerVo)
+
+	}
+	return nodeServerVos, nil
+}
