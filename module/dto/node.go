@@ -13,7 +13,7 @@ type NodeCreateDto struct {
 	NodeServerId *uint   `json:"nodeServerId" form:"nodeServerId" validate:"required,gt=0"`
 	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip           *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	NodeServerIp *string `json:"nodeServerIp" form:"nodeServerIp" validate:"required,ip,min=4,max=64"`
 	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
@@ -44,7 +44,7 @@ type NodeUpdateDto struct {
 	NodeSubId    *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gte=0"`
 	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip           *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	NodeServerIp *string `json:"nodeServerIp" form:"nodeServerIp" validate:"required,ip,min=4,max=64"`
 	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 

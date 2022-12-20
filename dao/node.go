@@ -13,7 +13,7 @@ import (
 func SelectNodeById(id *uint) (*module.Node, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "ip", "domain", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "domain", "port", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -41,7 +41,7 @@ func CreateNode(node *module.Node) error {
 		"node_sub_id":    *node.NodeSubId,
 		"node_type_id":   *node.NodeTypeId,
 		"name":           *node.Name,
-		"ip":             *node.Ip,
+		"node_server_ip": *node.NodeServerIp,
 		"domain":         *node.Domain,
 	}
 	if node.Port != nil && *node.Port != 0 {
@@ -141,8 +141,8 @@ func UpdateNodeById(node *module.Node) error {
 	if node.Name != nil {
 		update["name"] = *node.Name
 	}
-	if node.Ip != nil {
-		update["ip"] = *node.Ip
+	if node.NodeServerIp != nil {
+		update["node_server_ip"] = *node.NodeServerIp
 	}
 	if node.Domain != nil {
 		update["domain"] = *node.Domain

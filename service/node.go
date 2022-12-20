@@ -102,10 +102,10 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	defer mutex.Unlock()
 	if mutex.TryLock() {
 		// Grpc添加节点
-		if err = GrpcAddNode(token, *nodeCreateDto.Ip, &core.NodeAddDto{
-			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
-			Port:       uint64(*nodeCreateDto.Port),
-			Ip:         *nodeCreateDto.Ip,
+		if err = GrpcAddNode(token, *nodeCreateDto.NodeServerIp, &core.NodeAddDto{
+			NodeTypeId:   uint64(*nodeCreateDto.NodeTypeId),
+			Port:         uint64(*nodeCreateDto.Port),
+			NodeServerIp: *nodeCreateDto.NodeServerIp,
 
 			//  Xray
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
@@ -132,7 +132,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 				for {
 					select {
 					case <-time.After(8 * time.Second):
-						_ = GrpcRemoveNode(token, *nodeCreateDto.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+						_ = GrpcRemoveNode(token, *nodeCreateDto.NodeServerIp, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
 						return
 					}
 				}
@@ -187,7 +187,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			NodeSubId:    &nodeId,
 			NodeTypeId:   nodeCreateDto.NodeTypeId,
 			Name:         nodeCreateDto.Name,
-			Ip:           nodeCreateDto.Ip,
+			NodeServerIp: nodeCreateDto.NodeServerIp,
 			Domain:       nodeCreateDto.Domain,
 			Port:         nodeCreateDto.Port,
 		}
@@ -211,6 +211,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Con
 			NodeSubId:    *item.NodeSubId,
 			NodeTypeId:   *item.NodeTypeId,
 			Name:         *item.Name,
+			NodeServerIp: *item.NodeServerIp,
 			Domain:       *item.Domain,
 			Port:         *item.Port,
 			CreateTime:   *item.CreateTime,
@@ -229,7 +230,7 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Con
 			wg.Add(1)
 			go func() {
 				for j := range splitNodeVos[indexI] {
-					var ip = splitNodeVos[indexI][j].Ip
+					var ip = splitNodeVos[indexI][j].NodeServerIp
 					status, ok := nodeMap.Load(ip)
 					if ok {
 						splitNodeVos[indexI][j].Status = status.(int)
@@ -273,7 +274,7 @@ func DeleteNodeById(token string, id *uint) error {
 		if err != nil {
 			return err
 		}
-		_ = GrpcRemoveNode(token, *node.Ip, *node.Port, *node.NodeTypeId)
+		_ = GrpcRemoveNode(token, *node.NodeServerIp, *node.Port, *node.NodeTypeId)
 		if *node.NodeTypeId == 1 {
 			if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
 				return err
@@ -310,13 +311,13 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			return err
 		}
 		// Grpc的操作
-		if err = GrpcRemoveNode(token, *nodeEntity.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
+		if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
 			return err
 		}
-		if err = GrpcAddNode(token, *nodeUpdateDto.Ip, &core.NodeAddDto{
-			NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
-			Port:       uint64(*nodeUpdateDto.Port),
-			Ip:         *nodeUpdateDto.Ip,
+		if err = GrpcAddNode(token, *nodeUpdateDto.NodeServerIp, &core.NodeAddDto{
+			NodeTypeId:   uint64(*nodeUpdateDto.NodeTypeId),
+			Port:         uint64(*nodeUpdateDto.Port),
+			NodeServerIp: *nodeUpdateDto.NodeServerIp,
 
 			//  Xray
 			XrayProtocol:       *nodeUpdateDto.XrayProtocol,
@@ -339,7 +340,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 		}); err != nil {
-			_ = GrpcRemoveNode(token, *nodeEntity.Ip, *nodeEntity.Port, *nodeEntity.NodeTypeId)
+			_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId)
 			return err
 		}
 
@@ -384,13 +385,13 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				}
 			}
 			if *nodeUpdateDto.Name != *nodeUpdateDto.Name ||
-				*nodeEntity.Ip != *nodeUpdateDto.Ip ||
+				*nodeEntity.NodeServerIp != *nodeUpdateDto.NodeServerIp ||
 				*nodeEntity.Port != *nodeUpdateDto.Port {
 				node := module.Node{
 					Id:           nodeUpdateDto.Id,
 					NodeServerId: nodeUpdateDto.NodeServerId,
 					Name:         nodeUpdateDto.Name,
-					Ip:           nodeUpdateDto.Ip,
+					NodeServerIp: nodeUpdateDto.NodeServerIp,
 					Domain:       nodeUpdateDto.Domain,
 					Port:         nodeUpdateDto.Port,
 				}
@@ -462,7 +463,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				NodeSubId:    &nodeId,
 				NodeTypeId:   nodeUpdateDto.NodeTypeId,
 				Name:         nodeUpdateDto.Name,
-				Ip:           nodeUpdateDto.Ip,
+				NodeServerIp: nodeUpdateDto.NodeServerIp,
 				Domain:       nodeUpdateDto.Domain,
 				Port:         nodeUpdateDto.Port,
 			}

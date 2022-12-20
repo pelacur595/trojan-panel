@@ -296,7 +296,7 @@ func Clash(c *gin.Context) {
 			if *nodeXray.Protocol == "vmess" {
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
-				vmess.Server = item.Ip
+				vmess.Server = item.Domain
 				vmess.Port = item.Port
 				vmess.VmessType = "vmess"
 				vmess.Uuid = util.GenerateUUID(pass)
@@ -322,7 +322,7 @@ func Clash(c *gin.Context) {
 			} else if *nodeXray.Protocol == "trojan" {
 				trojan := bo.Trojan{}
 				trojan.Name = item.Name
-				trojan.Server = item.Ip
+				trojan.Server = item.Domain
 				trojan.Port = item.Port
 				trojan.TrojanType = "trojan"
 				trojan.Password = pass
@@ -344,7 +344,7 @@ func Clash(c *gin.Context) {
 			}
 			trojanGo := bo.TrojanGo{}
 			trojanGo.Name = item.Name
-			trojanGo.Server = item.Ip
+			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
 			trojanGo.TrojanType = "trojan"
 			trojanGo.Password = pass
@@ -365,7 +365,7 @@ func Clash(c *gin.Context) {
 			}
 			hysteria := bo.Hysteria{}
 			hysteria.Name = item.Name
-			hysteria.Server = item.Ip
+			hysteria.Server = item.Domain
 			hysteria.Port = item.Port
 			hysteria.HysteriaType = "hysteria"
 			hysteria.Password = pass
