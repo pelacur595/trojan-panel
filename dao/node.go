@@ -62,7 +62,7 @@ func CreateNode(node *module.Node) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*[]module.Node, uint, error) {
+func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSize *uint) (*[]module.Node, uint, error) {
 	var (
 		total uint
 		nodes []module.Node
@@ -72,6 +72,9 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*[]module
 	var whereCount = map[string]interface{}{}
 	if queryName != nil && *queryName != "" {
 		whereCount["name like"] = fmt.Sprintf("%%%s%%", *queryName)
+	}
+	if nodeServerId != nil {
+		whereCount["node_server_id"] = *nodeServerId
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("node", whereCount, selectFieldsCount)
@@ -90,6 +93,9 @@ func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint) (*[]module
 		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
+	}
+	if nodeServerId != nil && *nodeServerId != 0 {
+		where["node_server_id"] = *nodeServerId
 	}
 	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "domain", "port", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
@@ -166,7 +172,7 @@ func UpdateNodeById(node *module.Node) error {
 }
 
 func CountNode() (int, error) {
-	return CountNodeByName(nil, nil)
+	return CountNodeByNameAndNodeServerId(nil, nil, nil)
 }
 
 func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
@@ -194,7 +200,7 @@ func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
 	return count, nil
 }
 
-func CountNodeByName(id *uint, queryName *string) (int, error) {
+func CountNodeByNameAndNodeServerId(id *uint, queryName *string, nodeServerId *uint) (int, error) {
 	var count int
 
 	var whereCount = map[string]interface{}{}
@@ -203,6 +209,9 @@ func CountNodeByName(id *uint, queryName *string) (int, error) {
 	}
 	if queryName != nil {
 		whereCount["name"] = *queryName
+	}
+	if nodeServerId != nil {
+		whereCount["node_server_id"] = *nodeServerId
 	}
 
 	selectFields := []string{"count(1)"}

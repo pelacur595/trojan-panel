@@ -88,7 +88,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	}
 
 	// 校验名称
-	countName, err := dao.CountNodeByName(nil, nodeCreateDto.Name)
+	countName, err := dao.CountNodeByNameAndNodeServerId(nil, nodeCreateDto.Name, nil)
 	if err != nil {
 		return err
 	}
@@ -202,8 +202,8 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodePageVo, error) {
-	nodePage, total, err := dao.SelectNodePage(queryName, pageNum, pageSize)
+func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodePageVo, error) {
+	nodePage, total, err := dao.SelectNodePage(queryName, nodeServerId, pageNum, pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +322,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 	}
 
 	// 校验名称
-	count, err := dao.CountNodeByName(nodeUpdateDto.Id, nodeUpdateDto.Name)
+	count, err := dao.CountNodeByNameAndNodeServerId(nodeUpdateDto.Id, nodeUpdateDto.Name, nil)
 	if err != nil {
 		return err
 	}

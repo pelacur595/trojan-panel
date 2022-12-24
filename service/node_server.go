@@ -1,11 +1,13 @@
 package service
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"sync"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
+	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
 	"trojan-panel/util"
@@ -82,6 +84,14 @@ func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint, c *g
 }
 
 func DeleteNodeServerById(id *uint) error {
+	count, err := dao.CountNodeByNameAndNodeServerId(nil, nil, id)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return errors.New(constant.NodeServerDeletedError)
+	}
+
 	return dao.DeleteNodeServerById(id)
 }
 

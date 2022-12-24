@@ -6,7 +6,8 @@ type NodePageDto struct {
 }
 
 type NodeDto struct {
-	Name *string `json:"name" form:"name" validate:"omitempty,min=0,max=20"`
+	Name         *string `json:"name" form:"name" validate:"omitempty,min=0,max=20"`
+	NodeServerId *uint   `json:"nodeServerId" form:"nodeServerId" validate:"omitempty,gte=0"`
 }
 
 type NodeCreateDto struct {

@@ -37,6 +37,7 @@ const (
 	GrpcAddNodeError string = "远程服务添加节点失败,请稍后再试"
 	LoadKeyPairError string = "加载本地密钥和证书失败"
 
-	PortIsOccupied string = "端口被占用,请检查该端口或选择其他端口"
-	PortRangeError string = "端口范围在100-30000之间"
+	PortIsOccupied         string = "端口被占用,请检查该端口或选择其他端口"
+	PortRangeError         string = "端口范围在100-30000之间"
+	NodeServerDeletedError string = "该服务器下存在节点"
 )
