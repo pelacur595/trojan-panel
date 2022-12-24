@@ -73,7 +73,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	if queryName != nil && *queryName != "" {
 		whereCount["name like"] = fmt.Sprintf("%%%s%%", *queryName)
 	}
-	if nodeServerId != nil {
+	if nodeServerId != nil && *nodeServerId != 0 {
 		whereCount["node_server_id"] = *nodeServerId
 	}
 	selectFieldsCount := []string{"count(1)"}
