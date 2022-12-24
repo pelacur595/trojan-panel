@@ -13,7 +13,7 @@ import (
 func SelectNodeById(id *uint) (*module.Node, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "domain", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "domain", "port", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())

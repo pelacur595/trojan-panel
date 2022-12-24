@@ -102,21 +102,19 @@ func CountNodeServerByName(id *uint, queryName *string) (int, error) {
 	return dao.CountNodeServerByName(id, queryName)
 }
 
-func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerVo, error) {
+func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerListVo, error) {
 	nodeServerList, err := dao.SelectNodeServerList(dto.Ip, dto.Name)
 	if err != nil {
 		return nil, err
 	}
-	nodeServerVos := make([]vo.NodeServerVo, 0)
+	nodeServerListVos := make([]vo.NodeServerListVo, 0)
 	for _, item := range nodeServerList {
-		nodeServerVo := vo.NodeServerVo{
-			Id:         *item.Id,
-			Name:       *item.Name,
-			Ip:         *item.Ip,
-			CreateTime: *item.CreateTime,
+		nodeServerVo := vo.NodeServerListVo{
+			Id:   *item.Id,
+			Name: *item.Name,
 		}
-		nodeServerVos = append(nodeServerVos, nodeServerVo)
+		nodeServerListVos = append(nodeServerListVos, nodeServerVo)
 
 	}
-	return nodeServerVos, nil
+	return nodeServerListVos, nil
 }

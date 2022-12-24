@@ -16,10 +16,16 @@ func SelectNodeServerById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeServerOneVo, err := service.SelectNodeServerById(nodeServerRequireIdDto.Id)
+	nodeServer, err := service.SelectNodeServerById(nodeServerRequireIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
+	}
+	nodeServerOneVo := vo.NodeServerOneVo{
+		Id:         *nodeServer.Id,
+		Name:       *nodeServer.Name,
+		Ip:         *nodeServer.Ip,
+		CreateTime: *nodeServer.CreateTime,
 	}
 	vo.Success(nodeServerOneVo, c)
 }
@@ -89,10 +95,10 @@ func SelectNodeServerList(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeServerList, err := service.SelectNodeServerList(&nodeServerDto)
+	nodeServerListVos, err := service.SelectNodeServerList(&nodeServerDto)
 	if err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	vo.Success(nodeServerList, c)
+	vo.Success(nodeServerListVos, c)
 }

@@ -22,3 +22,8 @@ type NodeServerOneVo struct {
 	Ip         string    `json:"ip"`
 	CreateTime time.Time `json:"createTime"`
 }
+
+type NodeServerListVo struct {
+	Id   uint   `json:"id"`
+	Name string `json:"name"`
+}

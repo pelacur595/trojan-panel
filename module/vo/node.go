@@ -9,7 +9,6 @@ type NodeVo struct {
 	NodeSubId    uint      `json:"nodeSubId"`
 	NodeTypeId   uint      `json:"nodeTypeId"`
 	Name         string    `json:"name"`
-	NodeServerIp string    `json:"nodeServerIp"`
 	Domain       string    `json:"domain"`
 	Port         uint      `json:"port"`
 	CreateTime   time.Time `json:"createTime"`
@@ -29,7 +28,6 @@ type NodeOneVo struct {
 	NodeSubId    uint      `json:"nodeSubId"`
 	NodeTypeId   uint      `json:"nodeTypeId"`
 	Name         string    `json:"name"`
-	NodeServerIp string    `json:"nodeServerIp"`
 	Domain       string    `json:"domain"`
 	Port         uint      `json:"port"`
 	CreateTime   time.Time `json:"createTime"`
