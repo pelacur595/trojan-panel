@@ -8,7 +8,7 @@ type Node struct {
 	NodeSubId    *uint      `ddb:"node_sub_id"`
 	NodeTypeId   *uint      `ddb:"node_type_id"`
 	Name         *string    `ddb:"name"`
-	NodeServerIp *string    `ddb:"nodeServerIp"`
+	NodeServerIp *string    `ddb:"node_server_ip"`
 	Domain       *string    `ddb:"domain"`
 	Port         *uint      `ddb:"port"`
 	CreateTime   *time.Time `ddb:"create_time"`

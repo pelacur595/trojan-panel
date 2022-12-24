@@ -11,7 +11,6 @@ import (
 	"net/url"
 	"strings"
 	"sync"
-	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
@@ -107,44 +106,44 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	defer mutex.Unlock()
 	if mutex.TryLock() {
 		// Grpc添加节点
-		if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
-			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
-			Port:       uint64(*nodeCreateDto.Port),
-			Domain:     *nodeCreateDto.Domain,
-
-			//  Xray
-			XrayProtocol:       *nodeCreateDto.XrayProtocol,
-			XraySettings:       *nodeCreateDto.XraySettings,
-			XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
-			XrayTag:            *nodeCreateDto.XrayTag,
-			XraySniffing:       *nodeCreateDto.XraySniffing,
-			XrayAllocate:       *nodeCreateDto.XrayAllocate,
-			// Trojan Go
-			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
-			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
-			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
-			TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
-			TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
-			TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
-			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
-			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
-			// Hysteria
-			HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
-			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
-			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
-		}); err != nil {
-			go func() {
-				for {
-					select {
-					case <-time.After(8 * time.Second):
-						_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
-						return
-					}
-				}
-			}()
-
-			return err
-		}
+		//if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
+		//	NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
+		//	Port:       uint64(*nodeCreateDto.Port),
+		//	Domain:     *nodeCreateDto.Domain,
+		//
+		//	//  Xray
+		//	XrayProtocol:       *nodeCreateDto.XrayProtocol,
+		//	XraySettings:       *nodeCreateDto.XraySettings,
+		//	XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
+		//	XrayTag:            *nodeCreateDto.XrayTag,
+		//	XraySniffing:       *nodeCreateDto.XraySniffing,
+		//	XrayAllocate:       *nodeCreateDto.XrayAllocate,
+		//	// Trojan Go
+		//	TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
+		//	TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
+		//	TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
+		//	TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
+		//	TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
+		//	TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
+		//	TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
+		//	TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
+		//	// Hysteria
+		//	HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
+		//	HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
+		//	HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
+		//}); err != nil {
+		//	go func() {
+		//		for {
+		//			select {
+		//			case <-time.After(8 * time.Second):
+		//				_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+		//				return
+		//			}
+		//		}
+		//	}()
+		//
+		//	return err
+		//}
 		// 数据插入到数据库中
 		if *nodeCreateDto.NodeTypeId == 1 {
 			nodeXray := module.NodeXray{
@@ -343,39 +342,39 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		if err != nil {
 			return err
 		}
-		// Grpc的操作
-		if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
-			return err
-		}
-		if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
-			NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
-			Port:       uint64(*nodeUpdateDto.Port),
-			Domain:     *nodeUpdateDto.Domain,
-
-			//  Xray
-			XrayProtocol:       *nodeUpdateDto.XrayProtocol,
-			XraySettings:       *nodeUpdateDto.XraySettings,
-			XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
-			XrayTag:            *nodeUpdateDto.XrayTag,
-			XraySniffing:       *nodeUpdateDto.XraySniffing,
-			XrayAllocate:       *nodeUpdateDto.XrayAllocate,
-			// Trojan Go
-			TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
-			TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
-			TrojanGoWebsocketEnable: uint64(*nodeUpdateDto.TrojanGoWebsocketEnable),
-			TrojanGoWebsocketPath:   *nodeUpdateDto.TrojanGoWebsocketPath,
-			TrojanGoWebsocketHost:   *nodeUpdateDto.TrojanGoWebsocketHost,
-			TrojanGoSSEnable:        uint64(*nodeUpdateDto.TrojanGoSsEnable),
-			TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
-			TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
-			// Hysteria
-			HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
-			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
-			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
-		}); err != nil {
-			_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId)
-			return err
-		}
+		//// Grpc的操作
+		//if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
+		//	return err
+		//}
+		//if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
+		//	NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
+		//	Port:       uint64(*nodeUpdateDto.Port),
+		//	Domain:     *nodeUpdateDto.Domain,
+		//
+		//	//  Xray
+		//	XrayProtocol:       *nodeUpdateDto.XrayProtocol,
+		//	XraySettings:       *nodeUpdateDto.XraySettings,
+		//	XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
+		//	XrayTag:            *nodeUpdateDto.XrayTag,
+		//	XraySniffing:       *nodeUpdateDto.XraySniffing,
+		//	XrayAllocate:       *nodeUpdateDto.XrayAllocate,
+		//	// Trojan Go
+		//	TrojanGoSni:             *nodeUpdateDto.TrojanGoSni,
+		//	TrojanGoMuxEnable:       uint64(*nodeUpdateDto.TrojanGoMuxEnable),
+		//	TrojanGoWebsocketEnable: uint64(*nodeUpdateDto.TrojanGoWebsocketEnable),
+		//	TrojanGoWebsocketPath:   *nodeUpdateDto.TrojanGoWebsocketPath,
+		//	TrojanGoWebsocketHost:   *nodeUpdateDto.TrojanGoWebsocketHost,
+		//	TrojanGoSSEnable:        uint64(*nodeUpdateDto.TrojanGoSsEnable),
+		//	TrojanGoSSMethod:        *nodeUpdateDto.TrojanGoSsMethod,
+		//	TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
+		//	// Hysteria
+		//	HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
+		//	HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
+		//	HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
+		//}); err != nil {
+		//	_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId)
+		//	return err
+		//}
 
 		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
 			// 没有修改节点类型的情况
