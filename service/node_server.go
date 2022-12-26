@@ -21,8 +21,8 @@ func CreateNodeServer(nodeServer *module.NodeServer) error {
 	return dao.CreateNodeServer(nodeServer)
 }
 
-func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodeServerPageVo, error) {
-	nodeServerPage, total, err := dao.SelectNodeServerPage(queryName, pageNum, pageSize)
+func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pageSize *uint, c *gin.Context) (*vo.NodeServerPageVo, error) {
+	nodeServerPage, total, err := dao.SelectNodeServerPage(queryName, queryIp, pageNum, pageSize)
 	if err != nil {
 		return nil, err
 	}

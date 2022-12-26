@@ -7,7 +7,7 @@ type NodeServerPageDto struct {
 
 type NodeServerDto struct {
 	Name *string `json:"name" form:"name" validate:"omitempty,min=0,max=20"`
-	Ip   *string `json:"ip" form:"ip" validate:"omitempty,ip,min=4,max=64"`
+	Ip   *string `json:"ip" form:"ip" validate:"omitempty,min=0,max=64"`
 }
 
 type NodeServerCreateDto struct {

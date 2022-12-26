@@ -52,7 +52,7 @@ func SelectNodeServerPage(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeServerPageVo, err := service.SelectNodeServerPage(nodeServerPageDto.Name, nodeServerPageDto.PageNum, nodeServerPageDto.PageSize, c)
+	nodeServerPageVo, err := service.SelectNodeServerPage(nodeServerPageDto.Name, nodeServerPageDto.Ip, nodeServerPageDto.PageNum, nodeServerPageDto.PageSize, c)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
