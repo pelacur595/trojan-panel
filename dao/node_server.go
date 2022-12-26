@@ -55,7 +55,7 @@ func CreateNodeServer(nodeServer *module.NodeServer) error {
 	return nil
 }
 
-func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint) (*[]module.NodeServer, uint, error) {
+func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pageSize *uint) (*[]module.NodeServer, uint, error) {
 	var (
 		total       uint
 		nodeServers []module.NodeServer
@@ -65,6 +65,9 @@ func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint) (*[]
 	var whereCount = map[string]interface{}{}
 	if queryName != nil && *queryName != "" {
 		whereCount["name like"] = fmt.Sprintf("%%%s%%", *queryName)
+	}
+	if queryIp != nil && *queryIp != "" {
+		whereCount["ip like"] = fmt.Sprintf("%%%s%%", *queryIp)
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("node_server", whereCount, selectFieldsCount)
@@ -83,6 +86,9 @@ func SelectNodeServerPage(queryName *string, pageNum *uint, pageSize *uint) (*[]
 		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
+	}
+	if queryIp != nil && *queryIp != "" {
+		where["ip like"] = fmt.Sprintf("%%%s%%", *queryIp)
 	}
 	selectFields := []string{"id", "`ip`", "name", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node_server", where, selectFields)
