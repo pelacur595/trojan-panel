@@ -175,12 +175,12 @@ func CountNode() (int, error) {
 	return CountNodeByNameAndNodeServerId(nil, nil, nil)
 }
 
-func CountNodeByIpAndPort(ip *string, port *uint) (int, error) {
+func CountNodeByIpAndPort(nodeServerIp *string, port *uint) (int, error) {
 	var count int
 
 	var whereCount = map[string]interface{}{}
-	if ip != nil && *ip != "" {
-		whereCount["ip"] = *ip
+	if nodeServerIp != nil && *nodeServerIp != "" {
+		whereCount["node_server_ip"] = *nodeServerIp
 	}
 	if port != nil && *port != 0 {
 		whereCount["port"] = *port
@@ -231,7 +231,7 @@ func CountNodeByNameAndNodeServerId(id *uint, queryName *string, nodeServerId *u
 func SelectNodesIpAndPort() ([]module.Node, error) {
 	var nodes []module.Node
 
-	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"id", "ip", "port"})
+	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"id", "node_server_id", "port"})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nodes, errors.New(constant.SysError)
@@ -253,7 +253,7 @@ func SelectNodesIpAndPort() ([]module.Node, error) {
 func SelectNodesIpDistinct() ([]string, error) {
 	var ips []string
 
-	buildSelect, values, err := builder.NamedQuery("select distinct ip from node", nil)
+	buildSelect, values, err := builder.NamedQuery("select distinct node_server_ip from node", nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return ips, errors.New(constant.SysError)
@@ -271,7 +271,7 @@ func SelectNodesIpDistinct() ([]string, error) {
 		return ips, errors.New(constant.SysError)
 	}
 	for _, record := range result {
-		ips = append(ips, fmt.Sprintf("%s", record["ip"]))
+		ips = append(ips, fmt.Sprintf("%s", record["node_server_ip"]))
 	}
 	return ips, nil
 }
