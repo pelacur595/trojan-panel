@@ -612,10 +612,8 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 			nodeTrojanGo.WebsocketPath != nil && *nodeTrojanGo.WebsocketPath != "" {
 			headBuilder.WriteString(fmt.Sprintf("&type=%s", url.PathEscape("ws")))
 			headBuilder.WriteString(fmt.Sprintf("&path=%s",
-				url.PathEscape(fmt.Sprintf("/%s", *nodeTrojanGo.WebsocketPath))))
-			if nodeTrojanGo.SsEnable != nil && *nodeTrojanGo.SsEnable != 0 ||
-				nodeTrojanGo.SsMethod != nil && *nodeTrojanGo.SsMethod != "" ||
-				nodeTrojanGo.SsPassword != nil && *nodeTrojanGo.SsPassword != "" {
+				url.PathEscape(fmt.Sprintf("%s", *nodeTrojanGo.WebsocketPath))))
+			if nodeTrojanGo.SsEnable != nil && *nodeTrojanGo.SsEnable != 0 {
 				headBuilder.WriteString(fmt.Sprintf("&encryption=%s", url.PathEscape(
 					fmt.Sprintf("ss;%s:%s", *nodeTrojanGo.SsMethod, *nodeTrojanGo.SsPassword))))
 			}
