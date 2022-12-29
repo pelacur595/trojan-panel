@@ -34,8 +34,8 @@ type NodeCreateDto struct {
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
 
 	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
-	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
-	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
 }
 
 type NodeUpdateDto struct {
@@ -64,6 +64,6 @@ type NodeUpdateDto struct {
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
 
 	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
-	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=999"`
-	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=999"`
+	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
 }
