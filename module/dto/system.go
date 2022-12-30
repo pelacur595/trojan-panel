@@ -15,4 +15,7 @@ type SystemUpdateDto struct {
 	EmailPort        *uint   `json:"emailPort" form:"emailPort" validate:"required,validatePort"`
 	EmailUsername    *string `json:"emailUsername" form:"emailUsername" validate:"omitempty,min=0,max=32"`
 	EmailPassword    *string `json:"emailPassword" form:"emailPassword" validate:"omitempty,min=0,max=32"`
+
+	SystemName *string `json:"systemName" form:"systemName" validate:"omitempty,min=0,max=32"`
+	ClashRule  *string `json:"clashRule" form:"clashRule" validate:"omitempty,min=0,max=256"`
 }

@@ -44,6 +44,11 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemEmailConfigBo 反序列化失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
+		systemTemplateConfigBo := bo.SystemTemplateConfigBo{}
+		if err = json.Unmarshal([]byte(*system.TemplateConfig), &systemTemplateConfigBo); err != nil {
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemTemplateConfigBo 反序列化失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
+		}
 
 		systemVo = vo.SystemVo{
 			Id:                          *system.Id,
@@ -59,6 +64,8 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			EmailPort:                   systemEmailConfigBo.EmailPort,
 			EmailUsername:               systemEmailConfigBo.EmailUsername,
 			EmailPassword:               systemEmailConfigBo.EmailPassword,
+			SystemName:                  systemTemplateConfigBo.SystemName,
+			ClashRule:                   systemTemplateConfigBo.ClashRule,
 		}
 
 		systemVoJson, err := json.Marshal(systemVo)

@@ -15,12 +15,16 @@ type SystemVo struct {
 	EmailPort        uint   `json:"emailPort" redis:"emailPort"`
 	EmailUsername    string `json:"emailUsername" redis:"emailUsername"`
 	EmailPassword    string `json:"emailPassword" redis:"emailPassword"`
+
+	SystemName string `json:"systemName" redis:"systemName"`
+	ClashRule  string `json:"clashRule" redis:"clashRule"`
 }
 
 type SettingVo struct {
-	RegisterEnable     uint `json:"registerEnable"`
-	RegisterQuota      int  `json:"registerQuota"`
-	RegisterExpireDays uint `json:"registerExpireDays"`
-	TrafficRankEnable  uint `json:"trafficRankEnable"`
-	EmailEnable        uint `json:"emailEnable"`
+	RegisterEnable     uint   `json:"registerEnable"`
+	RegisterQuota      int    `json:"registerQuota"`
+	RegisterExpireDays uint   `json:"registerExpireDays"`
+	TrafficRankEnable  uint   `json:"trafficRankEnable"`
+	EmailEnable        uint   `json:"emailEnable"`
+	SystemName         string `json:"systemName" redis:"systemName"`
 }

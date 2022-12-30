@@ -17,3 +17,8 @@ type SystemEmailConfigBo struct {
 	EmailUsername    string `json:"emailUsername"`    // 系统邮箱设置-username
 	EmailPassword    string `json:"emailPassword"`    // 系统邮箱设置-password
 }
+
+type SystemTemplateConfigBo struct {
+	SystemName string `json:"systemName" redis:"systemName"`
+	ClashRule  string `json:"clashRule" redis:"clashRule"`
+}
