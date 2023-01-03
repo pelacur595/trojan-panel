@@ -19,7 +19,7 @@
 -- Current Database: `trojan_panel_db`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `trojan_panel_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+CREATE DATABASE IF NOT EXISTS `trojan_panel_db` DEFAULT CHARACTER SET utf8mb4;
 
 USE `trojan_panel_db`;
 
