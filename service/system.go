@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -48,6 +49,14 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 		if err = json.Unmarshal([]byte(*system.TemplateConfig), &systemTemplateConfigBo); err != nil {
 			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemTemplateConfigBo 反序列化失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
+		}
+		if systemTemplateConfigBo.ClashRule != "" {
+			decodeString, err := base64.StdEncoding.DecodeString(systemTemplateConfigBo.ClashRule)
+			if err != nil {
+				logrus.Errorln(fmt.Sprintf("system config clashRule base64 stdEncoding decodeString err: %v", err))
+				return systemVo, errors.New(constant.SysError)
+			}
+			systemTemplateConfigBo.ClashRule = string(decodeString)
 		}
 
 		systemVo = vo.SystemVo{
@@ -130,10 +139,24 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	systemEmailConfigBoStr := string(systemEmailConfigBoByte)
 
+	systemTemplateConfigBo := bo.SystemTemplateConfigBo{}
+	if systemDto.SystemName != nil {
+		systemTemplateConfigBo.SystemName = *systemDto.SystemName
+	}
+	if systemDto.ClashRule != nil {
+		systemTemplateConfigBo.ClashRule = *systemDto.ClashRule
+	}
+	systemTemplateConfigBoByte, err := json.Marshal(systemTemplateConfigBo)
+	if err != nil {
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemTemplateConfigBo 序列化异常err: %v", err))
+	}
+	systemTemplateConfigBoStr := string(systemTemplateConfigBoByte)
+
 	system := module.System{
-		Id:            systemDto.Id,
-		AccountConfig: &accountConfigBoJsonStr,
-		EmailConfig:   &systemEmailConfigBoStr,
+		Id:             systemDto.Id,
+		AccountConfig:  &accountConfigBoJsonStr,
+		EmailConfig:    &systemEmailConfigBoStr,
+		TemplateConfig: &systemTemplateConfigBoStr,
 	}
 
 	if err := dao.UpdateSystemById(&system); err != nil {

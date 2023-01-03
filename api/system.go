@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -45,6 +46,11 @@ func UpdateSystemById(c *gin.Context) {
 	if err := validate.Struct(&systemUpdateDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
+	}
+	if systemUpdateDto.ClashRule != nil && *systemUpdateDto.ClashRule != "" {
+		// base64编码
+		clashRuleStrByte := base64.StdEncoding.EncodeToString([]byte(*systemUpdateDto.ClashRule))
+		systemUpdateDto.ClashRule = &clashRuleStrByte
 	}
 	if err := service.UpdateSystemById(systemUpdateDto); err != nil {
 		vo.Fail(constant.SysError, c)

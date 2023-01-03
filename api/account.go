@@ -392,8 +392,15 @@ func Clash(c *gin.Context) {
 		return
 	}
 
+	systemName := constant.SystemName
+	systemConfig, err := service.SelectSystemByName(&systemName)
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+
 	result := fmt.Sprintf(`%s
-%s`, string(clashConfigYaml), constant.ClashRules)
+%s`, string(clashConfigYaml), systemConfig.ClashRule)
 
 	c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
 	c.Header("profile-update-interval", "12")
