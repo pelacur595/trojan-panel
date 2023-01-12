@@ -17,7 +17,7 @@ const (
 	// RbacModelFilePath rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
 	// ClashRuleFilePath Clash规则默认模板
-	ClashRuleFilePath string = "config/clash-rule.yaml"
+	ClashRuleFilePath string = "config/template-clash-rule.yaml"
 
 	TrojanPanelCertFilePath string = "/tpdata/trojan-panel/cert/"
 	TrojanPanelCrtFile      string = "trojan-panel.crt"
