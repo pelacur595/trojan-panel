@@ -1,12 +1,12 @@
 package service
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
+	"os"
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -50,13 +50,11 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemTemplateConfigBo 反序列化失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
-		if systemTemplateConfigBo.ClashRule != "" {
-			decodeString, err := base64.StdEncoding.DecodeString(systemTemplateConfigBo.ClashRule)
-			if err != nil {
-				logrus.Errorln(fmt.Sprintf("system config clashRule base64 stdEncoding decodeString err: %v", err))
-				return systemVo, errors.New(constant.SysError)
-			}
-			systemTemplateConfigBo.ClashRule = string(decodeString)
+		// 读取Clash规则默认模板文件
+		clashRuleContent, err := os.ReadFile(constant.ClashRuleFilePath)
+		if err != nil {
+			logrus.Errorln(fmt.Sprintf("Clash规则默认模板失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
 		}
 
 		systemVo = vo.SystemVo{
@@ -74,7 +72,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			EmailUsername:               systemEmailConfigBo.EmailUsername,
 			EmailPassword:               systemEmailConfigBo.EmailPassword,
 			SystemName:                  systemTemplateConfigBo.SystemName,
-			ClashRule:                   systemTemplateConfigBo.ClashRule,
+			ClashRule:                   string(clashRuleContent),
 		}
 
 		systemVoJson, err := json.Marshal(systemVo)
@@ -144,7 +142,10 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 		systemTemplateConfigBo.SystemName = *systemDto.SystemName
 	}
 	if systemDto.ClashRule != nil {
-		systemTemplateConfigBo.ClashRule = *systemDto.ClashRule
+		// 修改Clash规则默认模板文件
+		if err := os.WriteFile(constant.ClashRuleFilePath, []byte(*systemDto.ClashRule), 0666); err != nil {
+			logrus.Errorln(fmt.Sprintf("写入Clash规则默认模板异常err: %v", err))
+		}
 	}
 	systemTemplateConfigBoByte, err := json.Marshal(systemTemplateConfigBo)
 	if err != nil {

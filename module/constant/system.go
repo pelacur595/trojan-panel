@@ -16,6 +16,8 @@ const (
 	ConfigFilePath string = "config/config.ini"
 	// RbacModelFilePath rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
+	// ClashRuleFilePath Clash规则默认模板
+	ClashRuleFilePath string = "config/clash-rule.yaml"
 
 	TrojanPanelCertFilePath string = "/tpdata/trojan-panel/cert/"
 	TrojanPanelCrtFile      string = "trojan-panel.crt"
@@ -24,5 +26,5 @@ const (
 	// SaltKey 加密 盐
 	SaltKey string = "well_very_funny!"
 
-	TrojanPanelVersion = "v1.3.1"
+	TrojanPanelVersion = "v2.0.0"
 )

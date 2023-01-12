@@ -145,6 +145,22 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 			panic(err)
 		}
 	}
+
+	clashRuleFilePath := constant.ClashRuleFilePath
+	if !Exists(clashRuleFilePath) {
+		file, err := os.Create(clashRuleFilePath)
+		if err != nil {
+			logrus.Errorf("创建clash-rule.yaml文件异常 err: %v", err)
+			panic(err)
+		}
+		defer file.Close()
+
+		_, err = file.WriteString(constant.ClashRules)
+		if err != nil {
+			logrus.Errorf("clash-rule.yaml文件写入异常 err: %v", err)
+			panic(err)
+		}
+	}
 }
 
 func usage() {

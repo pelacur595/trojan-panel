@@ -20,5 +20,4 @@ type SystemEmailConfigBo struct {
 
 type SystemTemplateConfigBo struct {
 	SystemName string `json:"systemName" redis:"systemName"`
-	ClashRule  string `json:"clashRule" redis:"clashRule"`
 }
