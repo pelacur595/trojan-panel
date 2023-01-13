@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 	"time"
-	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
 )
 
@@ -110,26 +109,26 @@ func Ping(token string, ip string) (bool, error) {
 	return false, errors.New(send.Msg)
 }
 
-func NodeServerState(token string, ip string) (bo.NodeServerGroupBo, error) {
-	groupBo := bo.NodeServerGroupBo{}
-	conn, ctx, clo, err := newGrpcInstance(token, ip, time.Second)
+func NodeServerState(token string, ip string) (*NodeServerGroupVo, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, 2*time.Second)
 	defer clo()
 	if err != nil {
-		return groupBo, err
+		return nil, err
 	}
 	client := NewApiNodeServerServiceClient(conn)
 	nodeServerGroupDto := NodeServerGroupDto{}
 	send, err := client.NodeServerState(ctx, &nodeServerGroupDto)
 	if err != nil {
 		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s err: %v", ip, err)
-		return groupBo, errors.New(constant.GrpcError)
+		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
-		if err = anypb.UnmarshalTo(send.Data, &groupBo, proto.UnmarshalOptions{}); err != nil {
+		var nodeServerGroupVo NodeServerGroupVo
+		if err = anypb.UnmarshalTo(send.Data, &nodeServerGroupVo, proto.UnmarshalOptions{}); err != nil {
 			logrus.Errorf("查询服务器状态返序列化异常 ip: %s err: %v", ip, err)
-			return groupBo, errors.New(constant.GrpcError)
+			return nil, errors.New(constant.GrpcError)
 		}
-		return groupBo, nil
+		return &nodeServerGroupVo, nil
 	}
-	return groupBo, errors.New(send.Msg)
+	return nil, errors.New(send.Msg)
 }
