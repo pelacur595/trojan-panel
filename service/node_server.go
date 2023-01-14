@@ -96,6 +96,14 @@ func DeleteNodeServerById(id *uint) error {
 }
 
 func UpdateNodeServerById(dto *dto.NodeServerUpdateDto) error {
+	count, err := dao.CountNodeByNameAndNodeServerId(nil, nil, dto.Id)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return errors.New(constant.NodeServerDeletedError)
+	}
+
 	nodeServer := module.NodeServer{
 		Id:   dto.Id,
 		Ip:   dto.Ip,
