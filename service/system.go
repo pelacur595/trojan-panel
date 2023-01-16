@@ -53,7 +53,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 		// 读取Clash规则默认模板文件
 		clashRuleContent, err := os.ReadFile(constant.ClashRuleFilePath)
 		if err != nil {
-			logrus.Errorln(fmt.Sprintf("Clash规则默认模板失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("读取Clash规则默认模板失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 
