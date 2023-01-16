@@ -136,3 +136,15 @@ func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerListVo, error)
 	}
 	return nodeServerListVos, nil
 }
+
+func NodeServerState(token string, nodeServerId *uint) (*core.NodeServerGroupVo, error) {
+	nodeServer, err := dao.SelectNodeServerById(nodeServerId)
+	if err != nil {
+		return nil, err
+	}
+	nodeServerGroupVo, err := core.NodeServerState(token, *nodeServer.Ip)
+	if err != nil {
+		return nil, err
+	}
+	return nodeServerGroupVo, nil
+}

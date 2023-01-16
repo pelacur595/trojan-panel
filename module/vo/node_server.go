@@ -27,3 +27,9 @@ type NodeServerListVo struct {
 	Id   uint   `json:"id"`
 	Name string `json:"name"`
 }
+
+type NodeServerGroupVo struct {
+	CpuUsed  float32
+	MemUsed  float32
+	DiskUsed float32
+}

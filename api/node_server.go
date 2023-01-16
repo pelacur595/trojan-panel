@@ -7,6 +7,7 @@ import (
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
 	"trojan-panel/service"
+	"trojan-panel/util"
 )
 
 func SelectNodeServerById(c *gin.Context) {
@@ -97,8 +98,23 @@ func SelectNodeServerList(c *gin.Context) {
 	}
 	nodeServerListVos, err := service.SelectNodeServerList(&nodeServerDto)
 	if err != nil {
-		vo.Fail(constant.ValidateFailed, c)
+		vo.Fail(err.Error(), c)
 		return
 	}
 	vo.Success(nodeServerListVos, c)
+}
+
+func NodeServerState(c *gin.Context) {
+	var requiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&requiredIdDto)
+	if err := validate.Struct(&requiredIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	nodeServerState, err := service.NodeServerState(util.GetToken(c), requiredIdDto.Id)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nodeServerState, c)
 }

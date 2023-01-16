@@ -71,6 +71,8 @@ func Router(router *gin.Engine) {
 			nodeServer.POST("/updateNodeServerById", api.UpdateNodeServerById)
 			// 更新服务器列表
 			nodeServer.GET("/selectNodeServerList", api.SelectNodeServerList)
+			// 查询服务器状态
+			nodeServer.GET("/nodeServerState", api.NodeServerState)
 		}
 		node := trojan.Group("/node")
 		{
