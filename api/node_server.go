@@ -91,7 +91,7 @@ func UpdateNodeServerById(c *gin.Context) {
 
 func SelectNodeServerList(c *gin.Context) {
 	var nodeServerDto dto.NodeServerDto
-	_ = c.ShouldBindJSON(&nodeServerDto)
+	_ = c.ShouldBindQuery(&nodeServerDto)
 	if err := validate.Struct(&nodeServerDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
@@ -106,7 +106,7 @@ func SelectNodeServerList(c *gin.Context) {
 
 func NodeServerState(c *gin.Context) {
 	var requiredIdDto dto.RequiredIdDto
-	_ = c.ShouldBindJSON(&requiredIdDto)
+	_ = c.ShouldBindQuery(&requiredIdDto)
 	if err := validate.Struct(&requiredIdDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
