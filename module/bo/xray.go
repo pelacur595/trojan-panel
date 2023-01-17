@@ -14,3 +14,8 @@ type WsSettings struct {
 type Settings struct {
 	Encryption string `json:"encryption"`
 }
+
+type XrayTemplate struct {
+	Flow           string `json:"flow"`
+	ConfigTemplate string `json:"configTemplate"`
+}

@@ -132,3 +132,21 @@ func NodeServerState(token string, ip string) (*NodeServerGroupVo, error) {
 	}
 	return nil, errors.New(send.Msg)
 }
+
+func UpdateXrayTemplate(token string, ip string, xrayTemplateDto *XrayTemplateDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
+	defer clo()
+	if err != nil {
+		return err
+	}
+	client := NewApiXrayTemplateServiceClient(conn)
+	send, err := client.UpdateXrayTemplate(ctx, xrayTemplateDto)
+	if err != nil {
+		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s err: %v", ip, err)
+		return errors.New(constant.GrpcError)
+	}
+	if send.Success {
+		return nil
+	}
+	return errors.New(send.Msg)
+}
