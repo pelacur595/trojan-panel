@@ -57,7 +57,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			return systemVo, errors.New(constant.SysError)
 		}
 		// 读取Xray默认模板文件
-		xrayTemplateContent, err := os.ReadFile(constant.ClashRuleFilePath)
+		xrayTemplateContent, err := os.ReadFile(constant.XrayTemplateFilePath)
 		if err != nil {
 			logrus.Errorln(fmt.Sprintf("读取Xray默认模板文件失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
