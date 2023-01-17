@@ -164,5 +164,10 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 		return err
 	}
 	redis.Client.Key.Del("trojan-panel:system")
+	go func() {
+		time.AfterFunc(2*time.Second, func() {
+			redis.Client.Key.Del("trojan-panel:system")
+		})
+	}()
 	return nil
 }

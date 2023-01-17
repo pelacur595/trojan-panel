@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
 	"trojan-panel/module/vo"
@@ -12,6 +13,11 @@ func DeleteBlackListByIp(ip *string) error {
 		return err
 	}
 	redis.Client.Key.Del("trojan-panel:black-list:%s", *ip)
+	go func() {
+		time.AfterFunc(2*time.Second, func() {
+			redis.Client.Key.Del("trojan-panel:black-list:%s", *ip)
+		})
+	}()
 	return nil
 }
 

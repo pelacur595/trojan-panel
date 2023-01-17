@@ -48,40 +48,38 @@ func UpdateXrayTemplate(token string, xrayTemplate string) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		ips, err := dao.SelectNodesIpDistinct()
-		if err != nil {
+		if err := SyncXrayTemplate(token); err != nil {
 			return err
-		}
-		for _, ip := range ips {
-			xrayTemplateDto := core.XrayTemplateDto{XrayTemplate: xrayTemplate}
-			if err := core.UpdateXrayTemplate(token, ip, &xrayTemplateDto); err != nil {
-				logrus.Errorln(fmt.Sprintf("更新Xray默认模板异常 ip: %s err: %v", ip, err))
-			}
 		}
 		if err := os.WriteFile(constant.XrayTemplateFilePath, []byte(xrayTemplate), 0666); err != nil {
 			logrus.Errorln(fmt.Sprintf("写入Xray默认模板异常err: %v", err))
 			return errors.New(constant.SysError)
 		}
 		redis.Client.Key.Del("trojan-panel:config:template-xray")
+		go func() {
+			time.AfterFunc(2*time.Second, func() {
+				redis.Client.Key.Del("trojan-panel:config:template-xray")
+			})
+		}()
 	}
 	return nil
 }
 
-func SyncXrayTemplate(token string) {
+func SyncXrayTemplate(token string) error {
 	ips, err := dao.SelectNodesIpDistinct()
 	if err != nil {
 		logrus.Errorln(fmt.Sprintf("查询服务器IP异常 err: %v", err))
-		return
+		return err
 	}
 	xrayTemplate, err := SelectXrayTemplate()
 	if err != nil {
 		logrus.Errorln(fmt.Sprintf("查询Xray默认模板异常 err: %v", err))
-		return
+		return err
 	}
 	xrayTemplateJson, err := json.Marshal(xrayTemplate)
 	if err != nil {
 		logrus.Errorln(fmt.Sprintf("Xray默认模板序列化异常 err: %v", err))
-		return
+		return err
 	}
 	for _, ip := range ips {
 		xrayTemplateDto := core.XrayTemplateDto{XrayTemplate: string(xrayTemplateJson)}
@@ -89,4 +87,5 @@ func SyncXrayTemplate(token string) {
 			logrus.Errorln(fmt.Sprintf("更新Xray默认模板异常 ip: %s err: %v", ip, err))
 		}
 	}
+	return nil
 }
