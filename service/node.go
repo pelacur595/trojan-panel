@@ -102,6 +102,12 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		return err
 	}
 
+	systemName := constant.SystemName
+	systemConfig, err := SelectSystemByName(&systemName)
+	if err != nil {
+		return err
+	}
+
 	var nodeId uint
 	var mutex sync.Mutex
 	defer mutex.Unlock()
@@ -113,6 +119,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			Domain:     *nodeCreateDto.Domain,
 
 			//  Xray
+			XrayTemplate:       systemConfig.XrayTemplate,
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
 			XraySettings:       *nodeCreateDto.XraySettings,
 			XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
@@ -336,6 +343,12 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		return err
 	}
 
+	systemName := constant.SystemName
+	systemConfig, err := SelectSystemByName(&systemName)
+	if err != nil {
+		return err
+	}
+
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
@@ -353,6 +366,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			Domain:     *nodeUpdateDto.Domain,
 
 			//  Xray
+			XrayTemplate:       systemConfig.XrayTemplate,
 			XrayProtocol:       *nodeUpdateDto.XrayProtocol,
 			XraySettings:       *nodeUpdateDto.XraySettings,
 			XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,

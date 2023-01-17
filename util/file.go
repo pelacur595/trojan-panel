@@ -172,8 +172,57 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 		defer file.Close()
 
 		_, err = file.WriteString(`{
-  "flow": "xtls-rprx-vision",
-  "configTemplate": "{\n    \"log\": {\n        \"loglevel\": \"warning\"\n    },\n    \"inbounds\": [\n        {\n            \"tag\": \"api\",\n            \"listen\": \"127.0.0.1\",\n            \"port\": ${api_port},\n            \"protocol\": \"dokodemo-door\",\n            \"settings\": {\n                \"address\": \"127.0.0.1\"\n            }\n        }\n    ],\n    \"outbounds\": [\n        {\n            \"protocol\": \"freedom\"\n        }\n    ],\n    \"api\": {\n        \"tag\": \"api\",\n        \"services\": [\n            \"HandlerService\",\n            \"LoggerService\",\n            \"StatsService\"\n        ]\n    },\n    \"routing\": {\n        \"rules\": [\n            {\n                \"inboundTag\": [\n                    \"api\"\n                ],\n                \"outboundTag\": \"api\",\n                \"type\": \"field\"\n            }\n        ]\n    },\n    \"stats\": {},\n    \"policy\": {\n        \"levels\": {\n            \"0\": {\n                \"statsUserUplink\": true,\n                \"statsUserDownlink\": true\n            }\n        },\n        \"system\": {\n            \"statsInboundUplink\": true,\n            \"statsInboundDownlink\": true\n        }\n    }\n}"
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "api",
+      "listen": "127.0.0.1",
+      "port": "${api_port}",
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom"
+    }
+  ],
+  "api": {
+    "tag": "api",
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ]
+  },
+  "routing": {
+    "rules": [
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      }
+    ]
+  },
+  "stats": {},
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
+    "system": {
+      "statsInboundUplink": true,
+      "statsInboundDownlink": true
+    }
+  }
 }`)
 		if err != nil {
 			logrus.Errorf("template-xray.json文件写入异常 err: %v", err)

@@ -16,8 +16,9 @@ type SystemVo struct {
 	EmailUsername    string `json:"emailUsername" redis:"emailUsername"`
 	EmailPassword    string `json:"emailPassword" redis:"emailPassword"`
 
-	SystemName string `json:"systemName" redis:"systemName"`
-	ClashRule  string `json:"clashRule" redis:"clashRule"`
+	SystemName   string `json:"systemName" redis:"systemName"`
+	ClashRule    string `json:"clashRule" redis:"clashRule"`
+	XrayTemplate string `json:"xrayTemplate" redis:"xrayTemplate"`
 }
 
 type SettingVo struct {

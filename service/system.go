@@ -56,6 +56,12 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			logrus.Errorln(fmt.Sprintf("读取Clash规则默认模板失败 err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
+		// 读取Xray默认模板文件
+		xrayTemplateContent, err := os.ReadFile(constant.ClashRuleFilePath)
+		if err != nil {
+			logrus.Errorln(fmt.Sprintf("读取Xray默认模板文件失败 err: %v", err))
+			return systemVo, errors.New(constant.SysError)
+		}
 
 		systemVo = vo.SystemVo{
 			Id:                          *system.Id,
@@ -73,6 +79,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			EmailPassword:               systemEmailConfigBo.EmailPassword,
 			SystemName:                  systemTemplateConfigBo.SystemName,
 			ClashRule:                   string(clashRuleContent),
+			XrayTemplate:                string(xrayTemplateContent),
 		}
 
 		systemVoJson, err := json.Marshal(systemVo)
@@ -144,7 +151,13 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	if systemDto.ClashRule != nil {
 		// 修改Clash规则默认模板文件
 		if err := os.WriteFile(constant.ClashRuleFilePath, []byte(*systemDto.ClashRule), 0666); err != nil {
-			logrus.Errorln(fmt.Sprintf("写入Clash规则默认模板异常err: %v", err))
+			logrus.Errorln(fmt.Sprintf("写入Clash规则默认模板文件异常err: %v", err))
+		}
+	}
+	if systemDto.XrayTemplate != nil {
+		// 修改Xray默认模板文件
+		if err := os.WriteFile(constant.XrayTemplateFilePath, []byte(*systemDto.XrayTemplate), 0666); err != nil {
+			logrus.Errorln(fmt.Sprintf("写入Xray默认模板文件异常err: %v", err))
 		}
 	}
 	systemTemplateConfigBoByte, err := json.Marshal(systemTemplateConfigBo)
