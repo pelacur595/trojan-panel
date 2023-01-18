@@ -19,3 +19,17 @@ type XrayTemplate struct {
 	Flow           string `json:"flow"`
 	ConfigTemplate string `json:"configTemplate"`
 }
+
+type XrayConfigBo struct {
+	Log       TypeMessage `json:"log"`
+	API       TypeMessage `json:"api"`
+	DNS       TypeMessage `json:"dns"`
+	Routing   TypeMessage `json:"routing"`
+	Policy    TypeMessage `json:"policy"`
+	Inbounds  TypeMessage `json:"inbounds"`
+	Outbounds TypeMessage `json:"outbounds"`
+	Transport TypeMessage `json:"transport"`
+	Stats     TypeMessage `json:"stats"`
+	Reverse   TypeMessage `json:"reverse"`
+	FakeDNS   TypeMessage `json:"fakeDns"`
+}

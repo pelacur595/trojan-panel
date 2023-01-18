@@ -156,7 +156,18 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	if systemDto.XrayTemplate != nil {
 		// 修改Xray默认模板文件
-		if err := os.WriteFile(constant.XrayTemplateFilePath, []byte(*systemDto.XrayTemplate), 0666); err != nil {
+		xrayConfigBo := bo.XrayConfigBo{}
+		// 将json字符串映射到模板对象
+		if err = json.Unmarshal([]byte(*systemDto.XrayTemplate), &xrayConfigBo); err != nil {
+			logrus.Errorf("SystemDto XrayTemplate反序列化异常 err: %v", err)
+			return err
+		}
+		xrayConfigBoStr, err := json.MarshalIndent(xrayConfigBo, "", "    ")
+		if err != nil {
+			logrus.Errorf("XrayConfigBo序列化异常 err: %v", err)
+			return err
+		}
+		if err := os.WriteFile(constant.XrayTemplateFilePath, xrayConfigBoStr, 0666); err != nil {
 			logrus.Errorln(fmt.Sprintf("写入Xray默认模板文件异常err: %v", err))
 		}
 	}
