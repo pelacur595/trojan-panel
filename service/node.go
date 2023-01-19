@@ -598,7 +598,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 		}
 
 		if streamSettings.Security == "xtls" {
-			headBuilder.WriteString("&flow=xtls-rprx-direct")
+			headBuilder.WriteString("&flow=xtls-rprx-vision")
 		}
 		if streamSettings.Network == "ws" {
 			if streamSettings.WsSettings.Path != "" {
