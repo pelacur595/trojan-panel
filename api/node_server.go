@@ -116,5 +116,10 @@ func NodeServerState(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	vo.Success(nodeServerState, c)
+	nodeServerGroupVo := vo.NodeServerGroupVo{
+		CpuUsed:  nodeServerState.CpuUsed,
+		MemUsed:  nodeServerState.MemUsed,
+		DiskUsed: nodeServerState.DiskUsed,
+	}
+	vo.Success(nodeServerGroupVo, c)
 }

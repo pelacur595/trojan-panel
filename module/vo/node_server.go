@@ -29,7 +29,7 @@ type NodeServerListVo struct {
 }
 
 type NodeServerGroupVo struct {
-	CpuUsed  float32
-	MemUsed  float32
-	DiskUsed float32
+	CpuUsed  float32 `json:"cpuUsed"`
+	MemUsed  float32 `json:"memUsed"`
+	DiskUsed float32 `json:"diskUsed"`
 }
