@@ -175,17 +175,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
   "log": {
     "loglevel": "warning"
   },
-  "inbounds": [
-    {
-      "tag": "api",
-      "listen": "127.0.0.1",
-      "port": "${api_port}",
-      "protocol": "dokodemo-door",
-      "settings": {
-        "address": "127.0.0.1"
-      }
-    }
-  ],
+  "inbounds": [],
   "outbounds": [
     {
       "protocol": "freedom"
