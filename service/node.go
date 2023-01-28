@@ -81,6 +81,27 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 	}
 	return nil, errors.New(constant.NodeNotExist)
 }
+func SelectNodeInfo(id *uint, c *gin.Context) (*vo.NodeOneVo, error) {
+
+	nodeOneVo, err := SelectNodeById(id)
+	if err != nil {
+		return nil, err
+	}
+	accountInfo := util.GetCurrentAccount(c)
+	account, err := dao.SelectAccountByUsername(&accountInfo.Username)
+	if err != nil {
+		return nil, err
+	}
+	nodeOneVo.Password = *account.Pass
+	nodeOneVo.Uuid = util.GenerateUUID(*account.Pass)
+	if nodeOneVo.NodeTypeId == 1 {
+		nodeOneVo.AlterId = 0
+		if nodeOneVo.XrayProtocol == "vless" {
+			nodeOneVo.Flow = "xtls-rprx-direct"
+		}
+	}
+	return nodeOneVo, nil
+}
 
 func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	// 校验端口

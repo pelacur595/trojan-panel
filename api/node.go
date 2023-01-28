@@ -25,6 +25,21 @@ func SelectNodeById(c *gin.Context) {
 	vo.Success(nodeOneVo, c)
 }
 
+func SelectNodeInfo(c *gin.Context) {
+	var nodeRequireIdDto dto.RequiredIdDto
+	_ = c.ShouldBindQuery(&nodeRequireIdDto)
+	if err := validate.Struct(&nodeRequireIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	nodeOneVo, err := service.SelectNodeInfo(nodeRequireIdDto.Id, c)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nodeOneVo, c)
+}
+
 func CreateNode(c *gin.Context) {
 	var nodeCreateDto dto.NodeCreateDto
 	_ = c.ShouldBindJSON(&nodeCreateDto)

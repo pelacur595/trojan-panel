@@ -32,6 +32,11 @@ type NodeOneVo struct {
 	Port         uint      `json:"port"`
 	CreateTime   time.Time `json:"createTime"`
 
+	Password string `json:"password"`
+	Uuid     string `json:"uuid"`
+	AlterId  int    `json:"alterId"`
+	Flow     string `json:"flow"`
+
 	XrayProtocol             string                   `json:"xrayProtocol"`
 	XraySettings             string                   `json:"xraySettings"`
 	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`

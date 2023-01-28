@@ -78,6 +78,8 @@ func Router(router *gin.Engine) {
 		{
 			// 根据id查询节点
 			node.GET("/selectNodeById", api.SelectNodeById)
+			// 查询节点连接信息
+			node.GET("/selectNodeInfo", api.SelectNodeInfo)
 			// 创建节点
 			node.POST("/createNode", api.CreateNode)
 			// 分页查询节点
