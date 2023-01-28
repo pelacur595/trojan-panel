@@ -93,8 +93,8 @@ func SelectNodeInfo(id *uint, c *gin.Context) (*vo.NodeOneVo, error) {
 		return nil, err
 	}
 	nodeOneVo.Password = *account.Pass
-	nodeOneVo.Uuid = util.GenerateUUID(*account.Pass)
-	if nodeOneVo.NodeTypeId == 1 {
+	if nodeOneVo.NodeTypeId == 1 && (nodeOneVo.XrayProtocol == "vless" || nodeOneVo.XrayProtocol == "vmess") {
+		nodeOneVo.Uuid = util.GenerateUUID(*account.Pass)
 		nodeOneVo.AlterId = 0
 		if nodeOneVo.XrayProtocol == "vless" {
 			nodeOneVo.XrayFlow = "xtls-rprx-direct"
