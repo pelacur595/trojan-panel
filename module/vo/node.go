@@ -35,8 +35,8 @@ type NodeOneVo struct {
 	Password string `json:"password"`
 	Uuid     string `json:"uuid"`
 	AlterId  int    `json:"alterId"`
-	Flow     string `json:"flow"`
 
+	XrayFlow                 string                   `json:"xrayFlow"`
 	XrayProtocol             string                   `json:"xrayProtocol"`
 	XraySettings             string                   `json:"xraySettings"`
 	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`

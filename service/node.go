@@ -97,7 +97,7 @@ func SelectNodeInfo(id *uint, c *gin.Context) (*vo.NodeOneVo, error) {
 	if nodeOneVo.NodeTypeId == 1 {
 		nodeOneVo.AlterId = 0
 		if nodeOneVo.XrayProtocol == "vless" {
-			nodeOneVo.Flow = "xtls-rprx-direct"
+			nodeOneVo.XrayFlow = "xtls-rprx-direct"
 		}
 	}
 	return nodeOneVo, nil
