@@ -239,8 +239,8 @@ func ClashSubscribe(c *gin.Context) {
 	vo.Success(fmt.Sprintf("/api/auth/clash/%s", base64.StdEncoding.EncodeToString([]byte(password))), c)
 }
 
-// Clash 订阅
-func Clash(c *gin.Context) {
+// Subscribe 订阅
+func Subscribe(c *gin.Context) {
 	token := c.Param("token")
 	userAgent := c.Request.Header.Get("User-Agent")
 	tokenDecode, err := base64.StdEncoding.DecodeString(token)
@@ -251,9 +251,10 @@ func Clash(c *gin.Context) {
 	pass := string(tokenDecode)
 
 	if strings.HasPrefix(userAgent, constant.ClashforWindows) {
-		account, userInfo, clashConfigYaml, systemConfig, err := service.Clash(pass)
+		account, userInfo, clashConfigYaml, systemConfig, err := service.SubscribeClash(pass)
 		if err != nil {
 			vo.Fail(err.Error(), c)
+			return
 		}
 		result := fmt.Sprintf(`%s
 %s`, string(clashConfigYaml), systemConfig.ClashRule)
@@ -262,10 +263,9 @@ func Clash(c *gin.Context) {
 		c.Header("profile-update-interval", "12")
 		c.Header("subscription-userinfo", userInfo)
 		c.String(200, result)
-	} else {
-		vo.Fail("不支持该客户端", c)
+		return
 	}
-	return
+	vo.Fail("不支持该客户端", c)
 }
 
 // ResetAccountDownloadAndUpload 重设下载和上传流量

@@ -273,24 +273,6 @@ func CronResetDownloadAndUploadMonth() {
 	}
 }
 
-// ClashSubscribe 导出Clash配置
-func ClashSubscribe(pass string) (*module.Account, []vo.NodeOneVo, error) {
-	account, err := dao.SelectAccountClashSubscribe(pass)
-	if err != nil {
-		return nil, nil, err
-	}
-	nodes, err := dao.SelectNodesIpAndPort()
-	var nodeVos []vo.NodeOneVo
-	for _, item := range nodes {
-		nodeOneVo, err := SelectNodeById(item.Id)
-		if err != nil {
-			continue
-		}
-		nodeVos = append(nodeVos, *nodeOneVo)
-	}
-	return account, nodeVos, nil
-}
-
 func RemoveAccount(token string, password string) error {
 	ips, err := dao.SelectNodesIpDistinct()
 	if err != nil {
@@ -314,15 +296,31 @@ func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
 	return dao.ResetAccountDownloadAndUpload(id, roleIds)
 }
 
-// Clash for windows 参考文档：
-// 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
-// 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
-// 3. https://github.com/Dreamacro/clash/wiki/Configuration
-func Clash(pass string) (*module.Account, string, []byte, vo.SystemVo, error) {
-	account, nodeOneVos, err := ClashSubscribe(pass)
+// SubscribeClash
+/**
+Clash for windows 参考文档：
+1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
+2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+3. https://github.com/Dreamacro/clash/wiki/Configuration
+*/
+func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, error) {
+	account, err := dao.SelectAccountClashSubscribe(pass)
 	if err != nil {
 		return nil, "", []byte{}, vo.SystemVo{}, err
 	}
+	nodes, err := dao.SelectNodesIpAndPort()
+	if err != nil {
+		return nil, "", []byte{}, vo.SystemVo{}, err
+	}
+	var nodeOneVos []vo.NodeOneVo
+	for _, item := range nodes {
+		nodeOneVo, err := SelectNodeById(item.Id)
+		if err != nil {
+			continue
+		}
+		nodeOneVos = append(nodeOneVos, *nodeOneVo)
+	}
+
 	userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
 		*account.Upload,
 		*account.Download,
