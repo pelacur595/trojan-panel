@@ -359,7 +359,6 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				vless.Port = item.Port
 				vless.Type = constant.ProtocolVless
 				vless.Uuid = util.GenerateUUID(pass)
-				vless.SkipCertVerify = true
 				vless.Udp = true
 				vless.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {

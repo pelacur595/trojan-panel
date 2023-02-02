@@ -5,13 +5,12 @@ type ClashConfigInterface interface {
 }
 
 type Vless struct {
-	Name           string `yaml:"name"`
-	Server         string `yaml:"server"`
-	Port           uint   `yaml:"port"`
-	Type           string `yaml:"type"`
-	Uuid           string `yaml:"uuid"`
-	Flow           string `yaml:"flow"`
-	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+	Name   string `yaml:"name"`
+	Server string `yaml:"server"`
+	Port   uint   `yaml:"port"`
+	Type   string `yaml:"type"`
+	Uuid   string `yaml:"uuid"`
+	Flow   string `yaml:"flow"`
 
 	Udp     bool   `yaml:"udp"`
 	Tls     bool   `yaml:"tls"`
@@ -42,6 +41,9 @@ type Trojan struct {
 	Udp      bool   `yaml:"udp"`
 	Network  string `yaml:"network"`
 	WsOpts   WsOpts `yaml:"ws-opts"`
+}
+
+type Shadowsocks struct {
 }
 
 type TrojanGo struct {
