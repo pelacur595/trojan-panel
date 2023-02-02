@@ -1,14 +1,17 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 	"sync"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
+	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
@@ -309,4 +312,147 @@ func SelectConnectPassword(id *uint, username *string) (string, error) {
 // ResetAccountDownloadAndUpload 重设下载和上传流量
 func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
 	return dao.ResetAccountDownloadAndUpload(id, roleIds)
+}
+
+// Clash for windows 参考文档：
+// 1. https://docs.cfw.lbyczf.com/contents/urlscheme.html
+// 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
+// 3. https://github.com/Dreamacro/clash/wiki/Configuration
+func Clash(pass string) (*module.Account, string, []byte, vo.SystemVo, error) {
+	account, nodeOneVos, err := ClashSubscribe(pass)
+	if err != nil {
+		return nil, "", []byte{}, vo.SystemVo{}, err
+	}
+	userInfo := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d",
+		*account.Upload,
+		*account.Download,
+		*account.Quota,
+		*account.ExpireTime/1000)
+
+	clashConfig := bo.ClashConfig{}
+	var ClashConfigInterface []interface{}
+	var proxies []string
+	for _, item := range nodeOneVos {
+		if item.NodeTypeId == 1 {
+			nodeXray, err := SelectNodeXrayById(&item.NodeSubId)
+			if err != nil {
+				return nil, "", []byte{}, vo.SystemVo{}, err
+			}
+
+			streamSettings := bo.StreamSettings{}
+			if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
+				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
+				}
+			}
+			settings := bo.Settings{}
+			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+				if err = json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+					logrus.Errorln(fmt.Sprintf("SystemVo JSON反转失败 err: %v", err))
+					return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
+				}
+			}
+			if *nodeXray.Protocol == "vmess" {
+				vmess := bo.Vmess{}
+				vmess.Name = item.Name
+				vmess.Server = item.Domain
+				vmess.Port = item.Port
+				vmess.VmessType = "vmess"
+				vmess.Uuid = util.GenerateUUID(pass)
+				vmess.AlterId = 0
+				if settings.Encryption != "none" {
+					vmess.Cipher = "auto"
+				} else {
+					vmess.Cipher = "none"
+				}
+				vmess.Udp = true
+				vmess.Network = streamSettings.Network
+				if streamSettings.Security == "tls" {
+					vmess.Tls = true
+				} else {
+					vmess.Tls = false
+				}
+				if streamSettings.Network == "ws" {
+					vmess.WsOpts.Path = streamSettings.WsSettings.Path
+					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				}
+				ClashConfigInterface = append(ClashConfigInterface, vmess)
+				proxies = append(proxies, item.Name)
+			} else if *nodeXray.Protocol == "trojan" {
+				trojan := bo.Trojan{}
+				trojan.Name = item.Name
+				trojan.Server = item.Domain
+				trojan.Port = item.Port
+				trojan.TrojanType = "trojan"
+				trojan.Password = pass
+				trojan.Udp = true
+				trojan.Network = streamSettings.Network
+				if streamSettings.Network == "ws" {
+					trojan.WsOpts.Path = streamSettings.WsSettings.Path
+					trojan.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				}
+				ClashConfigInterface = append(ClashConfigInterface, trojan)
+				proxies = append(proxies, item.Name)
+			}
+
+		} else if item.NodeTypeId == 2 {
+			nodeTrojanGo, err := SelectNodeTrojanGoById(&item.NodeSubId)
+			if err != nil {
+				return nil, "", []byte{}, vo.SystemVo{}, err
+			}
+			trojanGo := bo.TrojanGo{}
+			trojanGo.Name = item.Name
+			trojanGo.Server = item.Domain
+			trojanGo.Port = item.Port
+			trojanGo.TrojanType = "trojan"
+			trojanGo.Password = pass
+			trojanGo.Udp = true
+			trojanGo.SNI = *nodeTrojanGo.Sni
+			if *nodeTrojanGo.WebsocketEnable == 1 {
+				trojanGo.Network = "ws"
+				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath
+				trojanGo.WsOpts.WsOptsHeaders.Host = *nodeTrojanGo.WebsocketHost
+			}
+			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
+			proxies = append(proxies, item.Name)
+		} else if item.NodeTypeId == 3 {
+			nodeHysteria, err := SelectNodeHysteriaById(&item.NodeSubId)
+			if err != nil {
+				return nil, "", []byte{}, vo.SystemVo{}, err
+			}
+			hysteria := bo.Hysteria{}
+			hysteria.Name = item.Name
+			hysteria.Server = item.Domain
+			hysteria.Port = item.Port
+			hysteria.HysteriaType = "hysteria"
+			hysteria.AuthStr = pass
+			hysteria.Protocol = *nodeHysteria.Protocol
+			hysteria.Up = *nodeHysteria.UpMbps
+			hysteria.Down = *nodeHysteria.DownMbps
+			ClashConfigInterface = append(ClashConfigInterface, hysteria)
+			proxies = append(proxies, item.Name)
+		}
+	}
+	proxyGroups := make([]bo.ProxyGroup, 0)
+	proxyGroup := bo.ProxyGroup{
+		Name:      "PROXY",
+		ProxyType: "select",
+		Proxies:   proxies,
+	}
+	proxyGroups = append(proxyGroups, proxyGroup)
+	clashConfig.ProxyGroups = proxyGroups
+	clashConfig.Proxies = ClashConfigInterface
+
+	clashConfigYaml, err := yaml.Marshal(&clashConfig)
+	if err != nil {
+		return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
+	}
+
+	systemName := constant.SystemName
+	systemConfig, err := SelectSystemByName(&systemName)
+	if err != nil {
+		return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
+	}
+	return account, userInfo, clashConfigYaml, systemConfig, nil
 }

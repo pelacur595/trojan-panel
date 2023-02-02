@@ -49,7 +49,7 @@ type Hysteria struct {
 	Server       string `yaml:"server"`
 	Port         uint   `yaml:"port"`
 	HysteriaType string `yaml:"type"`
-	Password     string `yaml:"password"`
+	AuthStr      string `yaml:"auth_str"`
 	Protocol     string `yaml:"protocol"`
 	Up           int    `yaml:"up"`
 	Down         int    `yaml:"down"`
