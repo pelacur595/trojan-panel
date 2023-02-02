@@ -17,7 +17,7 @@ func Router(router *gin.Engine) {
 		// 系统默认设置
 		trojanAuth.GET("/setting", api.Setting)
 		// 订阅
-		trojanAuth.GET("/clash/:token", api.Subscribe)
+		trojanAuth.GET("/subscribe/:token", api.Subscribe)
 	}
 	router.Use(middleware.JWTHandler(), middleware.CasbinHandler())
 	trojan := router.Group("/api")

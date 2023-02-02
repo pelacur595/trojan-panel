@@ -353,25 +353,25 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			switch *nodeXray.Protocol {
 			case constant.ProtocolVless:
-				vless := bo.Vless{}
-				vless.Name = item.Name
-				vless.Server = item.Domain
-				vless.Port = item.Port
-				vless.Type = constant.ProtocolVless
-				vless.Uuid = util.GenerateUUID(pass)
-				vless.Udp = true
-				vless.Network = streamSettings.Network
-				if streamSettings.Security == "tls" {
-					vless.Tls = true
-				} else {
-					vless.Tls = false
-				}
-				if streamSettings.Network == "ws" {
-					vless.WsOpts.Path = streamSettings.WsSettings.Path
-					vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
-				}
-				ClashConfigInterface = append(ClashConfigInterface, vless)
-				proxies = append(proxies, item.Name)
+				//vless := bo.Vless{}
+				//vless.Name = item.Name
+				//vless.Server = item.Domain
+				//vless.Port = item.Port
+				//vless.Type = constant.ProtocolVless
+				//vless.Uuid = util.GenerateUUID(pass)
+				//vless.Udp = true
+				//vless.Network = streamSettings.Network
+				//if streamSettings.Security == "tls" {
+				//	vless.Tls = true
+				//} else {
+				//	vless.Tls = false
+				//}
+				//if streamSettings.Network == "ws" {
+				//	vless.WsOpts.Path = streamSettings.WsSettings.Path
+				//	vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				//}
+				//ClashConfigInterface = append(ClashConfigInterface, vless)
+				//proxies = append(proxies, item.Name)
 			case constant.ProtocolVmess:
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
