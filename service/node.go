@@ -546,11 +546,11 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 }
 
 func NodeQRCode(accountId *uint, username *string, id *uint) ([]byte, error) {
-	nodeUrl, nodeTypeName, err := NodeURL(accountId, username, id)
+	nodeUrl, nodeTypeId, err := NodeURL(accountId, username, id)
 	if err != nil {
 		return nil, err
 	}
-	if nodeTypeName == constant.NaiveProxyName {
+	if nodeTypeId == constant.NaiveProxy {
 		nodeUrl = strings.TrimPrefix(nodeUrl, "naive+https://")
 		nodeUrl = fmt.Sprintf("https://%s", base64.StdEncoding.EncodeToString([]byte(nodeUrl)))
 	}
@@ -566,41 +566,41 @@ func NodeQRCode(accountId *uint, username *string, id *uint) ([]byte, error) {
 // xray: https://github.com/XTLS/Xray-core/issues/91
 // trojan-go: https://p4gefau1t.github.io/trojan-go/developer/url/
 // hysteria:https://github.com/HyNetwork/hysteria/wiki/URI-Scheme
-func NodeURL(accountId *uint, username *string, id *uint) (string, string, error) {
+func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) {
 
 	node, err := dao.SelectNodeById(id)
 	if err != nil {
-		return "", "", errors.New(constant.NodeURLError)
+		return "", 0, errors.New(constant.NodeURLError)
 	}
 
 	nodeType, err := dao.SelectNodeTypeById(node.NodeTypeId)
 	if err != nil {
-		return "", "", errors.New(constant.NodeURLError)
+		return "", 0, errors.New(constant.NodeURLError)
 	}
 
 	password, err := dao.SelectConnectPassword(accountId, nil)
 	if err != nil {
-		return "", "", errors.New(constant.NodeURLError)
+		return "", 0, errors.New(constant.NodeURLError)
 	}
 
 	// 构建URL
 	var headBuilder strings.Builder
 
-	if *nodeType.Name == constant.XrayName {
+	if *nodeType.Id == constant.Xray {
 		nodeXray, err := dao.SelectNodeXrayById(node.NodeSubId)
 		if err != nil {
-			return "", "", errors.New(constant.NodeURLError)
+			return "", 0, errors.New(constant.NodeURLError)
 		}
 		streamSettings := bo.StreamSettings{}
 		if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 			if err := json.Unmarshal([]byte(*nodeXray.StreamSettings), &streamSettings); err != nil {
-				return "", "", errors.New(constant.NodeURLError)
+				return "", 0, errors.New(constant.NodeURLError)
 			}
 		}
 		settings := bo.Settings{}
 		if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 			if err := json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
-				return "", "", errors.New(constant.NodeURLError)
+				return "", 0, errors.New(constant.NodeURLError)
 			}
 		}
 
@@ -629,10 +629,10 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 				headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
 			}
 		}
-	} else if *nodeType.Name == constant.TrojanGoName {
+	} else if *nodeType.Id == constant.TrojanGo {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 		if err != nil {
-			return "", "", errors.New(constant.NodeURLError)
+			return "", 0, errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("trojan-go://%s@%s:%d?", url.PathEscape(password),
 			*node.Domain, *node.Port))
@@ -657,10 +657,10 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 					fmt.Sprintf("ss;%s:%s", *nodeTrojanGo.SsMethod, *nodeTrojanGo.SsPassword))))
 			}
 		}
-	} else if *nodeType.Name == constant.HysteriaName {
+	} else if *nodeType.Id == constant.Hysteria {
 		nodeHysteria, err := dao.SelectNodeHysteriaById(node.NodeSubId)
 		if err != nil {
-			return "", "", errors.New(constant.NodeURLError)
+			return "", 0, errors.New(constant.NodeURLError)
 		}
 		headBuilder.WriteString(fmt.Sprintf("hysteria://%s:%d?protocol=%s&auth=%s&upmbps=%d&downmbps=%d",
 			*node.Domain,
@@ -669,14 +669,14 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, string, error
 			password,
 			*nodeHysteria.UpMbps,
 			*nodeHysteria.DownMbps))
-	} else if *nodeType.Name == constant.NaiveProxyName {
+	} else if *nodeType.Id == constant.NaiveProxy {
 		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))
 	}
 
 	if node.Name != nil && *node.Name != "" {
 		headBuilder.WriteString(fmt.Sprintf("#%s", url.PathEscape(*node.Name)))
 	}
-	return headBuilder.String(), *nodeType.Name, nil
+	return headBuilder.String(), *nodeType.Id, nil
 }
 
 func CountNode() (int, error) {

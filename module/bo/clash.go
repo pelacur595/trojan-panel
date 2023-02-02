@@ -5,54 +5,66 @@ type ClashConfigInterface interface {
 }
 
 type Vless struct {
+	Name           string `yaml:"name"`
+	Type           string `yaml:"type"`
+	Server         string `yaml:"server"`
+	Port           uint   `yaml:"port"`
+	Uuid           string `yaml:"uuid"`
+	Flow           string `yaml:"flow"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+
+	Udp     bool   `yaml:"udp"`
+	Tls     bool   `yaml:"tls"`
+	Network string `yaml:"network"`
+	WsOpts  WsOpts `yaml:"ws-opts"`
 }
 
 type Vmess struct {
-	Name      string `yaml:"name"`
-	Server    string `yaml:"server"`
-	Port      uint   `yaml:"port"`
-	VmessType string `yaml:"type"`
-	Uuid      string `yaml:"uuid"`
-	AlterId   uint   `yaml:"alterId"`
-	Cipher    string `yaml:"cipher"`
-	Udp       bool   `yaml:"udp"`
-	Tls       bool   `yaml:"tls"`
-	Network   string `yaml:"network"`
-	WsOpts    WsOpts `yaml:"ws-opts"`
+	Name    string `yaml:"name"`
+	Server  string `yaml:"server"`
+	Port    uint   `yaml:"port"`
+	Type    string `yaml:"type"`
+	Uuid    string `yaml:"uuid"`
+	AlterId uint   `yaml:"alterId"`
+	Cipher  string `yaml:"cipher"`
+	Udp     bool   `yaml:"udp"`
+	Tls     bool   `yaml:"tls"`
+	Network string `yaml:"network"`
+	WsOpts  WsOpts `yaml:"ws-opts"`
 }
 
 type Trojan struct {
-	Name       string `yaml:"name"`
-	Server     string `yaml:"server"`
-	Port       uint   `yaml:"port"`
-	TrojanType string `yaml:"type"`
-	Password   string `yaml:"password"`
-	Udp        bool   `yaml:"udp"`
-	Network    string `yaml:"network"`
-	WsOpts     WsOpts `yaml:"ws-opts"`
+	Name     string `yaml:"name"`
+	Server   string `yaml:"server"`
+	Port     uint   `yaml:"port"`
+	Type     string `yaml:"type"`
+	Password string `yaml:"password"`
+	Udp      bool   `yaml:"udp"`
+	Network  string `yaml:"network"`
+	WsOpts   WsOpts `yaml:"ws-opts"`
 }
 
 type TrojanGo struct {
-	Name       string `yaml:"name"`
-	Server     string `yaml:"server"`
-	Port       uint   `yaml:"port"`
-	TrojanType string `yaml:"type"`
-	Password   string `yaml:"password"`
-	SNI        string `yaml:"sni"`
-	Udp        bool   `yaml:"udp"`
-	Network    string `yaml:"network"`
-	WsOpts     WsOpts `yaml:"ws-opts"`
+	Name     string `yaml:"name"`
+	Server   string `yaml:"server"`
+	Port     uint   `yaml:"port"`
+	Type     string `yaml:"type"`
+	Password string `yaml:"password"`
+	SNI      string `yaml:"sni"`
+	Udp      bool   `yaml:"udp"`
+	Network  string `yaml:"network"`
+	WsOpts   WsOpts `yaml:"ws-opts"`
 }
 
 type Hysteria struct {
-	Name         string `yaml:"name"`
-	Server       string `yaml:"server"`
-	Port         uint   `yaml:"port"`
-	HysteriaType string `yaml:"type"`
-	AuthStr      string `yaml:"auth_str"`
-	Protocol     string `yaml:"protocol"`
-	Up           int    `yaml:"up"`
-	Down         int    `yaml:"down"`
+	Name     string `yaml:"name"`
+	Server   string `yaml:"server"`
+	Port     uint   `yaml:"port"`
+	Type     string `yaml:"type"`
+	AuthStr  string `yaml:"auth_str"`
+	Protocol string `yaml:"protocol"`
+	Up       int    `yaml:"up"`
+	Down     int    `yaml:"down"`
 }
 
 type WsOpts struct {
@@ -65,9 +77,9 @@ type WsOptsHeaders struct {
 }
 
 type ProxyGroup struct {
-	Name      string   `yaml:"name"`
-	ProxyType string   `yaml:"type"`
-	Proxies   []string `yaml:"proxies"`
+	Name    string   `yaml:"name"`
+	Type    string   `yaml:"type"`
+	Proxies []string `yaml:"proxies"`
 }
 
 type ClashConfig struct {

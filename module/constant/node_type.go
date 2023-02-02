@@ -1,8 +1,15 @@
 package constant
 
 const (
-	XrayName       string = "xray"       // type 1
-	TrojanGoName   string = "trojan-go"  // type 2
-	HysteriaName   string = "hysteria"   // type 3
-	NaiveProxyName string = "naiveproxy" // type 4
+	Xray       uint = 1
+	TrojanGo   uint = 2
+	Hysteria   uint = 3
+	NaiveProxy uint = 4
+
+	ProtocolVless      string = "vless"
+	ProtocolVmess      string = "vmess"
+	ProtocolTrojan     string = "trojan"
+	ProtocolTrojanGo   string = "trojan-go"
+	ProtocolHysteria   string = "hysteria"
+	ProtocolNaiveProxy string = "naiveproxy"
 )

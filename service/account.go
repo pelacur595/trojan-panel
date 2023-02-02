@@ -331,7 +331,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 	var ClashConfigInterface []interface{}
 	var proxies []string
 	for _, item := range nodeOneVos {
-		if item.NodeTypeId == 1 {
+		if item.NodeTypeId == constant.Xray {
 			nodeXray, err := SelectNodeXrayById(&item.NodeSubId)
 			if err != nil {
 				return nil, "", []byte{}, vo.SystemVo{}, err
@@ -351,12 +351,34 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 					return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
 				}
 			}
-			if *nodeXray.Protocol == "vmess" {
+			switch *nodeXray.Protocol {
+			case constant.ProtocolVless:
+				vless := bo.Vless{}
+				vless.Name = item.Name
+				vless.Server = item.Domain
+				vless.Port = item.Port
+				vless.Type = constant.ProtocolVless
+				vless.Uuid = util.GenerateUUID(pass)
+				vless.SkipCertVerify = true
+				vless.Udp = true
+				vless.Network = streamSettings.Network
+				if streamSettings.Security == "tls" {
+					vless.Tls = true
+				} else {
+					vless.Tls = false
+				}
+				if streamSettings.Network == "ws" {
+					vless.WsOpts.Path = streamSettings.WsSettings.Path
+					vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+				}
+				ClashConfigInterface = append(ClashConfigInterface, vless)
+				proxies = append(proxies, item.Name)
+			case constant.ProtocolVmess:
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
 				vmess.Server = item.Domain
 				vmess.Port = item.Port
-				vmess.VmessType = "vmess"
+				vmess.Type = constant.ProtocolVmess
 				vmess.Uuid = util.GenerateUUID(pass)
 				vmess.AlterId = 0
 				if settings.Encryption != "none" {
@@ -377,12 +399,12 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 				proxies = append(proxies, item.Name)
-			} else if *nodeXray.Protocol == "trojan" {
+			case constant.ProtocolTrojan:
 				trojan := bo.Trojan{}
 				trojan.Name = item.Name
 				trojan.Server = item.Domain
 				trojan.Port = item.Port
-				trojan.TrojanType = "trojan"
+				trojan.Type = constant.ProtocolTrojan
 				trojan.Password = pass
 				trojan.Udp = true
 				trojan.Network = streamSettings.Network
@@ -393,8 +415,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
 				proxies = append(proxies, item.Name)
 			}
-
-		} else if item.NodeTypeId == 2 {
+		} else if item.NodeTypeId == constant.TrojanGo {
 			nodeTrojanGo, err := SelectNodeTrojanGoById(&item.NodeSubId)
 			if err != nil {
 				return nil, "", []byte{}, vo.SystemVo{}, err
@@ -403,7 +424,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			trojanGo.Name = item.Name
 			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
-			trojanGo.TrojanType = "trojan"
+			trojanGo.Type = constant.ProtocolTrojanGo
 			trojanGo.Password = pass
 			trojanGo.Udp = true
 			trojanGo.SNI = *nodeTrojanGo.Sni
@@ -414,7 +435,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 			proxies = append(proxies, item.Name)
-		} else if item.NodeTypeId == 3 {
+		} else if item.NodeTypeId == constant.Hysteria {
 			nodeHysteria, err := SelectNodeHysteriaById(&item.NodeSubId)
 			if err != nil {
 				return nil, "", []byte{}, vo.SystemVo{}, err
@@ -423,7 +444,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			hysteria.Name = item.Name
 			hysteria.Server = item.Domain
 			hysteria.Port = item.Port
-			hysteria.HysteriaType = "hysteria"
+			hysteria.Type = constant.ProtocolHysteria
 			hysteria.AuthStr = pass
 			hysteria.Protocol = *nodeHysteria.Protocol
 			hysteria.Up = *nodeHysteria.UpMbps
@@ -434,9 +455,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 	}
 	proxyGroups := make([]bo.ProxyGroup, 0)
 	proxyGroup := bo.ProxyGroup{
-		Name:      "PROXY",
-		ProxyType: "select",
-		Proxies:   proxies,
+		Name:    "PROXY",
+		Type:    "select",
+		Proxies: proxies,
 	}
 	proxyGroups = append(proxyGroups, proxyGroup)
 	clashConfig.ProxyGroups = proxyGroups
