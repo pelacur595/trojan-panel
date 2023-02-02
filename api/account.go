@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"strings"
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -242,7 +241,7 @@ func ClashSubscribe(c *gin.Context) {
 // Subscribe 订阅
 func Subscribe(c *gin.Context) {
 	token := c.Param("token")
-	userAgent := c.Request.Header.Get("User-Agent")
+	//userAgent := c.Request.Header.Get("User-Agent")
 	tokenDecode, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
 		vo.Fail(constant.SysError, c)
@@ -250,22 +249,22 @@ func Subscribe(c *gin.Context) {
 	}
 	pass := string(tokenDecode)
 
-	if strings.HasPrefix(userAgent, constant.ClashforWindows) {
-		account, userInfo, clashConfigYaml, systemConfig, err := service.SubscribeClash(pass)
-		if err != nil {
-			vo.Fail(err.Error(), c)
-			return
-		}
-		result := fmt.Sprintf(`%s
-%s`, string(clashConfigYaml), systemConfig.ClashRule)
-
-		c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
-		c.Header("profile-update-interval", "12")
-		c.Header("subscription-userinfo", userInfo)
-		c.String(200, result)
+	//if strings.HasPrefix(userAgent, constant.ClashforWindows) {
+	account, userInfo, clashConfigYaml, systemConfig, err := service.SubscribeClash(pass)
+	if err != nil {
+		vo.Fail(err.Error(), c)
 		return
 	}
-	vo.Fail("不支持该客户端", c)
+	result := fmt.Sprintf(`%s
+%s`, string(clashConfigYaml), systemConfig.ClashRule)
+
+	c.Header("content-disposition", fmt.Sprintf("attachment; filename=%s.yaml", *account.Username))
+	c.Header("profile-update-interval", "12")
+	c.Header("subscription-userinfo", userInfo)
+	c.String(200, result)
+	return
+	//}
+	//vo.Fail("不支持该客户端", c)
 }
 
 // ResetAccountDownloadAndUpload 重设下载和上传流量
