@@ -6,9 +6,9 @@ type ClashConfigInterface interface {
 
 type Vless struct {
 	Name           string `yaml:"name"`
-	Type           string `yaml:"type"`
 	Server         string `yaml:"server"`
 	Port           uint   `yaml:"port"`
+	Type           string `yaml:"type"`
 	Uuid           string `yaml:"uuid"`
 	Flow           string `yaml:"flow"`
 	SkipCertVerify bool   `yaml:"skip-cert-verify"`
