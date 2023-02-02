@@ -235,7 +235,7 @@ func ClashSubscribe(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	vo.Success(fmt.Sprintf("/api/auth/clash/%s", base64.StdEncoding.EncodeToString([]byte(password))), c)
+	vo.Success(fmt.Sprintf("/api/auth/subscribe/%s", base64.StdEncoding.EncodeToString([]byte(password))), c)
 }
 
 // Subscribe 订阅
