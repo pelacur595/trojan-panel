@@ -28,5 +28,5 @@ const (
 	// SaltKey 加密 盐
 	SaltKey string = "well_very_funny!"
 
-	TrojanPanelVersion = "v2.0.1"
+	TrojanPanelVersion = "v2.0.2"
 )
