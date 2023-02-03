@@ -423,7 +423,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			trojanGo.Name = item.Name
 			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
-			trojanGo.Type = constant.ProtocolTrojanGo
+			trojanGo.Type = constant.ProtocolTrojan
 			trojanGo.Password = pass
 			trojanGo.Udp = true
 			trojanGo.SNI = *nodeTrojanGo.Sni
