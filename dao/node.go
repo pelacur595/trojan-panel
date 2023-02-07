@@ -97,7 +97,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	if nodeServerId != nil && *nodeServerId != 0 {
 		where["node_server_id"] = *nodeServerId
 	}
-	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "domain", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -250,28 +250,24 @@ func SelectNodesIpAndPort() ([]module.Node, error) {
 	return nodes, nil
 }
 
-func SelectNodesIpDistinct() ([]string, error) {
-	var ips []string
+func SelectNodesIpGrpcPortDistinct() ([]module.Node, error) {
+	var nodes []module.Node
 
-	buildSelect, values, err := builder.NamedQuery("select distinct node_server_ip from node", nil)
+	buildSelect, values, err := builder.NamedQuery("select node_server_ip, node_server_grpc_port from node group by node_server_ip, node_server_grpc_port", nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
-		return ips, errors.New(constant.SysError)
+		return nodes, errors.New(constant.SysError)
 	}
 	rows, err := db.Query(buildSelect, values...)
 	if err != nil {
 		logrus.Errorln(err.Error())
-		return ips, errors.New(constant.SysError)
+		return nodes, errors.New(constant.SysError)
 	}
 	defer rows.Close()
 
-	result, err := scanner.ScanMap(rows)
-	if err != nil {
+	if err = scanner.Scan(rows, &nodes); err != nil {
 		logrus.Errorln(err.Error())
-		return ips, errors.New(constant.SysError)
+		return nodes, errors.New(constant.SysError)
 	}
-	for _, record := range result {
-		ips = append(ips, fmt.Sprintf("%s", record["node_server_ip"]))
-	}
-	return ips, nil
+	return nodes, nil
 }

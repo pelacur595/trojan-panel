@@ -13,7 +13,7 @@ import (
 	"trojan-panel/module/constant"
 )
 
-func newGrpcInstance(token string, ip string, timeout time.Duration) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
+func newGrpcInstance(token string, ip string, grpcPort uint, timeout time.Duration) (conn *grpc.ClientConn, ctx context.Context, clo func(), err error) {
 	tokenParam := TokenValidateParam{
 		Token: token,
 	}
@@ -22,7 +22,7 @@ func newGrpcInstance(token string, ip string, timeout time.Duration) (conn *grpc
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithPerRPCCredentials(&tokenParam),
 	}
-	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, 8100),
+	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", ip, grpcPort),
 		opts...)
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	clo = func() {
@@ -36,8 +36,8 @@ func newGrpcInstance(token string, ip string, timeout time.Duration) (conn *grpc
 	return
 }
 
-func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
+func AddNode(token string, ip string, grpcPort uint, nodeAddDto *NodeAddDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.AddNode(ctx, nodeAddDto)
 	if err != nil {
-		logrus.Errorf("gRPC添加节点异常 ip: %s err: %v", ip, err)
+		logrus.Errorf("gRPC添加节点异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -54,8 +54,8 @@ func AddNode(token string, ip string, nodeAddDto *NodeAddDto) error {
 	return errors.New(send.Msg)
 }
 
-func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
+func RemoveNode(token string, ip string, grpcPort uint, nodeRemoveDto *NodeRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
 	client := NewApiNodeServiceClient(conn)
 	send, err := client.RemoveNode(ctx, nodeRemoveDto)
 	if err != nil {
-		logrus.Errorf("gRPC删除节点异常 ip: %s err: %v", ip, err)
+		logrus.Errorf("gRPC删除节点异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -72,8 +72,8 @@ func RemoveNode(token string, ip string, nodeRemoveDto *NodeRemoveDto) error {
 	return errors.New(send.Msg)
 }
 
-func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, 4*time.Second)
+func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *AccountRemoveDto) error {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 	client := NewApiAccountServiceClient(conn)
 	send, err := client.RemoveAccount(ctx, accountRemoveDto)
 	if err != nil {
-		logrus.Errorf("gRPC删除用户异常 ip: %s err: %v", ip, err)
+		logrus.Errorf("gRPC删除用户异常 ip: %s grpc porr: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -90,8 +90,8 @@ func RemoveAccount(token string, ip string, accountRemoveDto *AccountRemoveDto) 
 	return errors.New(send.Msg)
 }
 
-func Ping(token string, ip string) (bool, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, time.Second)
+func Ping(token string, ip string, grpcPort uint) (bool, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, time.Second)
 	defer clo()
 	if err != nil {
 		return false, err
@@ -100,7 +100,7 @@ func Ping(token string, ip string) (bool, error) {
 	stateDto := StateDto{}
 	send, err := client.Ping(ctx, &stateDto)
 	if err != nil {
-		logrus.Errorf("gRPC ping 异常 ip: %s err: %v", ip, err)
+		logrus.Errorf("gRPC ping 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return false, errors.New(constant.GrpcError)
 	}
 	if send.Success {
@@ -109,8 +109,8 @@ func Ping(token string, ip string) (bool, error) {
 	return false, errors.New(send.Msg)
 }
 
-func NodeServerState(token string, ip string) (*NodeServerGroupVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, 2*time.Second)
+func NodeServerState(token string, ip string, grpcPort uint) (*NodeServerGroupVo, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
@@ -119,13 +119,13 @@ func NodeServerState(token string, ip string) (*NodeServerGroupVo, error) {
 	nodeServerGroupDto := NodeServerGroupDto{}
 	send, err := client.NodeServerState(ctx, &nodeServerGroupDto)
 	if err != nil {
-		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s err: %v", ip, err)
+		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		var nodeServerGroupVo NodeServerGroupVo
 		if err = anypb.UnmarshalTo(send.Data, &nodeServerGroupVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("查询服务器状态返序列化异常 ip: %s err: %v", ip, err)
+			logrus.Errorf("查询服务器状态返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
 		return &nodeServerGroupVo, nil

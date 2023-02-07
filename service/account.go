@@ -274,15 +274,15 @@ func CronResetDownloadAndUploadMonth() {
 }
 
 func RemoveAccount(token string, password string) error {
-	ips, err := dao.SelectNodesIpDistinct()
+	nodes, err := dao.SelectNodesIpGrpcPortDistinct()
 	if err != nil {
 		return err
 	}
-	for _, ip := range ips {
+	for _, node := range nodes {
 		removeDto := core.AccountRemoveDto{
 			Password: password,
 		}
-		_ = core.RemoveAccount(token, ip, &removeDto)
+		_ = core.RemoveAccount(token, *node.NodeServerIp, *node.NodeServerGrpcPort, &removeDto)
 	}
 	return nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func TestNodeServerState(t *testing.T) {
-	state, err := NodeServerState("", "127.0.0.1")
+	state, err := NodeServerState("", "127.0.0.1", 8100)
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -19,7 +19,7 @@ func TestNodeServerState(t *testing.T) {
 }
 
 func TestPing(t *testing.T) {
-	state, err := Ping("", "127.0.0.1")
+	state, err := Ping("", "127.0.0.1", 8100)
 	if err != nil {
 		fmt.Println(err)
 	} else {

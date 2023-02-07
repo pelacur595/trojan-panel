@@ -13,7 +13,7 @@ import (
 func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
 	var nodeServer module.NodeServer
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "ip", "`name`", "create_time"}
+	selectFields := []string{"id", "ip", "grpc_port", "`name`", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node_server", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -39,6 +39,9 @@ func CreateNodeServer(nodeServer *module.NodeServer) error {
 	nodeServerEntity := map[string]interface{}{
 		"ip":   *nodeServer.Ip,
 		"name": *nodeServer.Name,
+	}
+	if nodeServer.GrpcPort != nil || *nodeServer.GrpcPort != 0 {
+		nodeServerEntity["grpc_port"] = *nodeServer.GrpcPort
 	}
 
 	var data []map[string]interface{}
@@ -90,7 +93,7 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 	if queryIp != nil && *queryIp != "" {
 		where["ip like"] = fmt.Sprintf("%%%s%%", *queryIp)
 	}
-	selectFields := []string{"id", "`ip`", "name", "create_time"}
+	selectFields := []string{"id", "`ip`", "grpc_port", "name", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node_server", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -133,6 +136,9 @@ func UpdateNodeServerById(nodeServer *module.NodeServer) error {
 	}
 	if nodeServer.Ip != nil {
 		update["ip"] = *nodeServer.Ip
+	}
+	if nodeServer.GrpcPort != nil && *nodeServer.GrpcPort != 0 {
+		update["grpc_port"] = *nodeServer.GrpcPort
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node_server", where, update)

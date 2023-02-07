@@ -32,6 +32,7 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 			Id:         *item.Id,
 			Name:       *item.Name,
 			Ip:         *item.Ip,
+			GrpcPort:   *item.GrpcPort,
 			CreateTime: *item.CreateTime,
 		}
 		nodeServerVos = append(nodeServerVos, nodeServerVo)
@@ -49,12 +50,13 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 			go func() {
 				for j := range splitNodeServerVos[indexI] {
 					var ip = splitNodeServerVos[indexI][j].Ip
+					var grpcPort = splitNodeServerVos[indexI][j].GrpcPort
 					status, ok := nodeMap.Load(ip)
 					if ok {
 						splitNodeServerVos[indexI][j].Status = status.(int)
 					} else {
 						var status = 0
-						success, err := core.Ping(token, ip)
+						success, err := core.Ping(token, ip, grpcPort)
 						if err != nil {
 							status = -1
 						} else {
@@ -105,9 +107,10 @@ func UpdateNodeServerById(dto *dto.NodeServerUpdateDto) error {
 	}
 
 	nodeServer := module.NodeServer{
-		Id:   dto.Id,
-		Ip:   dto.Ip,
-		Name: dto.Name,
+		Id:       dto.Id,
+		Ip:       dto.Ip,
+		Name:     dto.Name,
+		GrpcPort: dto.GrpcPort,
 	}
 	return dao.UpdateNodeServerById(&nodeServer)
 }
@@ -142,7 +145,7 @@ func NodeServerState(token string, nodeServerId *uint) (*core.NodeServerGroupVo,
 	if err != nil {
 		return nil, err
 	}
-	nodeServerGroupVo, err := core.NodeServerState(token, *nodeServer.Ip)
+	nodeServerGroupVo, err := core.NodeServerState(token, *nodeServer.Ip, *nodeServer.GrpcPort)
 	if err != nil {
 		return nil, err
 	}

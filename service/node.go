@@ -134,7 +134,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	defer mutex.Unlock()
 	if mutex.TryLock() {
 		// Grpc添加节点
-		if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
+		if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
 			Port:       uint64(*nodeCreateDto.Port),
 			Domain:     *nodeCreateDto.Domain,
@@ -165,7 +165,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 				for {
 					select {
 					case <-time.After(8 * time.Second):
-						_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+						_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
 						return
 					}
 				}
@@ -239,15 +239,16 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	nodeBos := make([]bo.NodeBo, 0)
 	for _, item := range *nodePage {
 		nodeBo := bo.NodeBo{
-			Id:           *item.Id,
-			NodeServerId: *item.NodeServerId,
-			NodeSubId:    *item.NodeSubId,
-			NodeTypeId:   *item.NodeTypeId,
-			Name:         *item.Name,
-			NodeServerIp: *item.NodeServerIp,
-			Domain:       *item.Domain,
-			Port:         *item.Port,
-			CreateTime:   *item.CreateTime,
+			Id:                 *item.Id,
+			NodeServerId:       *item.NodeServerId,
+			NodeSubId:          *item.NodeSubId,
+			NodeTypeId:         *item.NodeTypeId,
+			Name:               *item.Name,
+			NodeServerIp:       *item.NodeServerIp,
+			NodeServerGrpcPort: *item.NodeServerGrpcPort,
+			Domain:             *item.Domain,
+			Port:               *item.Port,
+			CreateTime:         *item.CreateTime,
 		}
 		nodeBos = append(nodeBos, nodeBo)
 	}
@@ -264,12 +265,13 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 			go func() {
 				for j := range splitNodeBos[indexI] {
 					var ip = splitNodeBos[indexI][j].NodeServerIp
+					var grpcPort = splitNodeBos[indexI][j].NodeServerGrpcPort
 					status, ok := nodeMap.Load(ip)
 					if ok {
 						splitNodeBos[indexI][j].Status = status.(int)
 					} else {
 						var status = 0
-						success, err := core.Ping(token, ip)
+						success, err := core.Ping(token, ip, grpcPort)
 						if err != nil {
 							status = -1
 						} else {
@@ -323,7 +325,7 @@ func DeleteNodeById(token string, id *uint) error {
 		if err != nil {
 			return err
 		}
-		_ = GrpcRemoveNode(token, *node.NodeServerIp, *node.Port, *node.NodeTypeId)
+		_ = GrpcRemoveNode(token, *node.NodeServerIp, *node.NodeServerGrpcPort, *node.Port, *node.NodeTypeId)
 		if *node.NodeTypeId == 1 {
 			if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
 				return err
@@ -378,10 +380,10 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			return err
 		}
 		// Grpc的操作
-		if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
+		if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.NodeServerGrpcPort, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
 			return err
 		}
-		if err = GrpcAddNode(token, *nodeServer.Ip, &core.NodeAddDto{
+		if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
 			NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 			Port:       uint64(*nodeUpdateDto.Port),
 			Domain:     *nodeUpdateDto.Domain,
@@ -408,7 +410,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 		}); err != nil {
-			_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.Port, *nodeEntity.NodeTypeId)
+			_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.NodeServerGrpcPort, *nodeEntity.Port, *nodeEntity.NodeTypeId)
 			return err
 		}
 
@@ -683,15 +685,15 @@ func CountNode() (int, error) {
 	return dao.CountNode()
 }
 
-func GrpcAddNode(token string, ip string, nodeAddDto *core.NodeAddDto) error {
-	if err := core.AddNode(token, ip, nodeAddDto); err != nil {
+func GrpcAddNode(token string, ip string, grpcPort uint, nodeAddDto *core.NodeAddDto) error {
+	if err := core.AddNode(token, ip, grpcPort, nodeAddDto); err != nil {
 		return err
 	}
 	return nil
 }
 
-func GrpcRemoveNode(token string, ip string, port uint, nodeType uint) error {
-	if err := core.RemoveNode(token, ip, &core.NodeRemoveDto{
+func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeType uint) error {
+	if err := core.RemoveNode(token, ip, grpcPort, &core.NodeRemoveDto{
 		NodeType: uint64(nodeType),
 		Port:     uint64(port),
 	}); err != nil {

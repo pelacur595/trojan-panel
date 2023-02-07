@@ -6,6 +6,7 @@ type NodeServerVo struct {
 	Id         uint      `json:"id"`
 	Name       string    `json:"name"`
 	Ip         string    `json:"ip"`
+	GrpcPort   uint      `json:"grpcPort"`
 	CreateTime time.Time `json:"createTime"`
 
 	Status int `json:"status"`
@@ -20,6 +21,7 @@ type NodeServerOneVo struct {
 	Id         uint      `json:"id"`
 	Name       string    `json:"name"`
 	Ip         string    `json:"ip"`
+	GrpcPort   uint      `json:"grpcPort"`
 	CreateTime time.Time `json:"createTime"`
 }
 
