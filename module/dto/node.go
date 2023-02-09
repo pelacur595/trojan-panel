@@ -17,6 +17,8 @@ type NodeCreateDto struct {
 	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
+	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
+	XraySSMethod       *string `json:"xraySSMethod" form:"xraySSMethod" validate:"omitempty,min=0,max=32"`
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
 	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`
@@ -47,6 +49,8 @@ type NodeUpdateDto struct {
 	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
+	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
+	XraySSMethod       *string `json:"xraySSMethod" form:"xraySSMethod" validate:"omitempty,min=0,max=32"`
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=256"`
 	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=256"`

@@ -141,6 +141,8 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 
 			//  Xray
 			XrayTemplate:       systemConfig.XrayTemplate,
+			XrayFlow:           *nodeCreateDto.XrayFlow,
+			XraySSMethod:       *nodeCreateDto.XraySSMethod,
 			XrayProtocol:       *nodeCreateDto.XrayProtocol,
 			XraySettings:       *nodeCreateDto.XraySettings,
 			XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
@@ -692,10 +694,10 @@ func GrpcAddNode(token string, ip string, grpcPort uint, nodeAddDto *core.NodeAd
 	return nil
 }
 
-func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeType uint) error {
+func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeTypeId uint) error {
 	if err := core.RemoveNode(token, ip, grpcPort, &core.NodeRemoveDto{
-		NodeType: uint64(nodeType),
-		Port:     uint64(port),
+		NodeTypeId: uint64(nodeTypeId),
+		Port:       uint64(port),
 	}); err != nil {
 		return err
 	}
