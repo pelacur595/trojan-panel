@@ -40,12 +40,14 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 		}
 		nodeTypeId := node.NodeTypeId
 		switch *nodeTypeId {
-		case 1:
+		case constant.Xray:
 			nodeXray, err := dao.SelectNodeXrayById(node.NodeSubId)
 			if err != nil {
 				return nil, err
 			}
 			nodeOneVo.XrayProtocol = *nodeXray.Protocol
+			nodeOneVo.XrayFlow = *nodeXray.XrayFlow
+			nodeOneVo.XraySSMethod = *nodeXray.XraySSMethod
 			xrayStreamSettingsEntity := vo.XrayStreamSettingsEntity{}
 			if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettingsEntity); err != nil {
@@ -55,7 +57,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			}
 			nodeOneVo.XrayStreamSettingsEntity = xrayStreamSettingsEntity
 			nodeOneVo.XrayTag = *nodeXray.Tag
-		case 2:
+		case constant.TrojanGo:
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
 			if err != nil {
 				return nil, err
@@ -68,7 +70,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			nodeOneVo.TrojanGoSsEnable = *nodeTrojanGo.SsEnable
 			nodeOneVo.TrojanGoSsMethod = *nodeTrojanGo.SsMethod
 			nodeOneVo.TrojanGoSsPassword = *nodeTrojanGo.SsPassword
-		case 3:
+		case constant.Hysteria:
 			nodeHysteria, err := dao.SelectNodeHysteriaById(node.NodeSubId)
 			if err != nil {
 				return nil, err
@@ -176,9 +178,11 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			return err
 		}
 		// 数据插入到数据库中
-		if *nodeCreateDto.NodeTypeId == 1 {
+		if *nodeCreateDto.NodeTypeId == constant.Xray {
 			nodeXray := module.NodeXray{
 				Protocol:       nodeCreateDto.XrayProtocol,
+				XrayFlow:       nodeCreateDto.XrayFlow,
+				XraySSMethod:   nodeCreateDto.XraySSMethod,
 				Settings:       nodeCreateDto.XraySettings,
 				StreamSettings: nodeCreateDto.XrayStreamSettings,
 				Tag:            nodeCreateDto.XrayTag,
@@ -189,7 +193,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			if err != nil {
 				return err
 			}
-		} else if *nodeCreateDto.NodeTypeId == 2 {
+		} else if *nodeCreateDto.NodeTypeId == constant.TrojanGo {
 			trojanGo := module.NodeTrojanGo{
 				Sni:             nodeCreateDto.TrojanGoSni,
 				MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
@@ -204,7 +208,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			if err != nil {
 				return err
 			}
-		} else if *nodeCreateDto.NodeTypeId == 3 {
+		} else if *nodeCreateDto.NodeTypeId == constant.Hysteria {
 			hysteria := module.NodeHysteria{
 				Protocol: nodeCreateDto.HysteriaProtocol,
 				UpMbps:   nodeCreateDto.HysteriaUpMbps,
@@ -393,6 +397,8 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			//  Xray
 			XrayTemplate:       systemConfig.XrayTemplate,
 			XrayProtocol:       *nodeUpdateDto.XrayProtocol,
+			XrayFlow:           *nodeUpdateDto.XrayFlow,
+			XraySSMethod:       *nodeUpdateDto.XraySSMethod,
 			XraySettings:       *nodeUpdateDto.XraySettings,
 			XrayStreamSettings: *nodeUpdateDto.XrayStreamSettings,
 			XrayTag:            *nodeUpdateDto.XrayTag,
@@ -418,10 +424,12 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 
 		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
 			// 没有修改节点类型的情况
-			if *nodeEntity.NodeTypeId == 1 {
+			if *nodeEntity.NodeTypeId == constant.Xray {
 				nodeXray := module.NodeXray{
 					Id:             nodeEntity.NodeSubId,
 					Protocol:       nodeUpdateDto.XrayProtocol,
+					XrayFlow:       nodeUpdateDto.XrayFlow,
+					XraySSMethod:   nodeUpdateDto.XraySSMethod,
 					Settings:       nodeUpdateDto.XraySettings,
 					StreamSettings: nodeUpdateDto.XrayStreamSettings,
 					Tag:            nodeUpdateDto.XrayTag,
@@ -431,7 +439,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				if err = dao.UpdateNodeXrayById(&nodeXray); err != nil {
 					return err
 				}
-			} else if *nodeEntity.NodeTypeId == 2 {
+			} else if *nodeEntity.NodeTypeId == constant.TrojanGo {
 				nodeTrojanGo := module.NodeTrojanGo{
 					Id:              nodeEntity.NodeSubId,
 					Sni:             nodeUpdateDto.TrojanGoSni,
@@ -445,7 +453,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				if err = dao.UpdateNodeTrojanGoById(&nodeTrojanGo); err != nil {
 					return err
 				}
-			} else if *nodeEntity.NodeTypeId == 3 {
+			} else if *nodeEntity.NodeTypeId == constant.Hysteria {
 				nodeHysteria := module.NodeHysteria{
 					Id:       nodeEntity.NodeSubId,
 					Protocol: nodeUpdateDto.HysteriaProtocol,
@@ -623,7 +631,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 		}
 
 		if streamSettings.Security == "xtls" {
-			headBuilder.WriteString("&flow=xtls-rprx-direct")
+			headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
 		}
 		if streamSettings.Network == "ws" {
 			if streamSettings.WsSettings.Path != "" {

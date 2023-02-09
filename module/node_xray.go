@@ -5,6 +5,8 @@ import "time"
 type NodeXray struct {
 	Id             *uint      `ddb:"id"`
 	Protocol       *string    `ddb:"protocol"`
+	XrayFlow       *string    `ddb:"xray_flow"`
+	XraySSMethod   *string    `ddb:"xray_ss_method"`
 	Settings       *string    `ddb:"settings"`
 	StreamSettings *string    `ddb:"stream_settings"`
 	Tag            *string    `ddb:"tag"`

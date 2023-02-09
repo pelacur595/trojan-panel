@@ -12,7 +12,7 @@ import (
 func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 	var nodeXray module.NodeXray
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "`protocol`", "settings", "stream_settings", "tag", "sniffing", "allocate"}
+	selectFields := []string{"id", "`protocol`", "xray_flow", "xray_ss_method", "settings", "stream_settings", "tag", "sniffing", "allocate"}
 	buildSelect, values, err := builder.BuildSelect("node_xray", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -39,6 +39,12 @@ func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
 	nodeXrayCreate := map[string]interface{}{}
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
 		nodeXrayCreate["protocol"] = *nodeXray.Protocol
+	}
+	if nodeXray.XrayFlow != nil && *nodeXray.XrayFlow != "" {
+		nodeXrayCreate["xray_flow"] = *nodeXray.XrayFlow
+	}
+	if nodeXray.XraySSMethod != nil && *nodeXray.XraySSMethod != "" {
+		nodeXrayCreate["xray_ss_method"] = *nodeXray.XraySSMethod
 	}
 	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 		nodeXrayCreate["settings"] = *nodeXray.Settings
@@ -84,8 +90,11 @@ func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
 		update["protocol"] = *nodeXray.Protocol
 	}
-	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
-		update["settings"] = *nodeXray.Settings
+	if nodeXray.XrayFlow != nil && *nodeXray.XrayFlow != "" {
+		update["xray_flow"] = *nodeXray.XrayFlow
+	}
+	if nodeXray.XraySSMethod != nil && *nodeXray.XraySSMethod != "" {
+		update["xray_ss_method"] = *nodeXray.XraySSMethod
 	}
 	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 		update["stream_settings"] = *nodeXray.StreamSettings
