@@ -297,7 +297,7 @@ DROP TABLE IF EXISTS `node_xray`;
 CREATE TABLE `node_xray` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `protocol` varchar(32) NOT NULL DEFAULT '' COMMENT '协议名称',
-  `xray_flow` varchar(32) NOT NULL DEFAULT 'xtls-rprx-vision' COMMENT 'Xray流控',
+  `xray_flow` varchar(32) NOT NULL DEFAULT 'xtls-rprx-direct' COMMENT 'Xray流控',
   `xray_ss_method` varchar(32) NOT NULL DEFAULT 'aes-256-gcm' COMMENT 'Xray Shadowsocks加密方式',
   `settings` varchar(256) NOT NULL DEFAULT '' COMMENT 'settings',
   `stream_settings` varchar(256) NOT NULL DEFAULT '' COMMENT 'streamSettings',
