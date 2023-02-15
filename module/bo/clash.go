@@ -44,6 +44,12 @@ type Trojan struct {
 }
 
 type Shadowsocks struct {
+	Name     string `yaml:"name"`
+	Server   string `yaml:"server"`
+	Port     uint   `yaml:"port"`
+	Type     string `yaml:"type"`
+	Cipher   string `yaml:"cipher"`
+	Password string `yaml:"password"`
 }
 
 type TrojanGo struct {
