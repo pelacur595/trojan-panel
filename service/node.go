@@ -616,29 +616,35 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 		}
 
 		connectPass := password
-		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
-			connectPass = util.GenerateUUID(password)
-		}
-		headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
-			url.PathEscape(connectPass), *node.Domain, *node.Port,
-			streamSettings.Network, streamSettings.Security))
-		if *nodeXray.Protocol == "vmess" {
-			headBuilder.WriteString("&alterId=0")
-			if settings.Encryption == "none" {
-				headBuilder.WriteString("&encryption=none")
-			}
-		}
 
-		if (*nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan") && streamSettings.Security == "xtls" {
-			headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
-		}
-		if streamSettings.Network == "ws" {
-			if streamSettings.WsSettings.Path != "" {
-				headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
+		if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" || *nodeXray.Protocol == "trojan" {
+			if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "vmess" {
+				connectPass = util.GenerateUUID(password)
 			}
-			if streamSettings.WsSettings.Host != "" {
-				headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
+			headBuilder.WriteString(fmt.Sprintf("%s://%s@%s:%d?type=%s&security=%s", *nodeXray.Protocol,
+				url.PathEscape(connectPass), *node.Domain, *node.Port,
+				streamSettings.Network, streamSettings.Security))
+			if *nodeXray.Protocol == "vmess" {
+				headBuilder.WriteString("&alterId=0")
+				if settings.Encryption == "none" {
+					headBuilder.WriteString("&encryption=none")
+				}
 			}
+
+			if (*nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan") && streamSettings.Security == "xtls" {
+				headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
+			}
+			if streamSettings.Network == "ws" {
+				if streamSettings.WsSettings.Path != "" {
+					headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
+				}
+				if streamSettings.WsSettings.Host != "" {
+					headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
+				}
+			}
+		} else if *nodeXray.Protocol == "shadowsocks" {
+			headBuilder.WriteString(fmt.Sprintf("ss://%s:%s@%s:%d", *nodeXray.XraySSMethod,
+				connectPass, *node.Domain, *node.Port))
 		}
 	} else if *nodeType.Id == constant.TrojanGo {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
