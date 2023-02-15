@@ -219,13 +219,14 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 
 		// 在主表中插入数据
 		node := module.Node{
-			NodeServerId: nodeCreateDto.NodeServerId,
-			NodeSubId:    &nodeId,
-			NodeTypeId:   nodeCreateDto.NodeTypeId,
-			Name:         nodeCreateDto.Name,
-			NodeServerIp: nodeServer.Ip,
-			Domain:       nodeCreateDto.Domain,
-			Port:         nodeCreateDto.Port,
+			NodeServerId:       nodeCreateDto.NodeServerId,
+			NodeSubId:          &nodeId,
+			NodeTypeId:         nodeCreateDto.NodeTypeId,
+			Name:               nodeCreateDto.Name,
+			NodeServerIp:       nodeServer.Ip,
+			NodeServerGrpcPort: nodeServer.GrpcPort,
+			Domain:             nodeCreateDto.Domain,
+			Port:               nodeCreateDto.Port,
 		}
 		if err = dao.CreateNode(&node); err != nil {
 			return err
@@ -537,14 +538,15 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 
 			node := module.Node{
-				Id:           nodeUpdateDto.Id,
-				NodeServerId: nodeUpdateDto.NodeServerId,
-				NodeSubId:    &nodeId,
-				NodeTypeId:   nodeUpdateDto.NodeTypeId,
-				Name:         nodeUpdateDto.Name,
-				NodeServerIp: nodeServer.Ip,
-				Domain:       nodeUpdateDto.Domain,
-				Port:         nodeUpdateDto.Port,
+				Id:                 nodeUpdateDto.Id,
+				NodeServerId:       nodeUpdateDto.NodeServerId,
+				NodeSubId:          &nodeId,
+				NodeTypeId:         nodeUpdateDto.NodeTypeId,
+				Name:               nodeUpdateDto.Name,
+				NodeServerIp:       nodeServer.Ip,
+				NodeServerGrpcPort: nodeServer.GrpcPort,
+				Domain:             nodeUpdateDto.Domain,
+				Port:               nodeUpdateDto.Port,
 			}
 			if err = dao.UpdateNodeById(&node); err != nil {
 				return err
