@@ -631,7 +631,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 				}
 			}
 
-			if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan" {
+			if (*nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan") && streamSettings.Security == "xtls" {
 				headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
 			}
 			if streamSettings.Network == "ws" {
