@@ -91,7 +91,7 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 }
 
 func Ping(token string, ip string, grpcPort uint) (bool, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
 	defer clo()
 	if err != nil {
 		return false, err
