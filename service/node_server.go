@@ -18,6 +18,13 @@ func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
 }
 
 func CreateNodeServer(nodeServer *module.NodeServer) error {
+	count, err := dao.CountNodeServerByName(nil, nodeServer.Name)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return errors.New(constant.NodeServerNameExist)
+	}
 	return dao.CreateNodeServer(nodeServer)
 }
 
@@ -104,6 +111,14 @@ func UpdateNodeServerById(dto *dto.NodeServerUpdateDto) error {
 	}
 	if count > 0 {
 		return errors.New(constant.NodeServerDeletedError)
+	}
+
+	count, err = dao.CountNodeServerByName(dto.Id, dto.Name)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return errors.New(constant.NodeServerNameExist)
 	}
 
 	nodeServer := module.NodeServer{
