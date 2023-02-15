@@ -12,13 +12,13 @@ type NodeServerDto struct {
 
 type NodeServerCreateDto struct {
 	Name     *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip       *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	Ip       *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
 	GrpcPort *uint   `json:"grpcPort" form:"grpcPort" validate:"required,validatePort"`
 }
 
 type NodeServerUpdateDto struct {
 	RequiredIdDto
 	Name     *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Ip       *string `json:"ip" form:"ip" validate:"required,ip,min=4,max=64"`
+	Ip       *string `json:"ip" form:"ip" validate:"required,ip|fqdn,min=4,max=64"`
 	GrpcPort *uint   `json:"grpcPort" form:"grpcPort" validate:"required,validatePort"`
 }
