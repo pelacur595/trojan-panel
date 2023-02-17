@@ -643,8 +643,8 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 				}
 			}
 		} else if *nodeXray.Protocol == "shadowsocks" {
-			headBuilder.WriteString(fmt.Sprintf("ss://%s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s@%s:%d?%s", *nodeXray.XraySSMethod,
-				connectPass, *node.Domain, *node.Port, *node.Name)))))
+			headBuilder.WriteString(fmt.Sprintf("ss://%s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s@%s:%d", *nodeXray.XraySSMethod,
+				connectPass, *node.Domain, *node.Port)))))
 		}
 	} else if *nodeType.Id == constant.TrojanGo {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)
