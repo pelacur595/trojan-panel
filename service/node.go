@@ -420,7 +420,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			return err
 		}
 
-		if nodeUpdateDto.NodeTypeId == nodeEntity.NodeTypeId {
+		if *nodeUpdateDto.NodeTypeId == *nodeEntity.NodeTypeId {
 			// 没有修改节点类型的情况
 			if *nodeEntity.NodeTypeId == constant.Xray {
 				nodeXray := module.NodeXray{
@@ -500,6 +500,8 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			if *nodeUpdateDto.NodeTypeId == 1 {
 				nodeXray := module.NodeXray{
 					Protocol:       nodeUpdateDto.XrayProtocol,
+					XrayFlow:       nodeUpdateDto.XrayFlow,
+					XraySSMethod:   nodeUpdateDto.XraySSMethod,
 					Settings:       nodeUpdateDto.XraySettings,
 					StreamSettings: nodeUpdateDto.XrayStreamSettings,
 					Tag:            nodeUpdateDto.XrayTag,
