@@ -96,6 +96,9 @@ func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
 	if nodeXray.XraySSMethod != nil && *nodeXray.XraySSMethod != "" {
 		update["xray_ss_method"] = *nodeXray.XraySSMethod
 	}
+	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+		update["settings"] = *nodeXray.Settings
+	}
 	if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 		update["stream_settings"] = *nodeXray.StreamSettings
 	}
