@@ -40,6 +40,7 @@ type NodeOneVo struct {
 	XrayFlow                 string                   `json:"xrayFlow"`
 	XraySSMethod             string                   `json:"xraySSMethod"`
 	XraySettings             string                   `json:"xraySettings"`
+	XraySettingEntity        XraySettingEntity        `json:"xraySettingEntity"`
 	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`
 	XrayTag                  string                   `json:"xrayTag"`
 	XraySniffing             string                   `json:"xraySniffing"`
@@ -61,6 +62,19 @@ type XrayStreamSettingsEntity struct {
 	Network    string                             `json:"network"`
 	Security   string                             `json:"security"`
 	WsSettings XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
+}
+
+type XraySettingEntity struct {
+	Fallbacks XrayFallback `json:"fallbacks"`
+	Network   string       `json:"network"`
+}
+
+type XrayFallback struct {
+	Name string `json:"name"`
+	Alpn string `json:"alpn"`
+	Path string `json:"path"`
+	Dest string `json:"dest"`
+	Xver uint   `json:"xver"`
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {

@@ -48,6 +48,14 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			nodeOneVo.XrayProtocol = *nodeXray.Protocol
 			nodeOneVo.XrayFlow = *nodeXray.XrayFlow
 			nodeOneVo.XraySSMethod = *nodeXray.XraySSMethod
+			xraySettingEntity := vo.XraySettingEntity{}
+			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+				if err = json.Unmarshal([]byte(*nodeXray.Settings), &xraySettingEntity); err != nil {
+					logrus.Errorln(fmt.Sprintf("Settings JSON反转失败 err: %v", err))
+					return nil, errors.New(constant.SysError)
+				}
+			}
+			nodeOneVo.XraySettingEntity = xraySettingEntity
 			xrayStreamSettingsEntity := vo.XrayStreamSettingsEntity{}
 			if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettingsEntity); err != nil {
