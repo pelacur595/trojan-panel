@@ -65,8 +65,8 @@ type XrayStreamSettingsEntity struct {
 }
 
 type XraySettingEntity struct {
-	Fallbacks XrayFallback `json:"fallbacks"`
-	Network   string       `json:"network"`
+	Fallbacks []XrayFallback `json:"fallbacks"`
+	Network   string         `json:"network"`
 }
 
 type XrayFallback struct {
