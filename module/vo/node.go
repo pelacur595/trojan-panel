@@ -74,7 +74,7 @@ type XrayFallback struct {
 	Name string `json:"name"`
 	Alpn string `json:"alpn"`
 	Path string `json:"path"`
-	Dest string `json:"dest"`
+	Dest any    `json:"dest"`
 	Xver uint   `json:"xver"`
 }
 
