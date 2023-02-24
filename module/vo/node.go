@@ -71,11 +71,11 @@ type XraySettingEntity struct {
 }
 
 type XrayFallback struct {
-	Name string `json:"name"`
-	Alpn string `json:"alpn"`
-	Path string `json:"path"`
-	Dest any    `json:"dest"`
-	Xver uint   `json:"xver"`
+	Name *string `json:"name"`
+	Alpn *string `json:"alpn"`
+	Path *string `json:"path"`
+	Dest any     `json:"dest"`
+	Xver *uint   `json:"xver"`
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {
