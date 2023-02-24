@@ -103,9 +103,12 @@ func SelectNodeInfo(id *uint, c *gin.Context) (*vo.NodeOneVo, error) {
 		return nil, err
 	}
 	nodeOneVo.Password = *account.Pass
-	if nodeOneVo.NodeTypeId == 1 && (nodeOneVo.XrayProtocol == "vless" || nodeOneVo.XrayProtocol == "vmess") {
+	if nodeOneVo.NodeTypeId == constant.Xray && (nodeOneVo.XrayProtocol == "vless" || nodeOneVo.XrayProtocol == "vmess") {
 		nodeOneVo.Uuid = util.GenerateUUID(*account.Pass)
 		nodeOneVo.AlterId = 0
+	}
+	if nodeOneVo.NodeTypeId == constant.NaiveProxy {
+		nodeOneVo.NaiveProxyUsername = accountInfo.Username
 	}
 	return nodeOneVo, nil
 }

@@ -56,6 +56,7 @@ type NodeOneVo struct {
 	HysteriaProtocol         string                   `json:"hysteriaProtocol"`
 	HysteriaUpMbps           int                      `json:"hysteriaUpMbps"`
 	HysteriaDownMbps         int                      `json:"hysteriaDownMbps"`
+	NaiveProxyUsername       string                   `json:"naiveProxyUsername"`
 }
 
 type XrayStreamSettingsEntity struct {
