@@ -67,7 +67,16 @@ message AccountRemoveDto {
   string password = 1;
 }
 
-message StateDto {}
+message StateDto {
+  uint64 nodeTypeId = 1;
+  uint64 port = 2;
+}
+
+message StateVo {
+  int64 state = 1;
+  int64 nodeState = 2;
+  string version = 3;
+}
 
 message Response {
   bool success = 1;

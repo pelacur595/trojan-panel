@@ -9,7 +9,8 @@ type NodeServerVo struct {
 	GrpcPort   uint      `json:"grpcPort"`
 	CreateTime time.Time `json:"createTime"`
 
-	Status int `json:"status"`
+	Status                 int    `json:"status"`
+	TrojanPanelCoreVersion string `json:"trojanPanelCoreVersion"`
 }
 
 type NodeServerPageVo struct {

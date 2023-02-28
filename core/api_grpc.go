@@ -90,23 +90,28 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 	return errors.New(send.Msg)
 }
 
-func Ping(token string, ip string, grpcPort uint) (bool, error) {
+func Ping(token string, ip string, grpcPort uint) (*StateVo, error) {
 	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
 	defer clo()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	client := NewApiStateServiceClient(conn)
 	stateDto := StateDto{}
 	send, err := client.Ping(ctx, &stateDto)
 	if err != nil {
 		logrus.Errorf("gRPC ping 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
-		return false, errors.New(constant.GrpcError)
+		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
-		return true, nil
+		var stateVo StateVo
+		if err = anypb.UnmarshalTo(send.Data, &stateVo, proto.UnmarshalOptions{}); err != nil {
+			logrus.Errorf("服务器Ping返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			return nil, errors.New(constant.GrpcError)
+		}
+		return &stateVo, nil
 	}
-	return false, errors.New(send.Msg)
+	return nil, errors.New(send.Msg)
 }
 
 func NodeServerState(token string, ip string, grpcPort uint) (*NodeServerGroupVo, error) {
