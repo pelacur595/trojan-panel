@@ -60,22 +60,22 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 					var grpcPort = splitNodeServerVos[indexI][j].GrpcPort
 					nodeMapValue, ok := nodeMap.Load(ip)
 					if ok {
-						stateVo := nodeMapValue.(*core.StateVo)
-						splitNodeServerVos[indexI][j].Status = int(stateVo.GetState())
-						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = stateVo.GetVersion()
+						nodeServerVo := nodeMapValue.(vo.NodeServerVo)
+						splitNodeServerVos[indexI][j].Status = nodeServerVo.Status
+						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = nodeServerVo.TrojanPanelCoreVersion
 					} else {
-						var status = 0
+						var status int
 						var trojanPanelCoreVersion = ""
 						stateVo, err := core.Ping(token, ip, grpcPort)
 						if err != nil {
 							status = -1
 						} else {
-							status = int(stateVo.GetState())
+							status = 1
 							trojanPanelCoreVersion = stateVo.GetVersion()
 						}
 						splitNodeServerVos[indexI][j].Status = status
 						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = trojanPanelCoreVersion
-						nodeMap.Store(ip, stateVo)
+						nodeMap.Store(ip, splitNodeServerVos[indexI][j])
 					}
 				}
 				wg.Done()

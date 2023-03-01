@@ -106,11 +106,12 @@ func Ping(token string, ip string, grpcPort uint) (*StateVo, error) {
 	if send.Success {
 		var stateVo StateVo
 		if err = anypb.UnmarshalTo(send.Data, &stateVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("服务器Ping返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			logrus.Errorf("gRPC ping 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
 		return &stateVo, nil
 	}
+	logrus.Errorf("gRPC Ping 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 	return nil, errors.New(send.Msg)
 }
 
