@@ -244,7 +244,7 @@ func CronScanAccountExpireWarn() {
 			if account.Email != nil && *account.Email != "" {
 				// 发送到期邮件
 				emailDto := dto.SendEmailDto{
-					FromEmailName: "Trojan Panel",
+					FromEmailName: systemVo.SystemName,
 					ToEmails:      []string{*account.Email},
 					Subject:       "账号到期提醒",
 					Content:       fmt.Sprintf("您的账户: %s,还有%d天到期,请及时续期", *account.Username, expireWarnDay),
