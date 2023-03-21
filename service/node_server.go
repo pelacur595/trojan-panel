@@ -66,7 +66,7 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 					} else {
 						var status int
 						var trojanPanelCoreVersion = ""
-						stateVo, err := core.Ping(token, ip, grpcPort)
+						stateVo, err := core.GetNodeServerState(token, ip, grpcPort)
 						if err != nil {
 							status = -1
 						} else {
@@ -158,14 +158,14 @@ func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerListVo, error)
 	return nodeServerListVos, nil
 }
 
-func NodeServerState(token string, nodeServerId *uint) (*core.NodeServerGroupVo, error) {
+func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo, error) {
 	nodeServer, err := dao.SelectNodeServerById(nodeServerId)
 	if err != nil {
 		return nil, err
 	}
-	nodeServerGroupVo, err := core.NodeServerState(token, *nodeServer.Ip, *nodeServer.GrpcPort)
+	nodeServerInfoVo, err := core.GetNodeServerInfo(token, *nodeServer.Ip, *nodeServer.GrpcPort)
 	if err != nil {
 		return nil, err
 	}
-	return nodeServerGroupVo, nil
+	return nodeServerInfoVo, nil
 }

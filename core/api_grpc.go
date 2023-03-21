@@ -90,51 +90,73 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 	return errors.New(send.Msg)
 }
 
-func Ping(token string, ip string, grpcPort uint) (*StateVo, error) {
+// GetNodeState 查询节点状态
+func GetNodeState(token string, ip string, grpcPort uint) (bool, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
+	defer clo()
+	if err != nil {
+		return false, err
+	}
+	client := NewApiStateServiceClient(conn)
+	nodeStateDto := NodeStateDto{}
+	send, err := client.GetNodeState(ctx, &nodeStateDto)
+	if err != nil {
+		logrus.Errorf("gRPC GetNodeState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		return false, errors.New(constant.GrpcError)
+	}
+	if send.Success {
+		return true, nil
+	}
+	logrus.Errorf("gRPC GetNodeState 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+	return false, errors.New(send.Msg)
+}
+
+// GetNodeServerState 查询服务器状态
+func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStateVo, error) {
 	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
 	}
 	client := NewApiStateServiceClient(conn)
-	stateDto := StateDto{}
-	send, err := client.Ping(ctx, &stateDto)
+	nodeServerStateDto := NodeServerStateDto{}
+	send, err := client.GetNodeServerState(ctx, &nodeServerStateDto)
 	if err != nil {
-		logrus.Errorf("gRPC ping 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		logrus.Errorf("gRPC GetNodeServerState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
-		var stateVo StateVo
-		if err = anypb.UnmarshalTo(send.Data, &stateVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("gRPC ping 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		var nodeServerStateVo NodeServerStateVo
+		if err = anypb.UnmarshalTo(send.Data, &nodeServerStateVo, proto.UnmarshalOptions{}); err != nil {
+			logrus.Errorf("gRPC GetNodeServerState 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
-		return &stateVo, nil
+		return &nodeServerStateVo, nil
 	}
-	logrus.Errorf("gRPC Ping 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+	logrus.Errorf("gRPC GetNodeServerState 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 	return nil, errors.New(send.Msg)
 }
 
-func NodeServerState(token string, ip string, grpcPort uint) (*NodeServerGroupVo, error) {
+func GetNodeServerInfo(token string, ip string, grpcPort uint) (*NodeServerInfoVo, error) {
 	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
 	}
 	client := NewApiNodeServerServiceClient(conn)
-	nodeServerGroupDto := NodeServerGroupDto{}
-	send, err := client.NodeServerState(ctx, &nodeServerGroupDto)
+	nodeServerInfoDto := NodeServerInfoDto{}
+	send, err := client.GetNodeServerInfo(ctx, &nodeServerInfoDto)
 	if err != nil {
 		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
-		var nodeServerGroupVo NodeServerGroupVo
-		if err = anypb.UnmarshalTo(send.Data, &nodeServerGroupVo, proto.UnmarshalOptions{}); err != nil {
+		var nodeServerInfoVo NodeServerInfoVo
+		if err = anypb.UnmarshalTo(send.Data, &nodeServerInfoVo, proto.UnmarshalOptions{}); err != nil {
 			logrus.Errorf("查询服务器状态返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
-		return &nodeServerGroupVo, nil
+		return &nodeServerInfoVo, nil
 	}
 	return nil, errors.New(send.Msg)
 }

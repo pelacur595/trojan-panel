@@ -286,11 +286,11 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 						splitNodeBos[indexI][j].Status = status.(int)
 					} else {
 						var nodeState = 0
-						stateVo, err := core.Ping(token, ip, grpcPort)
+						_, err := core.GetNodeState(token, ip, grpcPort)
 						if err != nil {
 							status = -1
 						} else {
-							nodeState = int(stateVo.GetNodeState())
+							nodeState = 1
 						}
 						splitNodeBos[indexI][j].Status = nodeState
 						nodeMap.Store(ip, status)

@@ -109,22 +109,22 @@ func SelectNodeServerList(c *gin.Context) {
 	vo.Success(nodeServerListVos, c)
 }
 
-func NodeServerState(c *gin.Context) {
+func GetNodeServerInfo(c *gin.Context) {
 	var requiredIdDto dto.RequiredIdDto
 	_ = c.ShouldBindQuery(&requiredIdDto)
 	if err := validate.Struct(&requiredIdDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeServerState, err := service.NodeServerState(util.GetToken(c), requiredIdDto.Id)
+	nodeServerInfo, err := service.GetNodeServerInfo(util.GetToken(c), requiredIdDto.Id)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	nodeServerGroupVo := vo.NodeServerGroupVo{
-		CpuUsed:  nodeServerState.CpuUsed,
-		MemUsed:  nodeServerState.MemUsed,
-		DiskUsed: nodeServerState.DiskUsed,
+	nodeServerInfoVo := vo.NodeServerInfoVo{
+		CpuUsed:  nodeServerInfo.CpuUsed,
+		MemUsed:  nodeServerInfo.MemUsed,
+		DiskUsed: nodeServerInfo.DiskUsed,
 	}
-	vo.Success(nodeServerGroupVo, c)
+	vo.Success(nodeServerInfoVo, c)
 }

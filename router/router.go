@@ -72,7 +72,7 @@ func Router(router *gin.Engine) {
 			// 更新服务器列表
 			nodeServer.GET("/selectNodeServerList", api.SelectNodeServerList)
 			// 查询服务器状态
-			nodeServer.GET("/nodeServerState", api.NodeServerState)
+			nodeServer.GET("/nodeServerState", api.GetNodeServerInfo)
 		}
 		node := trojan.Group("/node")
 		{

@@ -31,7 +31,7 @@ type NodeServerListVo struct {
 	Name string `json:"name"`
 }
 
-type NodeServerGroupVo struct {
+type NodeServerInfoVo struct {
 	CpuUsed  float32 `json:"cpuUsed"`
 	MemUsed  float32 `json:"memUsed"`
 	DiskUsed float32 `json:"diskUsed"`
