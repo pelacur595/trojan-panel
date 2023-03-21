@@ -46,12 +46,6 @@ func UpdateSystemById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if len(systemUpdateDto.FileList) > 0 {
-		if err := util.DownloadFile(systemUpdateDto.FileList[0].Url, constant.LogoImagePath); err != nil {
-			vo.Fail(constant.SysError, c)
-			return
-		}
-	}
 	if err := service.UpdateSystemById(systemUpdateDto); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
@@ -89,6 +83,30 @@ func UploadWebFile(c *gin.Context) {
 	// 解压webfile
 	if err := util.Unzip(webFile, constant.WebFilePath); err != nil {
 		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
+}
+
+func UploadLogo(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	// 文件大小 3MB
+	if file.Size > 1024*1024*3 {
+		vo.Fail(constant.FileSizeTooBig, c)
+		return
+	}
+	// 文件后缀.png
+	if !strings.HasSuffix(file.Filename, ".png") {
+		vo.Fail(constant.FileFormatError, c)
+		return
+	}
+	// 保存文件
+	if err := c.SaveUploadedFile(file, constant.LogoImagePath); err != nil {
+		vo.Fail(constant.FileUploadError, c)
 		return
 	}
 	vo.Success(nil, c)
