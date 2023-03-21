@@ -91,29 +91,34 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 }
 
 // GetNodeState 查询节点状态
-func GetNodeState(token string, ip string, grpcPort uint) (bool, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
+func GetNodeState(token string, ip string, grpcPort uint) (*NodeStateVo, error) {
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 	client := NewApiStateServiceClient(conn)
 	nodeStateDto := NodeStateDto{}
 	send, err := client.GetNodeState(ctx, &nodeStateDto)
 	if err != nil {
 		logrus.Errorf("gRPC GetNodeState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
-		return false, errors.New(constant.GrpcError)
+		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
-		return true, nil
+		var nodeStateVo NodeStateVo
+		if err = anypb.UnmarshalTo(send.Data, &nodeStateVo, proto.UnmarshalOptions{}); err != nil {
+			logrus.Errorf("gRPC GetNodeState 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			return nil, errors.New(constant.GrpcError)
+		}
+		return &nodeStateVo, nil
 	}
 	logrus.Errorf("gRPC GetNodeState 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
-	return false, errors.New(send.Msg)
+	return nil, errors.New(send.Msg)
 }
 
 // GetNodeServerState 查询服务器状态
 func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStateVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
@@ -138,7 +143,7 @@ func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStat
 }
 
 func GetNodeServerInfo(token string, ip string, grpcPort uint) (*NodeServerInfoVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 2*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
