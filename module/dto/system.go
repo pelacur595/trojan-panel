@@ -19,4 +19,10 @@ type SystemUpdateDto struct {
 	SystemName   *string `json:"systemName" form:"systemName" validate:"omitempty,min=0,max=32"`
 	ClashRule    *string `json:"clashRule" form:"clashRule" validate:"omitempty,min=0,max=5120"`
 	XrayTemplate *string `json:"xrayTemplate" form:"xrayTemplate" validate:"omitempty,min=0,max=5120"`
+
+	FileList []FileData `json:"fileList" form:"fileList" validate:"omitempty"`
+}
+
+type FileData struct {
+	Url string `json:"url" form:"url" validate:"omitempty"`
 }

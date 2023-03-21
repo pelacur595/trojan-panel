@@ -114,8 +114,6 @@ func Router(router *gin.Engine) {
 				system.POST("/updateSystemById", api.UpdateSystemById)
 				// 上传静态网站文件
 				system.POST("/uploadWebFile", api.UploadWebFile)
-				// 上传logo
-				system.POST("/uploadLogo", api.UploadLogo)
 			}
 			blackList := trojan.Group("/blackList")
 			{

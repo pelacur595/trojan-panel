@@ -234,11 +234,11 @@ func DownloadFile(url string, fileName string) error {
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(fileName, data, 0644); err != nil {
+	if err = os.WriteFile(fileName, data, 0644); err != nil {
 		return err
 	}
 	return nil
