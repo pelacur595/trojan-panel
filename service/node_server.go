@@ -64,16 +64,16 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 						splitNodeServerVos[indexI][j].Status = nodeServerVo.Status
 						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = nodeServerVo.TrojanPanelCoreVersion
 					} else {
-						var status int
-						var trojanPanelCoreVersion = ""
+						var nodeServerState int
+						var trojanPanelCoreVersion string
 						stateVo, err := core.GetNodeServerState(token, ip, grpcPort)
 						if err != nil {
-							status = -1
+							nodeServerState = 0
 						} else {
-							status = 1
+							nodeServerState = 1
 							trojanPanelCoreVersion = stateVo.GetVersion()
 						}
-						splitNodeServerVos[indexI][j].Status = status
+						splitNodeServerVos[indexI][j].Status = nodeServerState
 						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = trojanPanelCoreVersion
 						nodeMap.Store(ip, splitNodeServerVos[indexI][j])
 					}

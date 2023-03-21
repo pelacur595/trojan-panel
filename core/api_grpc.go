@@ -91,14 +91,17 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 }
 
 // GetNodeState 查询节点状态
-func GetNodeState(token string, ip string, grpcPort uint) (*NodeStateVo, error) {
+func GetNodeState(token string, ip string, grpcPort uint, nodeTypeId uint, port uint) (*NodeStateVo, error) {
 	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
 	}
 	client := NewApiStateServiceClient(conn)
-	nodeStateDto := NodeStateDto{}
+	nodeStateDto := NodeStateDto{
+		NodeTypeId: uint64(nodeTypeId),
+		Port:       uint64(port),
+	}
 	send, err := client.GetNodeState(ctx, &nodeStateDto)
 	if err != nil {
 		logrus.Errorf("gRPC GetNodeState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
