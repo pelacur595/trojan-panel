@@ -12,6 +12,8 @@ const (
 	LogPath string = "logs"
 	// ConfigPath 配置文件夹路径
 	ConfigPath string = "config"
+	// LogoImagePath 系统logo文件路径
+	LogoImagePath string = "config/logo.png"
 	// ConfigFilePath 配置文件路径
 	ConfigFilePath string = "config/config.ini"
 	// RbacModelFilePath rbac配置文件路径

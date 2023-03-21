@@ -87,3 +87,34 @@ func UploadWebFile(c *gin.Context) {
 	}
 	vo.Success(nil, c)
 }
+
+func UploadLogo(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	// 文件大小 5MB
+	if file.Size > 1024*1024*5 {
+		vo.Fail(constant.FileSizeTooBig, c)
+		return
+	}
+	// 文件后缀.png
+	if !strings.HasSuffix(file.Filename, ".png") {
+		vo.Fail(constant.FileFormatError, c)
+		return
+	}
+	// 保存文件
+	if err := c.SaveUploadedFile(file, constant.LogoImagePath); err != nil {
+		vo.Fail(constant.FileUploadError, c)
+		return
+	}
+	vo.Success(nil, c)
+}
+
+func GetLogo(c *gin.Context) {
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", "attachment; filename=logo.png")
+	c.File(constant.LogoImagePath)
+}

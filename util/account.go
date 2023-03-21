@@ -21,6 +21,9 @@ func GetCurrentAccount(c *gin.Context) *vo.AccountVo {
 // GetToken 获取token
 func GetToken(c *gin.Context) string {
 	tokenStr := c.Request.Header.Get("Authorization")
+	if tokenStr == "" {
+		return ""
+	}
 	return strings.SplitN(tokenStr, " ", 2)[1]
 }
 

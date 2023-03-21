@@ -25,8 +25,8 @@ const (
 	AccountRegisterClosed string = "用户注册功能已关闭"
 	AccountDisabled       string = "该用户已被禁用"
 
-	FileSizeTooBig  string = "文件大小不能超过10MB"
-	FileFormatError string = "文件格式只支持.zip"
+	FileSizeTooBig  string = "文件太大了"
+	FileFormatError string = "文件格式不支持"
 	FileUploadError string = "文件上传失败"
 
 	SystemEmailError string = "系统邮箱未设置"
