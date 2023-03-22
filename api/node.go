@@ -137,3 +137,13 @@ func NodeURL(c *gin.Context) {
 	}
 	vo.Success(url, c)
 }
+
+// ExportNode 导出节点
+func ExportNode(c *gin.Context) {
+
+}
+
+// ImportNode 导入节点
+func ImportNode(c *gin.Context) {
+
+}

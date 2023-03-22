@@ -128,3 +128,13 @@ func GetNodeServerInfo(c *gin.Context) {
 	}
 	vo.Success(nodeServerInfoVo, c)
 }
+
+// ExportNodeServer 导出服务器
+func ExportNodeServer(c *gin.Context) {
+
+}
+
+// ImportNodeServer 导入服务器
+func ImportNodeServer(c *gin.Context) {
+
+}

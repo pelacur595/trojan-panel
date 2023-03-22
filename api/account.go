@@ -281,3 +281,13 @@ func ResetAccountDownloadAndUpload(c *gin.Context) {
 	}
 	vo.Success(nil, c)
 }
+
+// ExportAccount 导出用户
+func ExportAccount(c *gin.Context) {
+
+}
+
+// ImportAccount 导入用户
+func ImportAccount(c *gin.Context) {
+
+}
