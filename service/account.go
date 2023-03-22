@@ -498,9 +498,10 @@ func ExportAccount() error {
 	}
 	defer file.Close()
 
-	w := csv.NewWriter(file)
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
 	titles := []string{"id", "username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
-	if err = w.Write(titles); err != nil {
+	if err = writer.Write(titles); err != nil {
 		logrus.Errorf("write csv file titles err fileName: %s err: %v", fileName, err)
 		return err
 	}
@@ -514,10 +515,9 @@ func ExportAccount() error {
 			item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
 		data = append(data, element)
 	}
-	if err = w.WriteAll(data); err != nil {
+	if err = writer.WriteAll(data); err != nil {
 		logrus.Errorf("writeAll csv file err fileName: %s err: %v", fileName, err)
 		return err
 	}
-	w.Flush()
 	return nil
 }
