@@ -30,7 +30,7 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 
 	// 分页查询
 	where := map[string]interface{}{
-		"_orderby": "role_id,create_time desc",
+		"_orderby": "create_time desc",
 		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if taskType != nil && *taskType != 0 {
 		where["`type`"] = *taskType
