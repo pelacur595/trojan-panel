@@ -173,17 +173,19 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 	return nodeServerInfoVo, nil
 }
 
-func ExportNodeServer() error {
+func ExportNodeServer(accountId uint, accountUsername string) error {
 	fileName := fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405"))
 	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
 	var fileTaskType uint = constant.TaskTypeNodeServer
 	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
-		Name:   &fileName,
-		Path:   &filePath,
-		Type:   &fileTaskType,
-		Status: &fileTaskStatus,
+		Name:            &fileName,
+		Path:            &filePath,
+		Type:            &fileTaskType,
+		Status:          &fileTaskStatus,
+		AccountId:       &accountId,
+		AccountUsername: &accountUsername,
 	}
 	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {

@@ -487,17 +487,19 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 	return account, userInfo, clashConfigYaml, systemConfig, nil
 }
 
-func ExportAccount() error {
+func ExportAccount(accountId uint, accountUsername string) error {
 	fileName := fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405"))
 	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
 	var fileTaskType uint = constant.TaskTypeAccount
 	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
-		Name:   &fileName,
-		Path:   &filePath,
-		Type:   &fileTaskType,
-		Status: &fileTaskStatus,
+		Name:            &fileName,
+		Path:            &filePath,
+		Type:            &fileTaskType,
+		Status:          &fileTaskStatus,
+		AccountId:       &accountId,
+		AccountUsername: &accountUsername,
 	}
 	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {
@@ -541,5 +543,9 @@ func ExportAccount() error {
 		}
 	}()
 
+	return nil
+}
+
+func ImportAccount() error {
 	return nil
 }

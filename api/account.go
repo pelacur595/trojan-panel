@@ -284,7 +284,8 @@ func ResetAccountDownloadAndUpload(c *gin.Context) {
 
 // ExportAccount 导出用户
 func ExportAccount(c *gin.Context) {
-	if err := service.ExportAccount(); err != nil {
+	accountVo := util.GetCurrentAccount(c)
+	if err := service.ExportAccount(accountVo.Id, accountVo.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}
@@ -293,5 +294,9 @@ func ExportAccount(c *gin.Context) {
 
 // ImportAccount 导入用户
 func ImportAccount(c *gin.Context) {
-
+	if err := service.ImportAccount(); err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
 }

@@ -35,7 +35,7 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 	if taskType != nil && *taskType != 0 {
 		where["`type`"] = *taskType
 	}
-	selectFields := []string{"id", "name", "`type`", "status", "create_time"}
+	selectFields := []string{"id", "name", "`type`", "status", "account_username", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("file_task", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -57,11 +57,12 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 	var fileTaskVos = make([]vo.FileTaskVo, 0)
 	for _, item := range fileTasks {
 		fileTaskVos = append(fileTaskVos, vo.FileTaskVo{
-			Id:         *item.Id,
-			Name:       *item.Name,
-			Type:       *item.Type,
-			Status:     *item.Status,
-			CreateTime: *item.CreateTime,
+			Id:              *item.Id,
+			Name:            *item.Name,
+			Type:            *item.Type,
+			Status:          *item.Status,
+			AccountUsername: *item.AccountUsername,
+			CreateTime:      *item.CreateTime,
 		})
 	}
 
