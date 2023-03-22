@@ -31,6 +31,9 @@ const (
 	FileFormatError string = "文件格式不支持"
 	FileUploadError string = "文件上传失败"
 
+	CsvRowNotEnough string = "数据为空"
+	CsvTitleError   string = "表头不正确"
+
 	SystemEmailError string = "系统邮箱未设置"
 
 	BlackListError   string = "由于您近期异常操作过于频繁,已限制访问,如需取消限制,请联系管理员"

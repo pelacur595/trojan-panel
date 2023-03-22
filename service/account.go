@@ -1,12 +1,15 @@
 package service
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
+	"io"
+	"mime/multipart"
 	"sync"
 	"time"
 	"trojan-panel/core"
@@ -546,6 +549,40 @@ func ExportAccount(accountId uint, accountUsername string) error {
 	return nil
 }
 
-func ImportAccount() error {
+func ImportAccount(cover uint, file *multipart.FileHeader) error {
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	reader := csv.NewReader(src)
+
+	titlesRead, err := reader.Read()
+	if err != nil {
+		if err == io.EOF {
+			return errors.New(constant.CsvRowNotEnough)
+		}
+		logrus.Errorf("ImportAccount read csv titles err: %s", err.Error())
+	}
+	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}
+	if !util.ArraysEqualPrefix(titles, titlesRead) {
+		return errors.New(constant.CsvTitleError)
+	}
+	var data [][]string
+	for {
+		record, err := reader.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			logrus.Errorf("ImportAccount read csv record err: %s", err.Error())
+		}
+		data = append(data, record)
+	}
+	// data 变量中存储CSV文件中的数据
+
+	// 在这里可以处理数据并将其存储到数据库中
+
 	return nil
 }

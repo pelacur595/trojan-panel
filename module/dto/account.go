@@ -58,5 +58,5 @@ type HysteriaAutoDto struct {
 }
 
 type ImportAccountDto struct {
-	ContainUsername bool `json:"containUsername" form:"containUsername" validate:"omitempty"`
+	Cover uint `json:"cover" form:"cover" validate:"omitempty,oneof=0 1"` // 是否通过用户名覆盖用户信息
 }

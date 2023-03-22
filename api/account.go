@@ -294,7 +294,18 @@ func ExportAccount(c *gin.Context) {
 
 // ImportAccount 导入用户
 func ImportAccount(c *gin.Context) {
-	if err := service.ImportAccount(); err != nil {
+	var importAccountDto dto.ImportAccountDto
+	_ = c.ShouldBindJSON(&importAccountDto)
+	if err := validate.Struct(&importAccountDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	file, err := c.FormFile("file")
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	if err := service.ImportAccount(importAccountDto.Cover, file); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}
