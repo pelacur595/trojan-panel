@@ -488,7 +488,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 }
 
 func ExportAccount() error {
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("account-%s.csv", time.Now().Format("20060102150405")))
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405")))
 
 	var data [][]string
 	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}

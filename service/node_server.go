@@ -173,7 +173,7 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 }
 
 func ExportNodeServer() error {
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("nodeServer-%s.csv", time.Now().Format("20060102150405")))
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405")))
 
 	var data [][]string
 	titles := []string{"ip", "name", "grpc_port", "create_time"}
