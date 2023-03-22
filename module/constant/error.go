@@ -21,9 +21,11 @@ const (
 	NodeTypeNotExist    string = "不存在该节点类型"
 	RoleNotExist        string = "不存在该角色"
 	SystemNotExist      string = "不存在该系统设置"
+	FileTaskNotExist    string = "不存在该文件任务"
 
 	AccountRegisterClosed string = "用户注册功能已关闭"
 	AccountDisabled       string = "该用户已被禁用"
+	FileTaskNotSuccess    string = "该任务还没有执行完成"
 
 	FileSizeTooBig  string = "文件太大了"
 	FileFormatError string = "文件格式不支持"

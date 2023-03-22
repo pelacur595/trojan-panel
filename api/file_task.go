@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
@@ -24,15 +25,40 @@ func SelectFileTaskPage(c *gin.Context) {
 }
 
 func DeleteFileTaskById(c *gin.Context) {
-	var accountRequiredIdDto dto.RequiredIdDto
-	_ = c.ShouldBindJSON(&accountRequiredIdDto)
-	if err := validate.Struct(&accountRequiredIdDto); err != nil {
+	var requiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&requiredIdDto)
+	if err := validate.Struct(&requiredIdDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.DeleteFileTaskById(accountRequiredIdDto.Id); err != nil {
+	if err := service.DeleteFileTaskById(requiredIdDto.Id); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
 	vo.Success(nil, c)
+}
+
+// DownloadFileTask 下载文件任务的文件
+func DownloadFileTask(c *gin.Context) {
+	var requiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindJSON(&requiredIdDto)
+	if err := validate.Struct(&requiredIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	fileTask, err := service.SelectFileTaskById(requiredIdDto.Id)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+
+	if *fileTask.Status != constant.TaskSuccess {
+		vo.Fail(constant.FileTaskNotSuccess, c)
+		return
+	}
+
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", *fileTask.Name))
+	c.File(*fileTask.Path)
 }

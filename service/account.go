@@ -488,22 +488,53 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 }
 
 func ExportAccount() error {
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405")))
+	fileName := fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405"))
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
-	var data [][]string
-	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
-	data = append(data, titles)
-	accountExportVo, err := dao.SelectAccountAll()
+	var fileTaskType uint = constant.TaskDoing
+	fileTask := module.FileTask{
+		Name: &fileName,
+		Path: &filePath,
+		Type: &fileTaskType,
+	}
+	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {
 		return err
 	}
-	for _, item := range accountExportVo {
-		element := []string{item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
-			item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
-		data = append(data, element)
-	}
-	if err = util.ExportCsv(filePath, data); err != nil {
-		return err
-	}
+
+	go func() {
+		var mutex sync.Mutex
+		defer mutex.Unlock()
+		if mutex.TryLock() {
+			var fail = constant.TaskFail
+			var success = constant.TaskSuccess
+			fileTask := module.FileTask{
+				Id:     &fileTaskId,
+				Status: &fail,
+			}
+
+			var data [][]string
+			titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
+			data = append(data, titles)
+			accountExportVo, err := dao.SelectAccountAll()
+			if err != nil {
+				logrus.Errorf("ExportAccount SelectAccountAll err: %v", err)
+			}
+			for _, item := range accountExportVo {
+				element := []string{item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
+					item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
+				data = append(data, element)
+			}
+			if err = util.ExportCsv(filePath, data); err != nil {
+				logrus.Errorf("ExportAccount ExportCsv err: %v", err)
+			} else {
+				fileTask.Status = &success
+			}
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ExportAccount UpdateFileTaskById err: %v", err)
+			}
+		}
+	}()
+
 	return nil
 }

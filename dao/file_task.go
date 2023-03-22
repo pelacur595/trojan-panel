@@ -89,3 +89,80 @@ func DeleteFileTaskById(id *uint) error {
 	}
 	return nil
 }
+
+func SelectFileTaskById(id *uint) (*module.FileTask, error) {
+	var fileTask module.FileTask
+
+	where := map[string]interface{}{"id": *id}
+	selectFields := []string{"id", "name", "path", "`type`", "status", "create_time"}
+	buildSelect, values, err := builder.BuildSelect("file_task", where, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &fileTask); err == scanner.ErrEmptyResult {
+		return nil, errors.New(constant.FileTaskNotExist)
+	} else if err != nil {
+		logrus.Errorln(err.Error())
+		return nil, errors.New(constant.SysError)
+	}
+	return &fileTask, nil
+}
+
+func CreateFileTask(fileTask *module.FileTask) (uint, error) {
+	fileTaskCreate := map[string]interface{}{
+		"name":   *fileTask.Name,
+		"path":   *fileTask.Path,
+		"`type`": *fileTask.Type,
+	}
+	var data []map[string]interface{}
+	data = append(data, fileTaskCreate)
+
+	buildInsert, values, err := builder.BuildInsert("file_task", data)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return 0, errors.New(constant.SysError)
+	}
+	result, err := db.Exec(buildInsert, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return 0, errors.New(constant.SysError)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return 0, errors.New(constant.SysError)
+	}
+	return uint(id), nil
+}
+
+func UpdateFileTaskById(fileTask *module.FileTask) error {
+	where := map[string]interface{}{"id": *fileTask.Id}
+	update := map[string]interface{}{}
+
+	if fileTask.Status != nil {
+		update["status"] = *fileTask.Status
+	}
+
+	if len(update) > 0 {
+		buildUpdate, values, err := builder.BuildUpdate("file_task", where, update)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	}
+	return nil
+}

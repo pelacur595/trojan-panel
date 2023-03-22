@@ -141,6 +141,8 @@ func Router(router *gin.Engine) {
 				fileTask.GET("/selectFileTaskPage", api.SelectFileTaskPage)
 				// 删除文件任务
 				fileTask.POST("/deleteFileTaskById", api.DeleteFileTaskById)
+				// 下载文件任务的文件
+				fileTask.POST("/downloadFileTask", api.DownloadFileTask)
 			}
 		}
 	}

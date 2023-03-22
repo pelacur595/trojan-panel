@@ -1,7 +1,10 @@
 package service
 
 import (
+	"os"
+	"sync"
 	"trojan-panel/dao"
+	"trojan-panel/module"
 	"trojan-panel/module/vo"
 )
 
@@ -10,5 +13,23 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 }
 
 func DeleteFileTaskById(id *uint) error {
-	return dao.DeleteFileTaskById(id)
+	var mutex sync.Mutex
+	defer mutex.TryLock()
+	if mutex.TryLock() {
+		fileTask, err := dao.SelectFileTaskById(id)
+		if err != nil {
+			return err
+		}
+		if err = os.Remove(*fileTask.Path); err != nil {
+			return err
+		}
+		if err := dao.DeleteFileTaskById(id); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func SelectFileTaskById(id *uint) (*module.FileTask, error) {
+	return dao.SelectFileTaskById(id)
 }
