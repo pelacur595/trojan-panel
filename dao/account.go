@@ -523,3 +523,37 @@ func SelectAccountAll() ([]vo.AccountExportVo, error) {
 	}
 	return accountExportVo, nil
 }
+
+// CreateOrUpdateAccount 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
+func CreateOrUpdateAccount(accounts []string) error {
+	if len(accounts) == 0 {
+		return nil
+	}
+	var data []map[string]interface{}
+	accountCreate := map[string]interface{}{
+		"username":    accounts[0],
+		"`pass`":      accounts[1],
+		"`hash`":      accounts[2],
+		"role_id":     accounts[3],
+		"email":       accounts[4],
+		"expire_time": accounts[5],
+		"deleted":     accounts[6],
+		"quota":       accounts[7],
+		"download":    accounts[8],
+		"upload":      accounts[9],
+	}
+	data = append(data, accountCreate)
+	accountUpdate := map[string]interface{}{
+		"username": accounts[0],
+	}
+	buildInsert, values, err := builder.BuildInsertOnDuplicate("account", data, accountUpdate)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	if _, err = db.Exec(buildInsert, values...); err != nil {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
+	return nil
+}

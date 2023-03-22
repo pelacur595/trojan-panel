@@ -7,6 +7,7 @@ type Account struct {
 	Id                 *uint      `ddb:"id"`
 	Username           *string    `ddb:"username"`
 	Pass               *string    `ddb:"pass"`
+	Hash               *string    `ddb:"hash"`
 	RoleId             *uint      `ddb:"role_id"`
 	Email              *string    `ddb:"email"`
 	ExpireTime         *uint      `ddb:"expire_time"`

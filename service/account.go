@@ -566,9 +566,11 @@ func ImportAccount(cover uint, file *multipart.FileHeader) error {
 		logrus.Errorf("ImportAccount read csv titles err: %s", err.Error())
 	}
 	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}
+	// 必须以titles作为表头
 	if !util.ArraysEqualPrefix(titles, titlesRead) {
 		return errors.New(constant.CsvTitleError)
 	}
+	// data 变量中存储CSV文件中的数据
 	var data [][]string
 	for {
 		record, err := reader.Read()
@@ -580,9 +582,11 @@ func ImportAccount(cover uint, file *multipart.FileHeader) error {
 		}
 		data = append(data, record)
 	}
-	// data 变量中存储CSV文件中的数据
-
-	// 在这里可以处理数据并将其存储到数据库中
-
+	// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
+	for _, item := range data {
+		if err = dao.CreateOrUpdateAccount(item); err != nil {
+			return err
+		}
+	}
 	return nil
 }
