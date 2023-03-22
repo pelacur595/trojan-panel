@@ -491,11 +491,13 @@ func ExportAccount() error {
 	fileName := fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405"))
 	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
-	var fileTaskType uint = constant.TaskDoing
+	var fileTaskType uint = constant.TaskTypeAccount
+	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
-		Name: &fileName,
-		Path: &filePath,
-		Type: &fileTaskType,
+		Name:   &fileName,
+		Path:   &filePath,
+		Type:   &fileTaskType,
+		Status: &fileTaskStatus,
 	}
 	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {
@@ -516,6 +518,7 @@ func ExportAccount() error {
 			var data [][]string
 			titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
 			data = append(data, titles)
+			// 查询所有需要导出数据
 			accountExportVo, err := dao.SelectAccountAll()
 			if err != nil {
 				logrus.Errorf("ExportAccount SelectAccountAll err: %v", err)
@@ -530,6 +533,8 @@ func ExportAccount() error {
 			} else {
 				fileTask.Status = &success
 			}
+
+			// 更新文件任务状态
 			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 				logrus.Errorf("ExportAccount UpdateFileTaskById err: %v", err)
 			}

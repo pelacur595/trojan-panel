@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"sync"
 	"time"
 	"trojan-panel/core"
@@ -173,21 +174,56 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 }
 
 func ExportNodeServer() error {
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405")))
+	fileName := fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405"))
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
-	var data [][]string
-	titles := []string{"ip", "name", "grpc_port", "create_time"}
-	data = append(data, titles)
-	nodeServerExportVo, err := dao.SelectNodeServerAll()
+	var fileTaskType uint = constant.TaskTypeNodeServer
+	var fileTaskStatus = constant.TaskDoing
+	fileTask := module.FileTask{
+		Name:   &fileName,
+		Path:   &filePath,
+		Type:   &fileTaskType,
+		Status: &fileTaskStatus,
+	}
+	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {
 		return err
 	}
-	for _, item := range nodeServerExportVo {
-		element := []string{item.Ip, item.Name, item.GrpcPort, item.CreateTime}
-		data = append(data, element)
-	}
-	if err = util.ExportCsv(filePath, data); err != nil {
-		return err
-	}
+
+	go func() {
+		var mutex sync.Mutex
+		defer mutex.Unlock()
+		if mutex.TryLock() {
+			var fail = constant.TaskFail
+			var success = constant.TaskSuccess
+			fileTask := module.FileTask{
+				Id:     &fileTaskId,
+				Status: &fail,
+			}
+
+			var data [][]string
+			titles := []string{"ip", "name", "grpc_port", "create_time"}
+			data = append(data, titles)
+			// 查询所有需要导出数据
+			nodeServerExportVo, err := dao.SelectNodeServerAll()
+			if err != nil {
+				logrus.Errorf("ExportNodeServer SelectNodeServerAll err: %v", err)
+			}
+			for _, item := range nodeServerExportVo {
+				element := []string{item.Ip, item.Name, item.GrpcPort, item.CreateTime}
+				data = append(data, element)
+			}
+			if err = util.ExportCsv(filePath, data); err != nil {
+				logrus.Errorf("ExportNodeServer ExportCsv err: %v", err)
+			} else {
+				fileTask.Status = &success
+			}
+
+			// 更新文件任务状态
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ExportNodeServer UpdateFileTaskById err: %v", err)
+			}
+		}
+	}()
 	return nil
 }
