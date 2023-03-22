@@ -135,6 +135,13 @@ func Router(router *gin.Engine) {
 				// 查询邮件发送记录
 				emailRecord.GET("/selectEmailRecordPage", api.SelectEmailRecordPage)
 			}
+			fileTask := trojan.Group("/fileTask")
+			{
+				// 分页查询文件任务
+				fileTask.GET("/selectFileTaskPage", api.SelectFileTaskPage)
+				// 删除文件任务
+				fileTask.POST("/deleteFileTaskById", api.DeleteFileTaskById)
+			}
 		}
 	}
 }
