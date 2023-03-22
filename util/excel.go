@@ -14,6 +14,8 @@ func ExportCsv(filePath string, data [][]string) error {
 		return err
 	}
 	defer file.Close()
+
+	// 创建带有指定编码格式的 bufio.Writer
 	writer := bufio.NewWriter(file)
 	_, err = writer.WriteString("\xEF\xBB\xBF")
 	if err != nil {
