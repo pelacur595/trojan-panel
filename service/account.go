@@ -1,15 +1,12 @@
 package service
 
 import (
-	"bufio"
-	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
-	"os"
 	"sync"
 	"time"
 	"trojan-panel/core"
@@ -491,23 +488,8 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 }
 
 func ExportAccount() error {
-	fileName := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("account-%s.csv", time.Now().Format("20060102150405")))
-	file, err := os.Create(fileName)
-	if err != nil {
-		logrus.Errorf("create csv file err fileName: %s err: %v", fileName, err)
-		return err
-	}
-	defer file.Close()
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("account-%s.csv", time.Now().Format("20060102150405")))
 
-	writer := bufio.NewWriter(file)
-	_, err = writer.WriteString("\xEF\xBB\xBF")
-	if err != nil {
-		logrus.Errorf("set csv file UTF-8 err fileName: %s err: %v", fileName, err)
-		return err
-	}
-
-	csvWriter := csv.NewWriter(writer)
-	defer csvWriter.Flush()
 	var data [][]string
 	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
 	data = append(data, titles)
@@ -520,8 +502,7 @@ func ExportAccount() error {
 			item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
 		data = append(data, element)
 	}
-	if err = csvWriter.WriteAll(data); err != nil {
-		logrus.Errorf("writeAll csv file err fileName: %s err: %v", fileName, err)
+	if err = util.ExportCsv(filePath, data); err != nil {
 		return err
 	}
 	return nil

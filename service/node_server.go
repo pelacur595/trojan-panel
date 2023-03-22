@@ -1,13 +1,9 @@
 package service
 
 import (
-	"bufio"
-	"encoding/csv"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"os"
 	"sync"
 	"time"
 	"trojan-panel/core"
@@ -177,23 +173,7 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 }
 
 func ExportNodeServer() error {
-	fileName := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("nodeServer-%s.csv", time.Now().Format("20060102150405")))
-	file, err := os.Create(fileName)
-	if err != nil {
-		logrus.Errorf("create csv file err fileName: %s err: %v", fileName, err)
-		return err
-	}
-	defer file.Close()
-
-	writer := bufio.NewWriter(file)
-	_, err = writer.WriteString("\xEF\xBB\xBF")
-	if err != nil {
-		logrus.Errorf("set csv file UTF-8 err fileName: %s err: %v", fileName, err)
-		return err
-	}
-
-	csvWriter := csv.NewWriter(writer)
-	defer csvWriter.Flush()
+	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("nodeServer-%s.csv", time.Now().Format("20060102150405")))
 
 	var data [][]string
 	titles := []string{"ip", "name", "grpc_port", "create_time"}
@@ -206,8 +186,7 @@ func ExportNodeServer() error {
 		element := []string{item.Ip, item.Name, item.GrpcPort, item.CreateTime}
 		data = append(data, element)
 	}
-	if err = csvWriter.WriteAll(data); err != nil {
-		logrus.Errorf("writeAll csv file err fileName: %s err: %v", fileName, err)
+	if err = util.ExportCsv(filePath, data); err != nil {
 		return err
 	}
 	return nil
