@@ -14,6 +14,7 @@ const (
 	ConfigPath string = "config"
 	// LogoImagePath 系统logo文件路径
 	LogoImagePath string = "config/logo.png"
+	LogoImageUrl  string = "https://raw.githubusercontent.com/trojanpanel/trojanpanel.github.io/main/docs/logo.png"
 	// ConfigFilePath 配置文件路径
 	ConfigFilePath string = "config/config.ini"
 	// RbacModelFilePath rbac配置文件路径

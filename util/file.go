@@ -77,6 +77,14 @@ func InitFile() {
 		}
 	}
 
+	// 创建Logo
+	logoImagePath := constant.LogoImagePath
+	if !Exists(logoImagePath) {
+		if err := DownloadFile(constant.LogoImageUrl, logoImagePath); err != nil {
+			logrus.Errorf("创建logo.png文件异常 err: %v", err)
+		}
+	}
+
 	configFilePath := constant.ConfigFilePath
 	if !Exists(configFilePath) {
 		file, err := os.Create(configFilePath)
