@@ -54,5 +54,9 @@ type AccountRegisterDto struct {
 }
 
 type HysteriaAutoDto struct {
-	Payload *string `json:"payload" validate:"required"`
+	Payload *string `json:"payload" form:"payload" validate:"required"`
+}
+
+type ExportAccountDto struct {
+	ContainUsername bool `json:"containUsername" form:"containUsername" validate:"omitempty"`
 }

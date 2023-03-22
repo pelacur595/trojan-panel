@@ -37,3 +37,18 @@ type AccountTrafficRankVo struct {
 	Username    string `json:"username" ddb:"username"`
 	TrafficUsed string `json:"trafficUsed" ddb:"trafficUsed"`
 }
+
+type AccountExportVo struct {
+	Id         string `ddb:"id"`
+	Username   string `ddb:"username"`
+	Pass       string `ddb:"pass"`
+	Hash       string `ddb:"hash"`
+	RoleId     string `ddb:"role_id"`
+	Email      string `ddb:"email"`
+	ExpireTime string `ddb:"expire_time"`
+	Deleted    string `ddb:"deleted"`
+	Quota      string `ddb:"quota"`
+	Download   string `ddb:"download"`
+	Upload     string `ddb:"upload"`
+	CreateTime string `ddb:"create_time"`
+}

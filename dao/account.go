@@ -500,3 +500,26 @@ func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
 	}
 	return &account, nil
 }
+
+func SelectAccountAll() ([]vo.AccountExportVo, error) {
+	var accountExportVo []vo.AccountExportVo
+	selectFields := []string{"id", "username", "pass", "hash", "role_id", "email", "expire_time", "deleted",
+		"quota", "download", "upload", "create_time"}
+	selectSQL, values, err := builder.BuildSelect("account", nil, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+
+	rows, err := db.Query(selectSQL, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+	if err = scanner.Scan(rows, &accountExportVo); err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+	return accountExportVo, nil
+}

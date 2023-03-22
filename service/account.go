@@ -1,13 +1,16 @@
 package service
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
+	"os"
 	"sync"
+	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
@@ -484,4 +487,37 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 		return nil, "", []byte{}, vo.SystemVo{}, errors.New(constant.SysError)
 	}
 	return account, userInfo, clashConfigYaml, systemConfig, nil
+}
+
+func ExportAccount() error {
+	fileName := fmt.Sprintf("%s/%s", constant.ExcelPath, fmt.Sprintf("account-%s.csv", time.Now().Format("20060102150405")))
+	file, err := os.Create(fileName)
+	if err != nil {
+		logrus.Errorf("create csv file err fileName: %s err: %v", fileName, err)
+		return err
+	}
+	defer file.Close()
+
+	w := csv.NewWriter(file)
+	titles := []string{"id", "username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
+	if err = w.Write(titles); err != nil {
+		logrus.Errorf("write csv file titles err fileName: %s err: %v", fileName, err)
+		return err
+	}
+	accountExportVo, err := dao.SelectAccountAll()
+	if err != nil {
+		return err
+	}
+	var data [][]string
+	for _, item := range accountExportVo {
+		element := []string{item.Id, item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
+			item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
+		data = append(data, element)
+	}
+	if err = w.WriteAll(data); err != nil {
+		logrus.Errorf("writeAll csv file err fileName: %s err: %v", fileName, err)
+		return err
+	}
+	w.Flush()
+	return nil
 }

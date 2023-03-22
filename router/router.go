@@ -59,6 +59,8 @@ func Router(router *gin.Engine) {
 				account.GET("/clashSubscribe", api.ClashSubscribe)
 				// 重设下载和上传流量
 				account.POST("/resetAccountDownloadAndUpload", api.ResetAccountDownloadAndUpload)
+				// 导出用户
+				account.POST("/exportAccount", api.ExportAccount)
 			}
 			role := trojan.Group("/role")
 			{

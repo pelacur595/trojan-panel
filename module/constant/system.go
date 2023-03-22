@@ -24,6 +24,8 @@ const (
 	// XrayTemplateFilePath Xray模板
 	XrayTemplateFilePath string = "config/template-xray.json"
 
+	ExcelPath string = "config/excel"
+
 	TrojanPanelCertFilePath string = "/tpdata/trojan-panel/cert/"
 	TrojanPanelCrtFile      string = "trojan-panel.crt"
 	TrojanPanelKeyFile      string = "trojan-panel.key"

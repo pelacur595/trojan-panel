@@ -227,6 +227,14 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 			panic(err)
 		}
 	}
+
+	excelPath := constant.ExcelPath
+	if !Exists(excelPath) {
+		if err := os.Mkdir(excelPath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config/excel文件夹异常 err: %v", err)
+			panic(err)
+		}
+	}
 }
 
 func usage() {
