@@ -36,3 +36,10 @@ type NodeServerInfoVo struct {
 	MemUsed  float32 `json:"memUsed"`
 	DiskUsed float32 `json:"diskUsed"`
 }
+
+type NodeServerExportVo struct {
+	Name       string `ddb:"name"`
+	Ip         string `ddb:"ip"`
+	GrpcPort   string `ddb:"grpc_port"`
+	CreateTime string `ddb:"create_time"`
+}

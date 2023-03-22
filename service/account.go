@@ -500,18 +500,15 @@ func ExportAccount() error {
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	titles := []string{"id", "username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
-	if err = writer.Write(titles); err != nil {
-		logrus.Errorf("write csv file titles err fileName: %s err: %v", fileName, err)
-		return err
-	}
+	var data [][]string
+	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
+	data = append(data, titles)
 	accountExportVo, err := dao.SelectAccountAll()
 	if err != nil {
 		return err
 	}
-	var data [][]string
 	for _, item := range accountExportVo {
-		element := []string{item.Id, item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
+		element := []string{item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
 			item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
 		data = append(data, element)
 	}

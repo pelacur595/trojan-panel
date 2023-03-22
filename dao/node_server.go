@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
+	"trojan-panel/module/vo"
 )
 
 func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
@@ -213,4 +214,26 @@ func SelectNodeServerList(ip *string, name *string) ([]module.NodeServer, error)
 		return nil, errors.New(constant.SysError)
 	}
 	return nodeServers, nil
+}
+
+func SelectNodeServerAll() ([]vo.NodeServerExportVo, error) {
+	var nodeServerExportVo []vo.NodeServerExportVo
+	selectFields := []string{"ip", "name", "grpc_port", "create_time"}
+	selectSQL, values, err := builder.BuildSelect("node_server", nil, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nodeServerExportVo, errors.New(constant.SysError)
+	}
+
+	rows, err := db.Query(selectSQL, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return nodeServerExportVo, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+	if err = scanner.Scan(rows, &nodeServerExportVo); err != nil {
+		logrus.Errorln(err.Error())
+		return nodeServerExportVo, errors.New(constant.SysError)
+	}
+	return nodeServerExportVo, nil
 }

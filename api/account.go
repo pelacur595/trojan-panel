@@ -284,12 +284,6 @@ func ResetAccountDownloadAndUpload(c *gin.Context) {
 
 // ExportAccount 导出用户
 func ExportAccount(c *gin.Context) {
-	var exportAccountDto dto.ExportAccountDto
-	_ = c.ShouldBindJSON(&exportAccountDto)
-	if err := validate.Struct(&exportAccountDto); err != nil {
-		vo.Fail(constant.ValidateFailed, c)
-		return
-	}
 	if err := service.ExportAccount(); err != nil {
 		vo.Fail(constant.SysError, c)
 		return

@@ -39,7 +39,6 @@ type AccountTrafficRankVo struct {
 }
 
 type AccountExportVo struct {
-	Id         string `ddb:"id"`
 	Username   string `ddb:"username"`
 	Pass       string `ddb:"pass"`
 	Hash       string `ddb:"hash"`

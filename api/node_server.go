@@ -131,7 +131,11 @@ func GetNodeServerInfo(c *gin.Context) {
 
 // ExportNodeServer 导出服务器
 func ExportNodeServer(c *gin.Context) {
-
+	if err := service.ExportNodeServer(); err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
 }
 
 // ImportNodeServer 导入服务器

@@ -83,6 +83,8 @@ func Router(router *gin.Engine) {
 				nodeServer.GET("/selectNodeServerList", api.SelectNodeServerList)
 				// 查询服务器状态
 				nodeServer.GET("/nodeServerState", api.GetNodeServerInfo)
+				// 导出服务器
+				nodeServer.POST("/exportNodeServer", api.ExportNodeServer)
 			}
 			node := trojan.Group("/node")
 			{

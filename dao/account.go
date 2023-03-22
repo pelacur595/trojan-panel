@@ -503,7 +503,7 @@ func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
 
 func SelectAccountAll() ([]vo.AccountExportVo, error) {
 	var accountExportVo []vo.AccountExportVo
-	selectFields := []string{"id", "username", "pass", "hash", "role_id", "email", "expire_time", "deleted",
+	selectFields := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted",
 		"quota", "download", "upload", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("account", nil, selectFields)
 	if err != nil {
