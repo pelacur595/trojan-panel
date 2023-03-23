@@ -9,7 +9,7 @@ type FileTaskVo struct {
 	Status          int       `json:"status"`
 	ErrMsg          string    `json:"errMsg"`
 	AccountUsername string    `json:"accountUsername"`
-	CreateTime      time.Time `json:"create_time"`
+	CreateTime      time.Time `json:"createTime"`
 }
 
 type FileTaskPageVo struct {
