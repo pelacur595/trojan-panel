@@ -7,6 +7,7 @@ type FileTaskVo struct {
 	Name            string    `json:"name"`
 	Type            uint      `json:"type"`
 	Status          int       `json:"status"`
+	ErrMsg          string    `json:"errMsg"`
 	AccountUsername string    `json:"accountUsername"`
 	CreateTime      time.Time `json:"create_time"`
 }

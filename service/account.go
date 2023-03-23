@@ -594,6 +594,8 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 			if err != nil {
 				if err == io.EOF {
 					logrus.Errorf("ImportAccount row no enough err: %v", err)
+					csvRowNotEnough := constant.CsvRowNotEnough
+					fileTask.ErrMsg = &csvRowNotEnough
 					if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 						logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
 					}
@@ -605,6 +607,8 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 			// 必须以titles作为表头
 			if !util.ArraysEqualPrefix(titles, titlesRead) {
 				logrus.Errorf("ImportAccount title prefix err: %v", err)
+				csvTitleError := constant.CsvTitleError
+				fileTask.ErrMsg = &csvTitleError
 				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
 				}

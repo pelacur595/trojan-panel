@@ -278,6 +278,8 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 			if err != nil {
 				if err == io.EOF {
 					logrus.Errorf("ImportNodeServer row no enough err: %v", err)
+					csvRowNotEnough := constant.CsvRowNotEnough
+					fileTask.ErrMsg = &csvRowNotEnough
 					if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 						logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
 					}
@@ -289,6 +291,8 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 			// 必须以titles作为表头
 			if !util.ArraysEqualPrefix(titles, titlesRead) {
 				logrus.Errorf("ImportNodeServer title prefix err: %v", err)
+				csvTitleError := constant.CsvTitleError
+				fileTask.ErrMsg = &csvTitleError
 				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
 				}

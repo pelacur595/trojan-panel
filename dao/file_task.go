@@ -35,7 +35,7 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 	if taskType != nil && *taskType != 0 {
 		where["`type`"] = *taskType
 	}
-	selectFields := []string{"id", "name", "`type`", "status", "account_username", "create_time"}
+	selectFields := []string{"id", "name", "`type`", "status", "err_msg", "account_username", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("file_task", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -61,6 +61,7 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 			Name:            *item.Name,
 			Type:            *item.Type,
 			Status:          *item.Status,
+			ErrMsg:          *item.ErrMsg,
 			AccountUsername: *item.AccountUsername,
 			CreateTime:      *item.CreateTime,
 		})
@@ -95,7 +96,7 @@ func SelectFileTaskById(id *uint) (*module.FileTask, error) {
 	var fileTask module.FileTask
 
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "name", "path", "`type`", "status", "create_time"}
+	selectFields := []string{"id", "name", "path", "`type`", "status", "err_msg", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("file_task", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -126,6 +127,9 @@ func CreateFileTask(fileTask *module.FileTask) (uint, error) {
 	if fileTask.Path != nil && *fileTask.Path != "" {
 		fileTaskCreate["path"] = *fileTask.Path
 	}
+	if fileTask.ErrMsg != nil && *fileTask.ErrMsg != "" {
+		fileTaskCreate["err_msg"] = *fileTask.ErrMsg
+	}
 	var data []map[string]interface{}
 	data = append(data, fileTaskCreate)
 
@@ -153,6 +157,10 @@ func UpdateFileTaskById(fileTask *module.FileTask) error {
 
 	if fileTask.Status != nil {
 		update["status"] = *fileTask.Status
+	}
+
+	if fileTask.ErrMsg != nil && *fileTask.ErrMsg != "" {
+		update["err_msg"] = *fileTask.ErrMsg
 	}
 
 	if len(update) > 0 {
