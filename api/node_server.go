@@ -158,12 +158,13 @@ func ImportNodeServer(c *gin.Context) {
 		vo.Fail(constant.FileSizeTooBig, c)
 		return
 	}
-	// 文件后缀.png
+	// 文件后缀.csv
 	if !strings.HasSuffix(file.Filename, ".csv") {
 		vo.Fail(constant.FileFormatError, c)
 		return
 	}
-	if err := service.ImportNodeServer(importAccountDto.Cover, file); err != nil {
+	account := util.GetCurrentAccount(c)
+	if err := service.ImportNodeServer(importAccountDto.Cover, file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}

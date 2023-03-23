@@ -311,7 +311,7 @@ func ImportAccount(c *gin.Context) {
 		vo.Fail(constant.FileSizeTooBig, c)
 		return
 	}
-	// 文件后缀.png
+	// 文件后缀.csv
 	if !strings.HasSuffix(file.Filename, ".csv") {
 		vo.Fail(constant.FileFormatError, c)
 		return

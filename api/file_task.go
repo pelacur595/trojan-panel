@@ -72,11 +72,11 @@ func DownloadCsvTemplate(c *gin.Context) {
 	}
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("Content-Transfer-Encoding", "binary")
-	if *templateRequiredIdDto.Id == constant.TaskTypeAccount {
+	if *templateRequiredIdDto.Id == constant.TaskTypeAccountExport {
 		c.Header("Content-Disposition", "attachment; filename=AccountTemplate.csv")
 		c.File(constant.ExcelAccountTemplate)
 		return
-	} else if *templateRequiredIdDto.Id == constant.TaskTypeNodeServer {
+	} else if *templateRequiredIdDto.Id == constant.TaskTypeNodeServerExport {
 		c.Header("Content-Disposition", "attachment; filename=NodeServerTemplate.csv")
 		c.File(constant.ExcelNodeServerTemplate)
 		return
