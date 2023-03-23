@@ -29,9 +29,10 @@ func SplitArr[T any](arr []T, num int64) [][]T {
 	return segments
 }
 
+// ArraysEqualPrefix 以a为主
 func ArraysEqualPrefix(a, b []string) bool {
 	// 如果两个数组长度不相等，直接返回false
-	if len(a) != len(b) {
+	if len(a) > len(b) {
 		return false
 	}
 	// 遍历两个数组的元素，逐一比较它们的值
