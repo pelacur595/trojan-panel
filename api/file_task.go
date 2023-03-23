@@ -16,7 +16,7 @@ func SelectFileTaskPage(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	page, err := service.SelectFileTaskPage(fileTaskPageDto.Type, fileTaskPageDto.PageNum, fileTaskPageDto.PageSize)
+	page, err := service.SelectFileTaskPage(fileTaskPageDto.Type, fileTaskPageDto.AccountUsername, fileTaskPageDto.PageNum, fileTaskPageDto.PageSize)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return

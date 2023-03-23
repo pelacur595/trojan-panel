@@ -8,8 +8,8 @@ import (
 	"trojan-panel/module/vo"
 )
 
-func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
-	return dao.SelectFileTaskPage(taskType, pageNum, pageSize)
+func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
+	return dao.SelectFileTaskPage(taskType, accountUsername, pageNum, pageSize)
 }
 
 func DeleteFileTaskById(id *uint) error {

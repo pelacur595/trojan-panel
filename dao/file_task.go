@@ -10,7 +10,7 @@ import (
 	"trojan-panel/module/vo"
 )
 
-func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
+func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
 	var (
 		total     uint
 		fileTasks []module.FileTask
@@ -20,6 +20,9 @@ func SelectFileTaskPage(taskType *uint, pageNum *uint, pageSize *uint) (*vo.File
 	var whereCount = map[string]interface{}{}
 	if taskType != nil && *taskType != 0 {
 		whereCount["`type`"] = *taskType
+	}
+	if accountUsername != nil && *accountUsername != "" {
+		whereCount["`account_username`"] = *accountUsername
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("file_task", whereCount, selectFieldsCount)
