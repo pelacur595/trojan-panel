@@ -85,6 +85,24 @@ func InitFile() {
 		}
 	}
 
+	// 创建AccountTemplate模板
+	excelAccountTemplate := constant.ExcelAccountTemplate
+	if !Exists(excelAccountTemplate) {
+		if err := ExportCsv(excelAccountTemplate, [][]string{{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}}); err != nil {
+			logrus.Errorf("创建AccountTemplate.csv异常 err: %v", err)
+			panic(err)
+		}
+	}
+
+	// 创建NodeServerTemplate模板
+	excelNodeServerTemplate := constant.ExcelNodeServerTemplate
+	if !Exists(excelNodeServerTemplate) {
+		if err := ExportCsv(excelNodeServerTemplate, [][]string{{"ip", "name", "grpc_port"}}); err != nil {
+			logrus.Errorf("创建NodeServerTemplate.csv异常 err: %v", err)
+			panic(err)
+		}
+	}
+
 	configFilePath := constant.ConfigFilePath
 	if !Exists(configFilePath) {
 		file, err := os.Create(configFilePath)
