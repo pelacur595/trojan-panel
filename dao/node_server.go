@@ -11,9 +11,8 @@ import (
 	"trojan-panel/module/vo"
 )
 
-func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
+func SelectNodeServer(where map[string]interface{}) (*module.NodeServer, error) {
 	var nodeServer module.NodeServer
-	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "ip", "grpc_port", "`name`", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node_server", where, selectFields)
 	if err != nil {
@@ -236,4 +235,52 @@ func SelectNodeServerAll() ([]vo.NodeServerExportVo, error) {
 		return nodeServerExportVo, errors.New(constant.SysError)
 	}
 	return nodeServerExportVo, nil
+}
+
+// CreateOrUpdateNodeServer 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
+func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
+	if len(nodeServers) == 0 {
+		return nil
+	}
+	var data []map[string]interface{}
+	accountCreate := map[string]interface{}{
+		"ip":        nodeServers[0],
+		"name":      nodeServers[1],
+		"grpc_port": nodeServers[2],
+	}
+	data = append(data, accountCreate)
+	accountUpdate := map[string]interface{}{
+		"name": nodeServers[1],
+	}
+	if cover == 1 {
+		// 如果存在则更新
+		buildInsert, values, err := builder.BuildInsertOnDuplicate("node_server", data, accountUpdate)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if _, err = db.Exec(buildInsert, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	} else {
+		// 如果存在则不做任何操作，不存在则添加
+		nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": nodeServers[0]})
+		if err != nil && err != errors.New(constant.NodeNotExist) {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if nodeServer == nil {
+			buildInsert, values, err := builder.BuildInsert("node_server", data)
+			if err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
+			if _, err = db.Exec(buildInsert, values...); err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
+		}
+	}
+	return nil
 }

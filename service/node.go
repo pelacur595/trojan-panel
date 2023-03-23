@@ -128,7 +128,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		return errors.New(constant.NodeNameExist)
 	}
 
-	nodeServer, err := dao.SelectNodeServerById(nodeCreateDto.NodeServerId)
+	nodeServer, err := dao.SelectNodeServer(map[string]interface{}{"id": *nodeCreateDto.NodeServerId})
 	if err != nil {
 		return err
 	}
@@ -376,7 +376,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		return errors.New(constant.NodeNameExist)
 	}
 
-	nodeServer, err := dao.SelectNodeServerById(nodeUpdateDto.NodeServerId)
+	nodeServer, err := dao.SelectNodeServer(map[string]interface{}{"id": *nodeUpdateDto.NodeServerId})
 	if err != nil {
 		return err
 	}

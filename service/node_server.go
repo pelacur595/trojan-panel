@@ -1,10 +1,13 @@
 package service
 
 import (
+	"encoding/csv"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"io"
+	"mime/multipart"
 	"sync"
 	"time"
 	"trojan-panel/core"
@@ -17,7 +20,7 @@ import (
 )
 
 func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
-	return dao.SelectNodeServerById(id)
+	return dao.SelectNodeServer(map[string]interface{}{"id": *id})
 }
 
 func CreateNodeServer(nodeServer *module.NodeServer) error {
@@ -162,7 +165,7 @@ func SelectNodeServerList(dto *dto.NodeServerDto) ([]vo.NodeServerListVo, error)
 }
 
 func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo, error) {
-	nodeServer, err := dao.SelectNodeServerById(nodeServerId)
+	nodeServer, err := dao.SelectNodeServer(map[string]interface{}{"id": *nodeServerId})
 	if err != nil {
 		return nil, err
 	}
@@ -227,5 +230,48 @@ func ExportNodeServer(accountId uint, accountUsername string) error {
 			}
 		}
 	}()
+	return nil
+}
+
+func ImportNodeServer(cover uint, file *multipart.FileHeader) error {
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	reader := csv.NewReader(src)
+
+	// 读取表头
+	titlesRead, err := reader.Read()
+	if err != nil {
+		if err == io.EOF {
+			return errors.New(constant.CsvRowNotEnough)
+		}
+		logrus.Errorf("ImportNodeServer read csv titles err: %s", err.Error())
+	}
+	titles := []string{"ip", "name", "grpc_port"}
+	// 必须以titles作为表头
+	if !util.ArraysEqualPrefix(titles, titlesRead) {
+		return errors.New(constant.CsvTitleError)
+	}
+	// data 变量中存储CSV文件中的数据
+	var data [][]string
+	for {
+		record, err := reader.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			logrus.Errorf("ImportNodeServer read csv record err: %s", err.Error())
+		}
+		data = append(data, record)
+	}
+	// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
+	for _, item := range data {
+		if err = dao.CreateOrUpdateNodeServer(item, cover); err != nil {
+			return err
+		}
+	}
 	return nil
 }

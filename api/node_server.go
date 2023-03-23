@@ -141,5 +141,20 @@ func ExportNodeServer(c *gin.Context) {
 
 // ImportNodeServer 导入服务器
 func ImportNodeServer(c *gin.Context) {
-
+	var importAccountDto dto.ImportAccountDto
+	_ = c.ShouldBindJSON(&importAccountDto)
+	if err := validate.Struct(&importAccountDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	file, err := c.FormFile("file")
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	if err := service.ImportNodeServer(importAccountDto.Cover, file); err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
 }

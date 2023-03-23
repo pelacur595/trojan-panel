@@ -87,6 +87,8 @@ func Router(router *gin.Engine) {
 				nodeServer.GET("/nodeServerState", api.GetNodeServerInfo)
 				// 导出服务器
 				nodeServer.POST("/exportNodeServer", api.ExportNodeServer)
+				// 导出服务器
+				nodeServer.POST("/importNodeServer", api.ImportNodeServer)
 			}
 			node := trojan.Group("/node")
 			{
