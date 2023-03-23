@@ -266,7 +266,7 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 	} else {
 		// 如果存在则不做任何操作，不存在则添加
 		nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": nodeServers[0]})
-		if err != nil && err != errors.New(constant.NodeNotExist) {
+		if err != nil && err.Error() != constant.NodeNotExist {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}

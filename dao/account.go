@@ -560,7 +560,7 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 	} else {
 		// 如果存在则不做任何操作，不存在则添加
 		account, err := SelectAccountByUsername(&accounts[0])
-		if err != nil && err != errors.New(constant.UsernameOrPassError) {
+		if err != nil && err.Error() != constant.UsernameOrPassError {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
