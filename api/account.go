@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strings"
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -295,7 +296,7 @@ func ExportAccount(c *gin.Context) {
 // ImportAccount 导入用户
 func ImportAccount(c *gin.Context) {
 	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBindJSON(&importAccountDto)
+	_ = c.ShouldBindQuery(&importAccountDto)
 	if err := validate.Struct(&importAccountDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
@@ -303,6 +304,16 @@ func ImportAccount(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		vo.Fail(constant.SysError, c)
+		return
+	}
+	// 文件大小 3MB
+	if file.Size > 1024*1024*10 {
+		vo.Fail(constant.FileSizeTooBig, c)
+		return
+	}
+	// 文件后缀.png
+	if !strings.HasSuffix(file.Filename, ".csv") {
+		vo.Fail(constant.FileFormatError, c)
 		return
 	}
 	if err := service.ImportAccount(importAccountDto.Cover, file); err != nil {

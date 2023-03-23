@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"strings"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
@@ -142,7 +143,7 @@ func ExportNodeServer(c *gin.Context) {
 // ImportNodeServer 导入服务器
 func ImportNodeServer(c *gin.Context) {
 	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBindJSON(&importAccountDto)
+	_ = c.ShouldBind(&importAccountDto)
 	if err := validate.Struct(&importAccountDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
@@ -150,6 +151,16 @@ func ImportNodeServer(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		vo.Fail(constant.SysError, c)
+		return
+	}
+	// 文件大小 3MB
+	if file.Size > 1024*1024*10 {
+		vo.Fail(constant.FileSizeTooBig, c)
+		return
+	}
+	// 文件后缀.png
+	if !strings.HasSuffix(file.Filename, ".csv") {
+		vo.Fail(constant.FileFormatError, c)
 		return
 	}
 	if err := service.ImportNodeServer(importAccountDto.Cover, file); err != nil {
