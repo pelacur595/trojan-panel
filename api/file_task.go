@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io"
+	"os"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
@@ -52,15 +54,30 @@ func DownloadFileTask(c *gin.Context) {
 		return
 	}
 
-	if *fileTask.Status != constant.TaskSuccess {
+	if fileTask == nil || *fileTask.Status != constant.TaskSuccess {
 		vo.Fail(constant.FileTaskNotSuccess, c)
 		return
 	}
 
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Transfer-Encoding", "binary")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", *fileTask.Name))
-	c.File(*fileTask.Path)
+	// 打开文件
+	file, err := os.Open(*fileTask.Path)
+	if err != nil {
+		vo.Fail(constant.FileNotExist, c)
+		return
+	}
+	defer file.Close()
+
+	// 设置响应头，以便在文件下载时使用该文件名
+	c.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", *fileTask.Name))
+	// 设置响应类型为二进制流
+	c.Writer.Header().Set("Content-Type", "application/octet-stream")
+	// 传输文件到客户端
+	_, err = io.Copy(c.Writer, file)
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	//vo.Success(nil, c)
 }
 
 func DownloadCsvTemplate(c *gin.Context) {
