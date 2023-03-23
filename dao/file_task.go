@@ -121,8 +121,10 @@ func SelectFileTaskById(id *uint) (*module.FileTask, error) {
 func CreateFileTask(fileTask *module.FileTask) (uint, error) {
 	fileTaskCreate := map[string]interface{}{
 		"name":   *fileTask.Name,
-		"path":   *fileTask.Path,
 		"`type`": *fileTask.Type,
+	}
+	if fileTask.Path != nil && *fileTask.Path != "" {
+		fileTaskCreate["path"] = *fileTask.Path
 	}
 	var data []map[string]interface{}
 	data = append(data, fileTaskCreate)

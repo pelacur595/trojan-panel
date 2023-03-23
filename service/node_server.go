@@ -180,7 +180,7 @@ func ExportNodeServer(accountId uint, accountUsername string) error {
 	fileName := fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405"))
 	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
-	var fileTaskType uint = constant.TaskTypeNodeServer
+	var fileTaskType uint = constant.TaskTypeNodeServerExport
 	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
 		Name:            &fileName,

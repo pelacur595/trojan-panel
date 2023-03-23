@@ -6,6 +6,8 @@ const (
 	TaskDoing   = 1
 	TaskSuccess = 2
 
-	TaskTypeAccount    = 1
-	TaskTypeNodeServer = 2
+	TaskTypeAccountExport    = 1
+	TaskTypeNodeServerExport = 2
+	TaskTypeAccountImport    = 3
+	TaskTypeNodeServerImport = 4
 )

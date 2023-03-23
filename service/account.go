@@ -494,7 +494,7 @@ func ExportAccount(accountId uint, accountUsername string) error {
 	fileName := fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405"))
 	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
 
-	var fileTaskType uint = constant.TaskTypeAccount
+	var fileTaskType uint = constant.TaskTypeAccountExport
 	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
 		Name:            &fileName,
@@ -549,44 +549,92 @@ func ExportAccount(accountId uint, accountUsername string) error {
 	return nil
 }
 
-func ImportAccount(cover uint, file *multipart.FileHeader) error {
-	src, err := file.Open()
+func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accountUsername string) error {
+	fileName := file.Filename
+
+	var fileTaskType uint = constant.TaskTypeAccountImport
+	var fileTaskStatus = constant.TaskDoing
+	fileTask := module.FileTask{
+		Name:            &fileName,
+		Path:            nil,
+		Type:            &fileTaskType,
+		Status:          &fileTaskStatus,
+		AccountId:       &accountId,
+		AccountUsername: &accountUsername,
+	}
+	fileTaskId, err := dao.CreateFileTask(&fileTask)
 	if err != nil {
 		return err
 	}
-	defer src.Close()
 
-	reader := csv.NewReader(src)
-
-	titlesRead, err := reader.Read()
-	if err != nil {
-		if err == io.EOF {
-			return errors.New(constant.CsvRowNotEnough)
-		}
-		logrus.Errorf("ImportAccount read csv titles err: %s", err.Error())
-	}
-	titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}
-	// 必须以titles作为表头
-	if !util.ArraysEqualPrefix(titles, titlesRead) {
-		return errors.New(constant.CsvTitleError)
-	}
-	// data 变量中存储CSV文件中的数据
-	var data [][]string
-	for {
-		record, err := reader.Read()
-		if err != nil {
-			if err == io.EOF {
-				break
+	go func() {
+		var mutex sync.Mutex
+		defer mutex.Unlock()
+		if mutex.TryLock() {
+			var fail = constant.TaskFail
+			var success = constant.TaskSuccess
+			fileTask := module.FileTask{
+				Id:     &fileTaskId,
+				Status: &fail,
 			}
-			logrus.Errorf("ImportAccount read csv record err: %s", err.Error())
+
+			src, err := file.Open()
+			defer src.Close()
+			if err != nil {
+				logrus.Errorf("ImportAccount file Open err: %v", err)
+				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+				}
+				return
+			}
+
+			reader := csv.NewReader(src)
+			// 读取第一行表头
+			titlesRead, err := reader.Read()
+			if err != nil {
+				if err == io.EOF {
+					logrus.Errorf("ImportAccount row no enough err: %v", err)
+					if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+						logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+					}
+					return
+				}
+				logrus.Errorf("ImportAccount read csv titles err: %s", err.Error())
+			}
+			titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}
+			// 必须以titles作为表头
+			if !util.ArraysEqualPrefix(titles, titlesRead) {
+				logrus.Errorf("ImportAccount title prefix err: %v", err)
+				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+				}
+				return
+			}
+			// data 变量中存储CSV文件中的数据
+			var data [][]string
+			for {
+				record, err := reader.Read()
+				if err != nil {
+					if err == io.EOF {
+						break
+					}
+					logrus.Errorf("ImportAccount read csv record err: %s", err.Error())
+				}
+				data = append(data, record)
+			}
+			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
+			for _, item := range data {
+				if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
+					continue
+				}
+			}
+
+			fileTask.Status = &success
+			// 更新文件任务状态
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+			}
 		}
-		data = append(data, record)
-	}
-	// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
-	for _, item := range data {
-		if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
-			return err
-		}
-	}
+	}()
 	return nil
 }

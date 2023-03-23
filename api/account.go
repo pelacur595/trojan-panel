@@ -316,7 +316,8 @@ func ImportAccount(c *gin.Context) {
 		vo.Fail(constant.FileFormatError, c)
 		return
 	}
-	if err := service.ImportAccount(importAccountDto.Cover, file); err != nil {
+	account := util.GetCurrentAccount(c)
+	if err := service.ImportAccount(importAccountDto.Cover, file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}
