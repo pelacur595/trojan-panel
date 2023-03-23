@@ -38,8 +38,8 @@ type NodeServerInfoVo struct {
 }
 
 type NodeServerExportVo struct {
-	Name       string `json:"name"`
-	Ip         string `json:"ip"`
-	GrpcPort   string `json:"grpc_port"`
-	CreateTime string `json:"create_time"`
+	Name       string `json:"name" ddb:"name"`
+	Ip         string `json:"ip" ddb:"ip"`
+	GrpcPort   string `json:"grpc_port" ddb:"grpc_port"`
+	CreateTime string `json:"create_time" ddb:"create_time"`
 }

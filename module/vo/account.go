@@ -39,15 +39,15 @@ type AccountTrafficRankVo struct {
 }
 
 type AccountExportVo struct {
-	Username   string `json:"username"`
-	Pass       string `json:"pass"`
-	Hash       string `json:"hash"`
-	RoleId     string `json:"role_id"`
-	Email      string `json:"email"`
-	ExpireTime string `json:"expire_time"`
-	Deleted    string `json:"deleted"`
-	Quota      string `json:"quota"`
-	Download   string `json:"download"`
-	Upload     string `json:"upload"`
-	CreateTime string `json:"create_time"`
+	Username   string `json:"username" ddb:"username"`
+	Pass       string `json:"pass" ddb:"pass"`
+	Hash       string `json:"hash" ddb:"hash"`
+	RoleId     string `json:"role_id" ddb:"role_id"`
+	Email      string `json:"email" ddb:"email"`
+	ExpireTime string `json:"expire_time" ddb:"expire_time"`
+	Deleted    string `json:"deleted" ddb:"deleted"`
+	Quota      string `json:"quota" ddb:"quota"`
+	Download   string `json:"download" ddb:"download"`
+	Upload     string `json:"upload" ddb:"upload"`
+	CreateTime string `json:"create_time" ddb:"create_time"`
 }
