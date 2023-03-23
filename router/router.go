@@ -61,6 +61,8 @@ func Router(router *gin.Engine) {
 				account.POST("/resetAccountDownloadAndUpload", api.ResetAccountDownloadAndUpload)
 				// 导出用户
 				account.POST("/exportAccount", api.ExportAccount)
+				// 导入用户
+				account.POST("/importAccount", api.ImportAccount)
 			}
 			role := trojan.Group("/role")
 			{
@@ -143,6 +145,8 @@ func Router(router *gin.Engine) {
 				fileTask.POST("/deleteFileTaskById", api.DeleteFileTaskById)
 				// 下载文件任务的文件
 				fileTask.POST("/downloadFileTask", api.DownloadFileTask)
+				// 获取文件模板
+				fileTask.POST("/downloadCsvTemplate", api.DownloadCsvTemplate)
 			}
 		}
 	}

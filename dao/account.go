@@ -525,7 +525,7 @@ func SelectAccountAll() ([]vo.AccountExportVo, error) {
 }
 
 // CreateOrUpdateAccount 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
-func CreateOrUpdateAccount(accounts []string) error {
+func CreateOrUpdateAccount(accounts []string, cover uint) error {
 	if len(accounts) == 0 {
 		return nil
 	}
@@ -546,14 +546,35 @@ func CreateOrUpdateAccount(accounts []string) error {
 	accountUpdate := map[string]interface{}{
 		"username": accounts[0],
 	}
-	buildInsert, values, err := builder.BuildInsertOnDuplicate("account", data, accountUpdate)
-	if err != nil {
-		logrus.Errorln(err.Error())
-		return errors.New(constant.SysError)
-	}
-	if _, err = db.Exec(buildInsert, values...); err != nil {
-		logrus.Errorln(err.Error())
-		return errors.New(constant.SysError)
+	if cover == 1 {
+		// 如果存在则更新
+		buildInsert, values, err := builder.BuildInsertOnDuplicate("account", data, accountUpdate)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if _, err = db.Exec(buildInsert, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	} else {
+		// 如果存在则不做任何操作，不存在则添加
+		account, err := SelectAccountByUsername(&accounts[0])
+		if err != nil && err != errors.New(constant.UsernameOrPassError) {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if account == nil {
+			buildInsert, values, err := builder.BuildInsert("account", data)
+			if err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
+			if _, err = db.Exec(buildInsert, values...); err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
+		}
 	}
 	return nil
 }

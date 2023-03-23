@@ -584,7 +584,7 @@ func ImportAccount(cover uint, file *multipart.FileHeader) error {
 	}
 	// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
 	for _, item := range data {
-		if err = dao.CreateOrUpdateAccount(item); err != nil {
+		if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
 			return err
 		}
 	}
