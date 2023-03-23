@@ -306,7 +306,7 @@ func ImportAccount(c *gin.Context) {
 		vo.Fail(constant.SysError, c)
 		return
 	}
-	// 文件大小 3MB
+	// 文件大小 10MB
 	if file.Size > 1024*1024*10 {
 		vo.Fail(constant.FileSizeTooBig, c)
 		return
