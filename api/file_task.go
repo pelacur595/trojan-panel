@@ -57,20 +57,11 @@ func DownloadFileTask(c *gin.Context) {
 		return
 	}
 
-	// 打开文件
-	//file, err := os.Open(*fileTask.Path)
-	//if err != nil {
-	//	vo.Fail(constant.FileNotExist, c)
-	//	return
-	//}
-	//defer file.Close()
-
 	// 设置文件类型
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("Content-Transfer-Encoding", "binary")
 	// 设置文件下载名称
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", *fileTask.Name))
-	c.Header("Content-Type", "text/csv")
 	// 将文件框架输出到响应的正文中
 	c.File(*fileTask.Path)
 }
