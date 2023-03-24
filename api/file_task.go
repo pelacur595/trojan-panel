@@ -7,6 +7,7 @@ import (
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
 	"trojan-panel/service"
+	"trojan-panel/util"
 )
 
 func SelectFileTaskPage(c *gin.Context) {
@@ -54,6 +55,11 @@ func DownloadFileTask(c *gin.Context) {
 
 	if fileTask == nil || *fileTask.Status != constant.TaskSuccess {
 		vo.Fail(constant.FileTaskNotSuccess, c)
+		return
+	}
+
+	if !util.Exists(*fileTask.Path) {
+		vo.Fail(constant.FileNotExist, c)
 		return
 	}
 
