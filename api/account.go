@@ -296,7 +296,7 @@ func ExportAccount(c *gin.Context) {
 // ImportAccount 导入用户
 func ImportAccount(c *gin.Context) {
 	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBindQuery(&importAccountDto)
+	_ = c.ShouldBindJSON(&importAccountDto)
 	if err := validate.Struct(&importAccountDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return

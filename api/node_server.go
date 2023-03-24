@@ -143,7 +143,7 @@ func ExportNodeServer(c *gin.Context) {
 // ImportNodeServer 导入服务器
 func ImportNodeServer(c *gin.Context) {
 	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBind(&importAccountDto)
+	_ = c.ShouldBindJSON(&importAccountDto)
 	if err := validate.Struct(&importAccountDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
