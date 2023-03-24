@@ -38,6 +38,9 @@ func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, 
 	if taskType != nil && *taskType != 0 {
 		where["`type`"] = *taskType
 	}
+	if accountUsername != nil && *accountUsername != "" {
+		where["`account_username`"] = *accountUsername
+	}
 	selectFields := []string{"id", "name", "`type`", "status", "err_msg", "account_username", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("file_task", where, selectFields)
 	if err != nil {
