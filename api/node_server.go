@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
@@ -142,12 +143,12 @@ func ExportNodeServer(c *gin.Context) {
 
 // ImportNodeServer 导入服务器
 func ImportNodeServer(c *gin.Context) {
-	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBindJSON(&importAccountDto)
-	if err := validate.Struct(&importAccountDto); err != nil {
+	coverStr, b := c.GetPostForm("cover")
+	if !b {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
+	cover, err := strconv.ParseUint(coverStr, 10, 32)
 	file, err := c.FormFile("file")
 	if err != nil {
 		vo.Fail(constant.SysError, c)
@@ -164,7 +165,7 @@ func ImportNodeServer(c *gin.Context) {
 		return
 	}
 	account := util.GetCurrentAccount(c)
-	if err := service.ImportNodeServer(importAccountDto.Cover, file, account.Id, account.Username); err != nil {
+	if err := service.ImportNodeServer(uint(cover), file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}

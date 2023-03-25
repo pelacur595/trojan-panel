@@ -136,6 +136,9 @@ func CreateFileTask(fileTask *module.FileTask) (uint, error) {
 	if fileTask.ErrMsg != nil && *fileTask.ErrMsg != "" {
 		fileTaskCreate["err_msg"] = *fileTask.ErrMsg
 	}
+	if fileTask.Status != nil && *fileTask.Status != 0 {
+		fileTaskCreate["status"] = *fileTask.Status
+	}
 	var data []map[string]interface{}
 	data = append(data, fileTaskCreate)
 
@@ -162,7 +165,7 @@ func UpdateFileTaskById(fileTask *module.FileTask) error {
 	update := map[string]interface{}{}
 
 	if fileTask.Status != nil {
-		update["status"] = *fileTask.Status
+		update["`status`"] = *fileTask.Status
 	}
 
 	if fileTask.ErrMsg != nil && *fileTask.ErrMsg != "" {

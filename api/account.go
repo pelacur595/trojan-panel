@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 	"time"
 	"trojan-panel/dao"
@@ -295,12 +296,12 @@ func ExportAccount(c *gin.Context) {
 
 // ImportAccount 导入用户
 func ImportAccount(c *gin.Context) {
-	var importAccountDto dto.ImportAccountDto
-	_ = c.ShouldBindJSON(&importAccountDto)
-	if err := validate.Struct(&importAccountDto); err != nil {
+	coverStr, b := c.GetPostForm("cover")
+	if !b {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
+	cover, err := strconv.ParseUint(coverStr, 10, 32)
 	file, err := c.FormFile("file")
 	if err != nil {
 		vo.Fail(constant.SysError, c)
@@ -317,7 +318,7 @@ func ImportAccount(c *gin.Context) {
 		return
 	}
 	account := util.GetCurrentAccount(c)
-	if err := service.ImportAccount(importAccountDto.Cover, file, account.Id, account.Username); err != nil {
+	if err := service.ImportAccount(uint(cover), file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
 	}
