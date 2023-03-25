@@ -567,7 +567,7 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 		return err
 	}
 
-	go func() {
+	go func(fileTaskId uint) {
 		var mutex sync.Mutex
 		defer mutex.Unlock()
 		if mutex.TryLock() {
@@ -639,6 +639,6 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 				logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
 			}
 		}
-	}()
+	}(fileTaskId)
 	return nil
 }
