@@ -139,6 +139,12 @@ func CreateFileTask(fileTask *module.FileTask) (uint, error) {
 	if fileTask.Status != nil && *fileTask.Status != 0 {
 		fileTaskCreate["status"] = *fileTask.Status
 	}
+	if fileTask.AccountUsername != nil && *fileTask.AccountUsername != "" {
+		fileTaskCreate["account_username"] = *fileTask.AccountUsername
+	}
+	if fileTask.AccountId != nil && *fileTask.AccountId != 0 {
+		fileTaskCreate["account_id"] = *fileTask.AccountId
+	}
 	var data []map[string]interface{}
 	data = append(data, fileTaskCreate)
 
