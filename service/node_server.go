@@ -266,6 +266,8 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 			defer src.Close()
 			if err != nil {
 				logrus.Errorf("ImportNodeServer file Open err: %v", err)
+				fileUploadError := constant.FileUploadError
+				fileTask.ErrMsg = &fileUploadError
 				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
 				}
