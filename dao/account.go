@@ -529,13 +529,14 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 	if len(accounts) == 0 {
 		return nil
 	}
+	// 如果存在则更新
+	account, err := SelectAccountByUsername(&accounts[0])
+	if err != nil && err.Error() != constant.UsernameOrPassError {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
+	}
 	if cover == 1 {
-		// 如果存在则更新
-		account, err := SelectAccountByUsername(&accounts[0])
-		if err != nil && err.Error() != constant.UsernameOrPassError {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
+		// 如果存在则更新，不存在则忽略
 		if account != nil {
 			accountWhere := map[string]interface{}{
 				"username": accounts[0],
@@ -561,14 +562,8 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 				return errors.New(constant.SysError)
 			}
 		}
-
 	} else {
-		// 如果存在则不做任何操作，不存在则添加
-		account, err := SelectAccountByUsername(&accounts[0])
-		if err != nil && err.Error() != constant.UsernameOrPassError {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
+		// 如果存在则忽略，不存在则添加
 		if account == nil {
 			var data []map[string]interface{}
 			accountCreate := map[string]interface{}{
