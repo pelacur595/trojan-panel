@@ -36,8 +36,8 @@ func ArraysEqualPrefix(a, b []string) bool {
 		return false
 	}
 	// 遍历两个数组的元素，逐一比较它们的值
-	for i := range a {
-		if a[i] != b[i] {
+	for i, item := range a {
+		if item != b[i] {
 			return false
 		}
 	}
