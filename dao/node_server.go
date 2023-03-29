@@ -242,36 +242,22 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 	if len(nodeServers) == 0 {
 		return nil
 	}
-	var data []map[string]interface{}
-	accountCreate := map[string]interface{}{
-		"ip":        nodeServers[0],
-		"name":      nodeServers[1],
-		"grpc_port": nodeServers[2],
-	}
-	data = append(data, accountCreate)
-	accountUpdate := map[string]interface{}{
-		"name": nodeServers[1],
+	nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": nodeServers[0]})
+	if err != nil && err.Error() != constant.NodeNotExist {
+		logrus.Errorln(err.Error())
+		return errors.New(constant.SysError)
 	}
 	if cover == 1 {
-		// 如果存在则更新
-		buildInsert, values, err := builder.BuildInsertOnDuplicate("node_server", data, accountUpdate)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
-		if _, err = db.Exec(buildInsert, values...); err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
-	} else {
-		// 如果存在则不做任何操作，不存在则添加
-		nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": nodeServers[0]})
-		if err != nil && err.Error() != constant.NodeNotExist {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
-		}
-		if nodeServer == nil {
-			buildInsert, values, err := builder.BuildInsert("node_server", data)
+		// 如果存在则更新，不存在则忽略
+		if nodeServer != nil {
+			accountWhere := map[string]interface{}{
+				"name": nodeServers[1],
+			}
+			accountUpdate := map[string]interface{}{
+				"ip":        nodeServers[0],
+				"grpc_port": nodeServers[2],
+			}
+			buildInsert, values, err := builder.BuildUpdate("node_server", accountWhere, accountUpdate)
 			if err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
@@ -279,6 +265,29 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 			if _, err = db.Exec(buildInsert, values...); err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
+			}
+		}
+
+	} else {
+		if nodeServer == nil {
+			// 如果存在则忽略，不存在则添加
+			if nodeServer == nil {
+				var data []map[string]interface{}
+				accountCreate := map[string]interface{}{
+					"ip":        nodeServers[0],
+					"name":      nodeServers[1],
+					"grpc_port": nodeServers[2],
+				}
+				data = append(data, accountCreate)
+				buildInsert, values, err := builder.BuildInsert("node_server", data)
+				if err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
+				if _, err = db.Exec(buildInsert, values...); err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
 			}
 		}
 	}
