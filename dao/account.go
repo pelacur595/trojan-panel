@@ -535,59 +535,57 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if cover == 1 {
+	if account != nil && cover == 1 {
 		// 如果存在则更新，不存在则忽略
-		if account != nil {
-			accountWhere := map[string]interface{}{
-				"username": accounts[0],
-			}
-			accountUpdate := map[string]interface{}{
-				"`pass`":      accounts[1],
-				"`hash`":      accounts[2],
-				"role_id":     accounts[3],
-				"email":       accounts[4],
-				"expire_time": accounts[5],
-				"deleted":     accounts[6],
-				"quota":       accounts[7],
-				"download":    accounts[8],
-				"upload":      accounts[9],
-			}
-			buildInsert, values, err := builder.BuildUpdate("account", accountWhere, accountUpdate)
-			if err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
-			}
-			if _, err = db.Exec(buildInsert, values...); err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
-			}
+		accountWhere := map[string]interface{}{
+			"username": accounts[0],
 		}
-	} else {
-		// 如果存在则忽略，不存在则添加
-		if account == nil {
-			var data []map[string]interface{}
-			accountCreate := map[string]interface{}{
-				"username":    accounts[0],
-				"`pass`":      accounts[1],
-				"`hash`":      accounts[2],
-				"role_id":     accounts[3],
-				"email":       accounts[4],
-				"expire_time": accounts[5],
-				"deleted":     accounts[6],
-				"quota":       accounts[7],
-				"download":    accounts[8],
-				"upload":      accounts[9],
-			}
-			data = append(data, accountCreate)
-			buildInsert, values, err := builder.BuildInsert("account", data)
-			if err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
-			}
-			if _, err = db.Exec(buildInsert, values...); err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
-			}
+		accountUpdate := map[string]interface{}{
+			"`pass`":      accounts[1],
+			"`hash`":      accounts[2],
+			"role_id":     accounts[3],
+			"email":       accounts[4],
+			"expire_time": accounts[5],
+			"deleted":     accounts[6],
+			"quota":       accounts[7],
+			"download":    accounts[8],
+			"upload":      accounts[9],
+		}
+		buildInsert, values, err := builder.BuildUpdate("account", accountWhere, accountUpdate)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if _, err = db.Exec(buildInsert, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	}
+
+	// 如果存在则忽略，不存在则添加
+	if account == nil {
+		var data []map[string]interface{}
+		accountCreate := map[string]interface{}{
+			"username":    accounts[0],
+			"`pass`":      accounts[1],
+			"`hash`":      accounts[2],
+			"role_id":     accounts[3],
+			"email":       accounts[4],
+			"expire_time": accounts[5],
+			"deleted":     accounts[6],
+			"quota":       accounts[7],
+			"download":    accounts[8],
+			"upload":      accounts[9],
+		}
+		data = append(data, accountCreate)
+		buildInsert, values, err := builder.BuildInsert("account", data)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if _, err = db.Exec(buildInsert, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
 		}
 	}
 	return nil
