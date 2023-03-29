@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"io"
 	"mime/multipart"
 	"sync"
@@ -274,7 +275,7 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 				return
 			}
 
-			reader := csv.NewReader(src)
+			reader := csv.NewReader(simplifiedchinese.GBK.NewDecoder().Reader(src))
 			// 读取第一行表头
 			titlesRead, err := reader.Read()
 			if err != nil {
