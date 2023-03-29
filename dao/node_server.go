@@ -247,17 +247,38 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
 	}
-	if cover == 1 {
+
+	if nodeServer != nil && cover == 1 {
 		// 如果存在则更新，不存在则忽略
-		if nodeServer != nil {
-			accountWhere := map[string]interface{}{
-				"name": nodeServers[1],
-			}
-			accountUpdate := map[string]interface{}{
+		accountWhere := map[string]interface{}{
+			"name": nodeServers[1],
+		}
+		accountUpdate := map[string]interface{}{
+			"ip":        nodeServers[0],
+			"grpc_port": nodeServers[2],
+		}
+		buildInsert, values, err := builder.BuildUpdate("node_server", accountWhere, accountUpdate)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+		if _, err = db.Exec(buildInsert, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	}
+
+	if nodeServer == nil {
+		// 如果存在则忽略，不存在则添加
+		if nodeServer == nil {
+			var data []map[string]interface{}
+			accountCreate := map[string]interface{}{
 				"ip":        nodeServers[0],
+				"name":      nodeServers[1],
 				"grpc_port": nodeServers[2],
 			}
-			buildInsert, values, err := builder.BuildUpdate("node_server", accountWhere, accountUpdate)
+			data = append(data, accountCreate)
+			buildInsert, values, err := builder.BuildInsert("node_server", data)
 			if err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
@@ -265,29 +286,6 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 			if _, err = db.Exec(buildInsert, values...); err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
-			}
-		}
-
-	} else {
-		if nodeServer == nil {
-			// 如果存在则忽略，不存在则添加
-			if nodeServer == nil {
-				var data []map[string]interface{}
-				accountCreate := map[string]interface{}{
-					"ip":        nodeServers[0],
-					"name":      nodeServers[1],
-					"grpc_port": nodeServers[2],
-				}
-				data = append(data, accountCreate)
-				buildInsert, values, err := builder.BuildInsert("node_server", data)
-				if err != nil {
-					logrus.Errorln(err.Error())
-					return errors.New(constant.SysError)
-				}
-				if _, err = db.Exec(buildInsert, values...); err != nil {
-					logrus.Errorln(err.Error())
-					return errors.New(constant.SysError)
-				}
 			}
 		}
 	}
