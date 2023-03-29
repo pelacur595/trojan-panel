@@ -266,26 +266,26 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 			logrus.Errorln(err.Error())
 			return errors.New(constant.SysError)
 		}
-	}
-
-	if nodeServer == nil {
-		// 如果存在则忽略，不存在则添加
+	} else {
 		if nodeServer == nil {
-			var data []map[string]interface{}
-			accountCreate := map[string]interface{}{
-				"ip":        nodeServers[0],
-				"name":      nodeServers[1],
-				"grpc_port": nodeServers[2],
-			}
-			data = append(data, accountCreate)
-			buildInsert, values, err := builder.BuildInsert("node_server", data)
-			if err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
-			}
-			if _, err = db.Exec(buildInsert, values...); err != nil {
-				logrus.Errorln(err.Error())
-				return errors.New(constant.SysError)
+			// 如果存在则忽略，不存在则添加
+			if nodeServer == nil {
+				var data []map[string]interface{}
+				accountCreate := map[string]interface{}{
+					"ip":        nodeServers[0],
+					"name":      nodeServers[1],
+					"grpc_port": nodeServers[2],
+				}
+				data = append(data, accountCreate)
+				buildInsert, values, err := builder.BuildInsert("node_server", data)
+				if err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
+				if _, err = db.Exec(buildInsert, values...); err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
 			}
 		}
 	}
