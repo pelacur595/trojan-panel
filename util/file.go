@@ -85,6 +85,14 @@ func InitFile() {
 		}
 	}
 
+	excelPath := constant.ExcelPath
+	if !Exists(excelPath) {
+		if err := os.Mkdir(excelPath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config/excel文件夹异常 err: %v", err)
+			panic(err)
+		}
+	}
+
 	// 创建AccountTemplate模板
 	excelAccountTemplate := constant.ExcelAccountTemplate
 	if !Exists(excelAccountTemplate) {
@@ -242,14 +250,6 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 }`)
 		if err != nil {
 			logrus.Errorf("template-xray.json文件写入异常 err: %v", err)
-			panic(err)
-		}
-	}
-
-	excelPath := constant.ExcelPath
-	if !Exists(excelPath) {
-		if err := os.Mkdir(excelPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config/excel文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
