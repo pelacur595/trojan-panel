@@ -17,6 +17,6 @@ type SystemUpdateDto struct {
 	EmailPassword    *string `json:"emailPassword" form:"emailPassword" validate:"omitempty,min=0,max=32"`
 
 	SystemName   *string `json:"systemName" form:"systemName" validate:"omitempty,min=0,max=32"`
-	ClashRule    *string `json:"clashRule" form:"clashRule" validate:"omitempty,min=0,max=5120"`
-	XrayTemplate *string `json:"xrayTemplate" form:"xrayTemplate" validate:"omitempty,min=0,max=5120"`
+	ClashRule    *string `json:"clashRule" form:"clashRule" validate:"omitempty,min=0,max=10240"`
+	XrayTemplate *string `json:"xrayTemplate" form:"xrayTemplate" validate:"omitempty,min=0,max=10240"`
 }
