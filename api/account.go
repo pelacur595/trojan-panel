@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/mojocn/base64Captcha"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +23,10 @@ func Login(c *gin.Context) {
 	_ = c.ShouldBindJSON(&accountLoginDto)
 	if err := validate.Struct(&accountLoginDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	if !util.VerifyCaptcha(*accountLoginDto.CaptchaId, *accountLoginDto.CaptchaCode) {
+		vo.Fail(constant.CaptchaError, c)
 		return
 	}
 	account, err := service.SelectAccountByUsername(accountLoginDto.Username)
@@ -72,7 +77,19 @@ func Login(c *gin.Context) {
 
 // GenerateCaptcha 验证码
 func GenerateCaptcha(c *gin.Context) {
-	return
+	driver := base64Captcha.NewDriverMath(80, 240, 8, 3, nil, nil, []string{"wqy-microhei.ttc"})
+	captcha := base64Captcha.NewCaptcha(driver, base64Captcha.DefaultMemStore)
+	// 生成验证码图片和答案
+	id, b64s, err := captcha.Generate()
+	if err != nil {
+		vo.Fail(constant.CaptchaGenerateError, c)
+		return
+	}
+	captureVo := vo.CaptureVo{
+		CaptchaId:  id,
+		CaptchaImg: b64s,
+	}
+	vo.Success(captureVo, c)
 }
 
 func Register(c *gin.Context) {
@@ -80,6 +97,10 @@ func Register(c *gin.Context) {
 	_ = c.ShouldBindJSON(&accountRegisterDto)
 	if err := validate.Struct(&accountRegisterDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	if !util.VerifyCaptcha(*accountRegisterDto.CaptchaId, *accountRegisterDto.CaptchaCode) {
+		vo.Fail(constant.CaptchaError, c)
 		return
 	}
 	if err := service.Register(accountRegisterDto); err != nil {

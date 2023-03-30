@@ -51,3 +51,8 @@ type AccountExportVo struct {
 	Upload     string `json:"upload" ddb:"upload"`
 	CreateTime string `json:"create_time" ddb:"create_time"`
 }
+
+type CaptureVo struct {
+	CaptchaId  string `json:"captchaId"`
+	CaptchaImg string `json:"captchaImg"`
+}

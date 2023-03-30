@@ -20,6 +20,8 @@ func Router(router *gin.Engine) {
 			trojanAuth.GET("/setting", api.Setting)
 			// 订阅
 			trojanAuth.GET("/subscribe/:token", api.Subscribe)
+			// 验证码
+			trojanAuth.GET("/generateCaptcha", api.GenerateCaptcha)
 		}
 		trojanImage := trojan.Group("/image")
 		{

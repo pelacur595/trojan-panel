@@ -10,9 +10,11 @@ const (
 	TokenExpiredError string = "登录过期"
 	LogOutError       string = "你还没有登录"
 
-	OriPassError        string = "原密码输入错误"
-	UsernameOrPassError string = "用户名或密码错误"
-	NodeURLError        string = "URL生成失败"
+	OriPassError         string = "原密码输入错误"
+	UsernameOrPassError  string = "用户名或密码错误"
+	NodeURLError         string = "URL生成失败"
+	CaptchaError         string = "验证码错误"
+	CaptchaGenerateError string = "验证码生成失败"
 
 	UsernameExist       string = "用户名已存在"
 	NodeNameExist       string = "节点名称名已存在"

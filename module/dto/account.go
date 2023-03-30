@@ -46,11 +46,13 @@ type AccountUpdateDto struct {
 type AccountLoginDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
+	CaptureDto
 }
 
 type AccountRegisterDto struct {
 	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr,excludes=admin"`
 	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
+	CaptureDto
 }
 
 type HysteriaAutoDto struct {
@@ -59,4 +61,9 @@ type HysteriaAutoDto struct {
 
 type ImportAccountDto struct {
 	Cover uint `json:"cover" form:"cover" validate:"omitempty,oneof=0 1"` // 是否通过用户名覆盖用户信息
+}
+
+type CaptureDto struct {
+	CaptchaId   *string `json:"captchaId" form:"captchaId" validate:"required"`
+	CaptchaCode *string `json:"captchaCode" form:"captchaCode" validate:"required"`
 }
