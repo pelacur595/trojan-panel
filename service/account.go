@@ -14,6 +14,7 @@ import (
 	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
 	"trojan-panel/module"
 	"trojan-panel/module/bo"
 	"trojan-panel/module/constant"
@@ -641,4 +642,9 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 		}
 	}(fileTaskId)
 	return nil
+}
+
+func LoginLimit(username string) {
+	redis.Client.String.
+		Set(fmt.Sprintf("trojan-panel:login-limit:%s", username), 1)
 }

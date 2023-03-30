@@ -34,15 +34,16 @@ func Login(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	if !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass)) {
-		vo.Fail(constant.UsernameOrPassError, c)
-		return
-	}
-	if *account.Deleted != 0 {
-		vo.Fail(constant.AccountDisabled, c)
-		return
-	}
 	if account != nil {
+		if !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass)) {
+			vo.Fail(constant.UsernameOrPassError, c)
+			//service.LoginLimit(*account.Username)
+			return
+		}
+		if *account.Deleted != 0 {
+			vo.Fail(constant.AccountDisabled, c)
+			return
+		}
 		roles, err := dao.SelectRoleNameByParentId(account.RoleId, true)
 		if err != nil {
 			vo.Fail(constant.SysError, c)
