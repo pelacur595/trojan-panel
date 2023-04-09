@@ -11,7 +11,7 @@ import (
 // 过期时间默认2小时
 const TokenExpireDuration = time.Hour * 2
 
-var MySecret = []byte("4eb01fa4acef754ad4fa94f4467fd343")
+var MySecret = []byte(RandString(10))
 
 type MyClaims struct {
 	AccountVo vo.AccountVo `json:"accountVo"`
