@@ -32,8 +32,5 @@ const (
 	TrojanPanelCrtFile      string = "trojan-panel.crt"
 	TrojanPanelKeyFile      string = "trojan-panel.key"
 
-	// SaltKey 加密 盐
-	SaltKey string = "well_very_funny!"
-
 	TrojanPanelVersion = "v2.0.5"
 )
