@@ -646,5 +646,28 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 
 func LoginLimit(username string) {
 	redis.Client.String.
-		Set(fmt.Sprintf("trojan-panel:login-limit:%s", username), 1)
+		Incr(fmt.Sprintf("trojan-panel:login-limit:%s", username))
+}
+
+// LoginVerify 密码输入错误3次以上 将账户锁定30分钟
+func LoginVerify(username string) error {
+	get := redis.Client.String.
+		Get(fmt.Sprintf("trojan-panel:login-limit:%s", username))
+	reply, err := get.Result()
+	if err != nil {
+		return errors.New(constant.SysError)
+	}
+	if reply != nil {
+		result, err := get.Int()
+		if err != nil {
+			return errors.New(constant.SysError)
+		}
+		if result >= 3 {
+			redis.Client.String.Set(fmt.Sprintf("trojan-panel:login-limit:%s", username), -1, time.Minute.Milliseconds()*30/1000)
+		}
+		if result >= 3 || result == -1 {
+			return errors.New(constant.LoginLimitError)
+		}
+	}
+	return nil
 }

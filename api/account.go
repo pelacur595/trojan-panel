@@ -25,6 +25,10 @@ func Login(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
+	if err := service.LoginVerify(*accountLoginDto.Username); err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
 	if !util.VerifyCaptcha(*accountLoginDto.CaptchaId, *accountLoginDto.CaptchaCode) {
 		vo.Fail(constant.CaptchaError, c)
 		return
@@ -37,7 +41,7 @@ func Login(c *gin.Context) {
 	if account != nil {
 		if !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *accountLoginDto.Username, *accountLoginDto.Pass)) {
 			vo.Fail(constant.UsernameOrPassError, c)
-			//service.LoginLimit(*account.Username)
+			service.LoginLimit(*account.Username)
 			return
 		}
 		if *account.Deleted != 0 {

@@ -15,6 +15,7 @@ const (
 	NodeURLError         string = "URL生成失败"
 	CaptchaError         string = "验证码错误"
 	CaptchaGenerateError string = "验证码生成失败"
+	LoginLimitError      string = "密码输入错误次数过多，账户已被锁定30分钟，请稍后再试"
 
 	UsernameExist       string = "用户名已存在"
 	NodeNameExist       string = "节点名称名已存在"
