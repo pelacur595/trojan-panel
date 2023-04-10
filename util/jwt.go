@@ -3,6 +3,7 @@ package util
 import (
 	"errors"
 	"github.com/golang-jwt/jwt"
+	redisgo "github.com/gomodule/redigo/redis"
 	"time"
 	"trojan-panel/dao/redis"
 	"trojan-panel/module/constant"
@@ -64,7 +65,7 @@ func GetJWTKey() (string, error) {
 	get := redis.Client.String.
 		Get("trojan-panel:jwt-key")
 	reply, err := get.String()
-	if err != nil {
+	if err != nil && err != redisgo.ErrNil {
 		return "", errors.New(constant.SysError)
 	}
 	if reply != "" {
