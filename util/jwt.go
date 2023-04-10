@@ -61,21 +61,22 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 	return nil, errors.New(constant.TokenExpiredError)
 }
 
-func GetJWTKey() (string, error) {
+func GetJWTKey() ([]byte, error) {
 	get := redis.Client.String.
 		Get("trojan-panel:jwt-key")
-	reply, err := get.String()
+	reply, err := get.Bytes()
 	if err != nil && err != redisgo.ErrNil {
-		return "", errors.New(constant.SysError)
+		return nil, errors.New(constant.SysError)
 	}
-	if reply != "" {
+	if len(reply) > 0 {
 		return reply, nil
 	} else {
 		// jwt key 72小时更新一次
-		_, err := redis.Client.String.Set("trojan-panel:jwt-key", []byte(RandString(32)), time.Hour.Milliseconds()*72/1000).Result()
+		key := []byte(RandString(32))
+		_, err := redis.Client.String.Set("trojan-panel:jwt-key", key, time.Hour.Milliseconds()*72/1000).Result()
 		if err != nil {
-			return "", errors.New(constant.SysError)
+			return nil, errors.New(constant.SysError)
 		}
+		return key, nil
 	}
-	return "", nil
 }
