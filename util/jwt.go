@@ -72,7 +72,7 @@ func GetJWTKey() (string, error) {
 		return reply, nil
 	} else {
 		// jwt key 72小时更新一次
-		_, err := redis.Client.String.Set("trojan-panel:jwt-key", RandString(10), time.Hour.Milliseconds()*72/1000).Result()
+		_, err := redis.Client.String.Set("trojan-panel:jwt-key", []byte(RandString(32)), time.Hour.Milliseconds()*72/1000).Result()
 		if err != nil {
 			return "", errors.New(constant.SysError)
 		}
