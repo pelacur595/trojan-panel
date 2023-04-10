@@ -10,7 +10,7 @@ import (
 	"trojan-panel/module/constant"
 )
 
-var aesKey = []byte(RandString(10))
+var aesKey = []byte(RandString(32))
 
 // AesEncode 加密
 func AesEncode(origData string) (string, error) {
