@@ -283,7 +283,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 					var grpcPort = splitNodeBos[indexI][j].NodeServerGrpcPort
 					var nodeTypeId = splitNodeBos[indexI][j].NodeTypeId
 					var port = splitNodeBos[indexI][j].Port
-					status, ok := nodeMap.Load(ip)
+					status, ok := nodeMap.Load(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port))
 					if ok {
 						splitNodeBos[indexI][j].Status = status.(int)
 					} else {
@@ -295,7 +295,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 							nodeState = 1
 						}
 						splitNodeBos[indexI][j].Status = nodeState
-						nodeMap.Store(ip, nodeState)
+						nodeMap.Store(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port), nodeState)
 					}
 				}
 				wg.Done()
