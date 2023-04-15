@@ -36,3 +36,9 @@ func InitRedis() {
 		},
 	}
 }
+
+func ReleaseRedis() {
+	if err := pool.Close(); err != nil {
+		logrus.Errorf("redis realease err: %v", err)
+	}
+}

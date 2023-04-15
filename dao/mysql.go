@@ -48,6 +48,12 @@ func InitMySQL() {
 	}
 }
 
+func ReleaseDb() {
+	if err := db.Close(); err != nil {
+		logrus.Errorf("db release err: %v", err)
+	}
+}
+
 func SqlInit(sqlStr string) error {
 	sqls := strings.Split(strings.Replace(sqlStr, "\r\n", "\n", -1), ";\n")
 	for _, s := range sqls {

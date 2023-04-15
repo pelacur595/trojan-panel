@@ -15,6 +15,7 @@ func main() {
 	r := gin.Default()
 	router.Router(r)
 	_ = r.Run(":8081")
+	defer releaseResource()
 }
 
 func init() {
@@ -26,4 +27,9 @@ func init() {
 	middleware.InitCron()
 	middleware.InitRateLimiter()
 	api.InitValidator()
+}
+
+func releaseResource() {
+	dao.ReleaseDb()
+	redis.ReleaseRedis()
 }
