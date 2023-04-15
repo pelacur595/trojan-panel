@@ -48,9 +48,9 @@ func InitMySQL() {
 	}
 }
 
-func ReleaseDb() {
+func CloseDb() {
 	if err := db.Close(); err != nil {
-		logrus.Errorf("db release err: %v", err)
+		logrus.Errorf("db close err: %v", err)
 	}
 }
 

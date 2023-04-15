@@ -30,6 +30,6 @@ func init() {
 }
 
 func releaseResource() {
-	dao.ReleaseDb()
-	redis.ReleaseRedis()
+	dao.CloseDb()
+	redis.CloseRedis()
 }
