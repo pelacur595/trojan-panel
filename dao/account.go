@@ -224,16 +224,36 @@ func SelectAccountByUsername(username *string) (*module.Account, error) {
 	return &account, nil
 }
 
-func UpdateAccountProfile(oldPass *string, newPass *string, username *string, email *string) error {
-	account, err := SelectAccountByUsername(username)
-	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
-		return errors.New(constant.OriPassError)
-	}
-
+func UpdateAccountPass(oldPass *string, newPass *string, username *string) error {
 	where := map[string]interface{}{"username": *username}
 	update := map[string]interface{}{}
 	if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
 		sha1String := util.Sha1String(fmt.Sprintf("%s%s", *username, *newPass))
+		update["pass"] = sha1String
+		update["hash"] = util.SHA224String(sha1String)
+	}
+	if len(update) > 0 {
+		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
+		if err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+
+		if _, err = db.Exec(buildUpdate, values...); err != nil {
+			logrus.Errorln(err.Error())
+			return errors.New(constant.SysError)
+		}
+	}
+	return nil
+}
+
+func UpdateAccountProperty(oldUsername string, pass *string, username *string, email *string) error {
+	sha1String := util.Sha1String(fmt.Sprintf("%s%s", oldUsername, *pass))
+	where := map[string]interface{}{"username": oldUsername, "`pass`": sha1String}
+	update := map[string]interface{}{}
+	if username != nil && *username != "" {
+		update["username"] = *username
+		sha1String := util.Sha1String(fmt.Sprintf("%s%s", *username, *pass))
 		update["pass"] = sha1String
 		update["hash"] = util.SHA224String(sha1String)
 	}

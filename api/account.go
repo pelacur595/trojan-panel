@@ -204,15 +204,31 @@ func DeleteAccountById(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
-func UpdateAccountProfile(c *gin.Context) {
-	var accountUpdateProfileDto dto.AccountUpdateProfileDto
-	_ = c.ShouldBindJSON(&accountUpdateProfileDto)
-	if err := validate.Struct(&accountUpdateProfileDto); err != nil {
+func UpdateAccountPass(c *gin.Context) {
+	var accountUpdatePassDto dto.AccountUpdatePassDto
+	_ = c.ShouldBindJSON(&accountUpdatePassDto)
+	if err := validate.Struct(&accountUpdatePassDto); err != nil {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.UpdateAccountProfile(util.GetToken(c), accountUpdateProfileDto.OldPass, accountUpdateProfileDto.NewPass,
-		accountUpdateProfileDto.Username, accountUpdateProfileDto.Email); err != nil {
+	if err := service.UpdateAccountPass(util.GetToken(c), accountUpdatePassDto.OldPass, accountUpdatePassDto.NewPass,
+		accountUpdatePassDto.Username); err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nil, c)
+}
+
+func UpdateAccountProperty(c *gin.Context) {
+	var accountUpdatePropertyDto dto.AccountUpdatePropertyDto
+	_ = c.ShouldBindJSON(&accountUpdatePropertyDto)
+	if err := validate.Struct(&accountUpdatePropertyDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	account := util.GetCurrentAccount(c)
+	if err := service.UpdateAccountProperty(util.GetToken(c), account.Username,
+		accountUpdatePropertyDto.Pass, accountUpdatePropertyDto.Username, accountUpdatePropertyDto.Email); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}

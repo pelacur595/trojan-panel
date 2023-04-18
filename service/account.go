@@ -87,20 +87,40 @@ func SelectAccountByUsername(username *string) (*module.Account, error) {
 	return dao.SelectAccountByUsername(username)
 }
 
-func UpdateAccountProfile(token string, oldPass *string, newPass *string, username *string, email *string) error {
+func UpdateAccountPass(token string, oldPass *string, newPass *string, username *string) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
-			password, err := dao.SelectConnectPassword(nil, username)
-			if err != nil {
-				return err
-			}
-			if err = RemoveAccount(token, password); err != nil {
-				return err
-			}
+		account, err := SelectAccountByUsername(username)
+		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
+			return errors.New(constant.OriPassError)
 		}
-		if err := dao.UpdateAccountProfile(oldPass, newPass, username, email); err != nil {
+
+		if err = RemoveAccount(token, *account.Pass); err != nil {
+			return err
+		}
+
+		if err := dao.UpdateAccountPass(oldPass, newPass, username); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func UpdateAccountProperty(token string, oldUsername string, pass *string, username *string, email *string) error {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		account, err := SelectAccountByUsername(&oldUsername)
+		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", oldUsername, *pass)) {
+			return errors.New(constant.OriPassError)
+		}
+
+		if err = RemoveAccount(token, *account.Pass); err != nil {
+			return err
+		}
+
+		if err := dao.UpdateAccountProperty(oldUsername, pass, username, email); err != nil {
 			return err
 		}
 	}
