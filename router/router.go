@@ -152,7 +152,7 @@ func Router(router *gin.Engine) {
 			// 下载文件任务的文件
 			fileTask.POST("/downloadFileTask", api.DownloadFileTask)
 			// 获取文件模板
-			fileTask.POST("/downloadCsvTemplate", api.DownloadCsvTemplate)
+			fileTask.POST("/downloadTemplate", api.DownloadTemplate)
 		}
 	}
 }

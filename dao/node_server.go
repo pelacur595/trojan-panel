@@ -238,11 +238,8 @@ func SelectNodeServerAll() ([]vo.NodeServerExportVo, error) {
 }
 
 // CreateOrUpdateNodeServer 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
-func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
-	if len(nodeServers) == 0 {
-		return nil
-	}
-	nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": nodeServers[0]})
+func CreateOrUpdateNodeServer(nodeServerModule module.NodeServer, cover uint) error {
+	nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": *nodeServerModule.Ip})
 	if err != nil && err.Error() != constant.NodeNotExist {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -251,40 +248,53 @@ func CreateOrUpdateNodeServer(nodeServers []string, cover uint) error {
 	if nodeServer != nil && cover == 1 {
 		// 如果存在则更新，不存在则忽略
 		accountWhere := map[string]interface{}{
-			"name": nodeServers[1],
+			"name": *nodeServerModule.Name,
 		}
-		accountUpdate := map[string]interface{}{
-			"ip":        nodeServers[0],
-			"grpc_port": nodeServers[2],
+
+		accountUpdate := map[string]interface{}{}
+		if nodeServerModule.Ip != nil && *nodeServerModule.Ip != "" {
+			accountUpdate["ip"] = *nodeServerModule.Ip
 		}
-		buildInsert, values, err := builder.BuildUpdate("node_server", accountWhere, accountUpdate)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
+		if nodeServerModule.GrpcPort != nil && *nodeServerModule.GrpcPort != 0 {
+			accountUpdate["grpc_port"] = *nodeServerModule.GrpcPort
 		}
-		if _, err = db.Exec(buildInsert, values...); err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
+		if len(accountUpdate) > 0 {
+			buildInsert, values, err := builder.BuildUpdate("node_server", accountWhere, accountUpdate)
+			if err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
+			if _, err = db.Exec(buildInsert, values...); err != nil {
+				logrus.Errorln(err.Error())
+				return errors.New(constant.SysError)
+			}
 		}
 	} else {
 		if nodeServer == nil {
 			// 如果存在则忽略，不存在则添加
 			if nodeServer == nil {
 				var data []map[string]interface{}
-				accountCreate := map[string]interface{}{
-					"ip":        nodeServers[0],
-					"name":      nodeServers[1],
-					"grpc_port": nodeServers[2],
+				accountCreate := map[string]interface{}{}
+				if nodeServerModule.Name != nil && *nodeServerModule.Name != "" {
+					accountCreate["name"] = *nodeServerModule.Name
 				}
-				data = append(data, accountCreate)
-				buildInsert, values, err := builder.BuildInsert("node_server", data)
-				if err != nil {
-					logrus.Errorln(err.Error())
-					return errors.New(constant.SysError)
+				if nodeServerModule.Ip != nil && *nodeServerModule.Ip != "" {
+					accountCreate["ip"] = *nodeServerModule.Ip
 				}
-				if _, err = db.Exec(buildInsert, values...); err != nil {
-					logrus.Errorln(err.Error())
-					return errors.New(constant.SysError)
+				if nodeServerModule.GrpcPort != nil && *nodeServerModule.GrpcPort != 0 {
+					accountCreate["grpc_port"] = *nodeServerModule.GrpcPort
+				}
+				if len(accountCreate) > 0 {
+					data = append(data, accountCreate)
+					buildInsert, values, err := builder.BuildInsert("node_server", data)
+					if err != nil {
+						logrus.Errorln(err.Error())
+						return errors.New(constant.SysError)
+					}
+					if _, err = db.Exec(buildInsert, values...); err != nil {
+						logrus.Errorln(err.Error())
+						return errors.New(constant.SysError)
+					}
 				}
 			}
 		}

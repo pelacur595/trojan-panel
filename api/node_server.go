@@ -159,8 +159,8 @@ func ImportNodeServer(c *gin.Context) {
 		vo.Fail(constant.FileSizeTooBig, c)
 		return
 	}
-	// 文件后缀.csv
-	if !strings.HasSuffix(file.Filename, ".csv") {
+	// 文件后缀.json
+	if !strings.HasSuffix(file.Filename, ".json") {
 		vo.Fail(constant.FileFormatError, c)
 		return
 	}

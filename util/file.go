@@ -85,28 +85,32 @@ func InitFile() {
 		}
 	}
 
-	excelPath := constant.ExcelPath
-	if !Exists(excelPath) {
-		if err := os.Mkdir(excelPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config/excel文件夹异常 err: %v", err)
+	ExportPath := constant.ExportPath
+	if !Exists(ExportPath) {
+		if err := os.Mkdir(ExportPath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config/export文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
 
 	// 创建AccountTemplate模板
-	excelAccountTemplate := constant.ExcelAccountTemplate
-	if !Exists(excelAccountTemplate) {
-		if err := ExportCsv(excelAccountTemplate, [][]string{{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}}); err != nil {
-			logrus.Errorf("创建AccountTemplate.csv异常 err: %v", err)
+	exportAccountTemplate := constant.ExportAccountTemplate
+	if !Exists(exportAccountTemplate) {
+		var accountTemplate []map[string]any
+		accountTemplate = append(accountTemplate, map[string]any{"username": "example", "pass": "example", "hash": "example", "role_id": 3, "email": "test@example.com", "expire_time": 4078656000000, "deleted": 0, "quota": -1, "download": 0, "upload": 0})
+		if err := ExportJson(exportAccountTemplate, accountTemplate); err != nil {
+			logrus.Errorf("创建AccountTemplate.json异常 err: %v", err)
 			panic(err)
 		}
 	}
 
 	// 创建NodeServerTemplate模板
-	excelNodeServerTemplate := constant.ExcelNodeServerTemplate
-	if !Exists(excelNodeServerTemplate) {
-		if err := ExportCsv(excelNodeServerTemplate, [][]string{{"ip", "name", "grpc_port"}}); err != nil {
-			logrus.Errorf("创建NodeServerTemplate.csv异常 err: %v", err)
+	exportNodeServerTemplate := constant.ExportNodeServerTemplate
+	if !Exists(exportNodeServerTemplate) {
+		var nodeServerTemplate []map[string]any
+		nodeServerTemplate = append(nodeServerTemplate, map[string]any{"ip": "127.0.0.1", "name": "example", "grpc_port": 8100})
+		if err := ExportJson(exportNodeServerTemplate, nodeServerTemplate); err != nil {
+			logrus.Errorf("创建NodeServerTemplate.json异常 err: %v", err)
 			panic(err)
 		}
 	}

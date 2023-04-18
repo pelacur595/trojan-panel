@@ -24,9 +24,9 @@ const (
 	// XrayTemplateFilePath Xray模板
 	XrayTemplateFilePath string = "config/template-xray.json"
 
-	ExcelPath               string = "config/excel"
-	ExcelAccountTemplate    string = "config/excel/AccountTemplate.csv"
-	ExcelNodeServerTemplate string = "config/excel/NodeServerTemplate.csv"
+	ExportPath               string = "config/export"
+	ExportAccountTemplate    string = "config/export/AccountTemplate.json"
+	ExportNodeServerTemplate string = "config/export/NodeServerTemplate.json"
 
 	TrojanPanelCertFilePath string = "/tpdata/trojan-panel/cert/"
 	TrojanPanelCrtFile      string = "trojan-panel.crt"

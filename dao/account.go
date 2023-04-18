@@ -505,18 +505,19 @@ func SelectAccountAll() ([]vo.AccountExportVo, error) {
 	var accountExportVo []vo.AccountExportVo
 	selectFields := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted",
 		"quota", "download", "upload", "create_time"}
-	selectSQL, values, err := builder.BuildSelect("account", nil, selectFields)
+	buildSelect, values, err := builder.BuildSelect("account", nil, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return accountExportVo, errors.New(constant.SysError)
 	}
 
-	rows, err := db.Query(selectSQL, values...)
+	rows, err := db.Query(buildSelect, values...)
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return accountExportVo, errors.New(constant.SysError)
 	}
 	defer rows.Close()
+
 	if err = scanner.Scan(rows, &accountExportVo); err != nil {
 		logrus.Errorln(err.Error())
 		return accountExportVo, errors.New(constant.SysError)
@@ -525,12 +526,9 @@ func SelectAccountAll() ([]vo.AccountExportVo, error) {
 }
 
 // CreateOrUpdateAccount 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
-func CreateOrUpdateAccount(accounts []string, cover uint) error {
-	if len(accounts) == 0 {
-		return nil
-	}
+func CreateOrUpdateAccount(accountModule module.Account, cover uint) error {
 	// 如果存在则更新
-	account, err := SelectAccountByUsername(&accounts[0])
+	account, err := SelectAccountByUsername(accountModule.Username)
 	if err != nil && err.Error() != constant.UsernameOrPassError {
 		logrus.Errorln(err.Error())
 		return errors.New(constant.SysError)
@@ -538,46 +536,38 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 	if account != nil && cover == 1 {
 		// 如果存在则更新，不存在则忽略
 		accountWhere := map[string]interface{}{
-			"username": accounts[0],
+			"username": *accountModule.Username,
 		}
-		accountUpdate := map[string]interface{}{
-			"`pass`":      accounts[1],
-			"`hash`":      accounts[2],
-			"role_id":     accounts[3],
-			"email":       accounts[4],
-			"expire_time": accounts[5],
-			"deleted":     accounts[6],
-			"quota":       accounts[7],
-			"download":    accounts[8],
-			"upload":      accounts[9],
+		accountUpdate := map[string]interface{}{}
+		if accountModule.Pass != nil && *accountModule.Pass != "" {
+			accountUpdate["`pass`"] = *accountModule.Pass
 		}
-		buildInsert, values, err := builder.BuildUpdate("account", accountWhere, accountUpdate)
-		if err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
+		if accountModule.Hash != nil && *accountModule.Hash != "" {
+			accountUpdate["hash"] = *accountModule.Hash
 		}
-		if _, err = db.Exec(buildInsert, values...); err != nil {
-			logrus.Errorln(err.Error())
-			return errors.New(constant.SysError)
+		if accountModule.RoleId != nil && *accountModule.RoleId != 0 {
+			accountUpdate["role_id"] = *accountModule.RoleId
 		}
-	} else {
-		// 如果存在则忽略，不存在则添加
-		if account == nil {
-			var data []map[string]interface{}
-			accountCreate := map[string]interface{}{
-				"username":    accounts[0],
-				"`pass`":      accounts[1],
-				"`hash`":      accounts[2],
-				"role_id":     accounts[3],
-				"email":       accounts[4],
-				"expire_time": accounts[5],
-				"deleted":     accounts[6],
-				"quota":       accounts[7],
-				"download":    accounts[8],
-				"upload":      accounts[9],
-			}
-			data = append(data, accountCreate)
-			buildInsert, values, err := builder.BuildInsert("account", data)
+		if accountModule.Email != nil {
+			accountUpdate["email"] = *accountModule.Email
+		}
+		if accountModule.ExpireTime != nil && *accountModule.ExpireTime != 0 {
+			accountUpdate["expire_time"] = *accountModule.ExpireTime
+		}
+		if accountModule.Deleted != nil {
+			accountUpdate["deleted"] = *accountModule.Deleted
+		}
+		if accountModule.Quota != nil {
+			accountUpdate["quota"] = *accountModule.Quota
+		}
+		if accountModule.Download != nil {
+			accountUpdate["download"] = *accountModule.Download
+		}
+		if accountModule.Upload != nil {
+			accountUpdate["upload"] = *accountModule.Upload
+		}
+		if len(accountUpdate) > 0 {
+			buildInsert, values, err := builder.BuildUpdate("account", accountWhere, accountUpdate)
 			if err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
@@ -585,6 +575,54 @@ func CreateOrUpdateAccount(accounts []string, cover uint) error {
 			if _, err = db.Exec(buildInsert, values...); err != nil {
 				logrus.Errorln(err.Error())
 				return errors.New(constant.SysError)
+			}
+		}
+	} else {
+		// 如果存在则忽略，不存在则添加
+		if account == nil {
+			var data []map[string]interface{}
+			accountCreate := map[string]interface{}{}
+			if accountModule.Username != nil && *accountModule.Username != "" {
+				accountCreate["username"] = *accountModule.Username
+			}
+			if accountModule.Pass != nil && *accountModule.Pass != "" {
+				accountCreate["`pass`"] = *accountModule.Pass
+			}
+			if accountModule.Hash != nil && *accountModule.Hash != "" {
+				accountCreate["hash"] = *accountModule.Hash
+			}
+			if accountModule.RoleId != nil && *accountModule.RoleId != 0 {
+				accountCreate["role_id"] = *accountModule.RoleId
+			}
+			if accountModule.Email != nil {
+				accountCreate["email"] = *accountModule.Email
+			}
+			if accountModule.ExpireTime != nil && *accountModule.ExpireTime != 0 {
+				accountCreate["expire_time"] = *accountModule.ExpireTime
+			}
+			if accountModule.Deleted != nil {
+				accountCreate["deleted"] = *accountModule.Deleted
+			}
+			if accountModule.Quota != nil {
+				accountCreate["quota"] = *accountModule.Quota
+			}
+			if accountModule.Download != nil {
+				accountCreate["download"] = *accountModule.Download
+			}
+			if accountModule.Upload != nil {
+				accountCreate["upload"] = *accountModule.Upload
+			}
+			if len(accountCreate) > 0 {
+				data = append(data, accountCreate)
+				buildInsert, values, err := builder.BuildInsert("account", data)
+				if err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
+				if _, err = db.Exec(buildInsert, values...); err != nil {
+					logrus.Errorln(err.Error())
+					return errors.New(constant.SysError)
+				}
 			}
 		}
 	}

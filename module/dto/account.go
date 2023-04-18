@@ -59,10 +59,6 @@ type HysteriaAutoDto struct {
 	Payload *string `json:"payload" form:"payload" validate:"required"`
 }
 
-type ImportAccountDto struct {
-	Cover uint `json:"cover" form:"cover" validate:"omitempty,oneof=0 1"` // 是否通过用户名覆盖用户信息
-}
-
 type CaptureDto struct {
 	CaptchaId   *string `json:"captchaId" form:"captchaId" validate:"required"`
 	CaptchaCode *string `json:"captchaCode" form:"captchaCode" validate:"required"`

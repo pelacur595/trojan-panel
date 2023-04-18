@@ -1,13 +1,11 @@
 package service
 
 import (
-	"encoding/csv"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"io"
 	"mime/multipart"
 	"sync"
 	"time"
@@ -178,8 +176,8 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 }
 
 func ExportNodeServer(accountId uint, accountUsername string) error {
-	fileName := fmt.Sprintf("nodeServerExport-%s.csv", time.Now().Format("20060102150405"))
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
+	fileName := fmt.Sprintf("nodeServerExport-%s.json", time.Now().Format("20060102150405"))
+	filePath := fmt.Sprintf("%s/%s", constant.ExportPath, fileName)
 
 	var fileTaskType uint = constant.TaskTypeNodeServerExport
 	var fileTaskStatus = constant.TaskDoing
@@ -207,20 +205,13 @@ func ExportNodeServer(accountId uint, accountUsername string) error {
 				Status: &fail,
 			}
 
-			var data [][]string
-			titles := []string{"ip", "name", "grpc_port", "create_time"}
-			data = append(data, titles)
 			// 查询所有需要导出数据
 			nodeServerExportVo, err := dao.SelectNodeServerAll()
 			if err != nil {
 				logrus.Errorf("ExportNodeServer SelectNodeServerAll err: %v", err)
 			}
-			for _, item := range nodeServerExportVo {
-				element := []string{item.Ip, item.Name, item.GrpcPort, item.CreateTime}
-				data = append(data, element)
-			}
-			if err = util.ExportCsv(filePath, data); err != nil {
-				logrus.Errorf("ExportNodeServer ExportCsv err: %v", err)
+			if err = util.ExportJson(filePath, nodeServerExportVo); err != nil {
+				logrus.Errorf("ExportAccount ExportJson err: %v", err)
 			} else {
 				fileTask.Status = &success
 			}
@@ -275,46 +266,18 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 				return
 			}
 
-			reader := csv.NewReader(simplifiedchinese.GBK.NewDecoder().Reader(src))
-			// 读取第一行表头
-			titlesRead, err := reader.Read()
-			if err != nil {
-				if err == io.EOF {
-					logrus.Errorf("ImportNodeServer row no enough err: %v", err)
-					csvRowNotEnough := constant.CsvRowNotEnough
-					fileTask.ErrMsg = &csvRowNotEnough
-					if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-						logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
-					}
-					return
-				}
-				logrus.Errorf("ImportNodeServer read csv titles err: %s", err.Error())
-			}
-			titles := []string{"ip", "name", "grpc_port"}
-			// 必须以titles作为表头
-			if !util.ArraysEqualPrefix(titles, titlesRead) {
-				logrus.Errorf("ImportNodeServer title prefix err: %v", err)
-				csvTitleError := constant.CsvTitleError
-				fileTask.ErrMsg = &csvTitleError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
-				}
+			var nodeServers []module.NodeServer
+			decoder := json.NewDecoder(src)
+			if err = decoder.Decode(&nodeServers); err != nil {
+				logrus.Errorf("ImportNodeServer decoder Decode err: %v", err)
 				return
 			}
-			// data 变量中存储CSV文件中的数据
-			var data [][]string
-			for {
-				record, err := reader.Read()
-				if err != nil {
-					if err == io.EOF {
-						break
-					}
-					logrus.Errorf("ImportNodeServer read csv record err: %s", err.Error())
-				}
-				data = append(data, record)
+			if len(nodeServers) == 0 {
+				logrus.Errorf("ImportNodeServer err: %s", constant.RowNotEnough)
+				return
 			}
 			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
-			for _, item := range data {
+			for _, item := range nodeServers {
 				if err = dao.CreateOrUpdateNodeServer(item, cover); err != nil {
 					continue
 				}
