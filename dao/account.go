@@ -260,6 +260,9 @@ func UpdateAccountProperty(oldUsername *string, pass *string, username *string, 
 	if email != nil && *email != "" {
 		update["email"] = *email
 	}
+	if username != nil && *username != "" {
+		update["username"] = *username
+	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
 		if err != nil {
