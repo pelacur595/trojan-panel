@@ -107,12 +107,12 @@ func UpdateAccountPass(token string, oldPass *string, newPass *string, username 
 	return nil
 }
 
-func UpdateAccountProperty(token string, oldUsername string, pass *string, username *string, email *string) error {
+func UpdateAccountProperty(token string, oldUsername *string, pass *string, username *string, email *string) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		account, err := SelectAccountByUsername(&oldUsername)
-		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", oldUsername, *pass)) {
+		account, err := SelectAccountByUsername(oldUsername)
+		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *oldUsername, *pass)) {
 			return errors.New(constant.OriPassError)
 		}
 

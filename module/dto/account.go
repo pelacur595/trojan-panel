@@ -10,9 +10,8 @@ type AccountDto struct {
 }
 
 type AccountUpdatePassDto struct {
-	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
-	NewPass  *string `json:"newPass" form:"newPass" validate:"required,min=6,max=20,validateStr"`
-	OldPass  *string `json:"oldPass" form:"oldPass" validate:"required,min=6,max=20,validateStr"`
+	NewPass *string `json:"newPass" form:"newPass" validate:"required,min=6,max=20,validateStr"`
+	OldPass *string `json:"oldPass" form:"oldPass" validate:"required,min=6,max=20,validateStr"`
 }
 
 type AccountUpdatePropertyDto struct {

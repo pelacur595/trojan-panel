@@ -211,8 +211,9 @@ func UpdateAccountPass(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
+	account := util.GetCurrentAccount(c)
 	if err := service.UpdateAccountPass(util.GetToken(c), accountUpdatePassDto.OldPass, accountUpdatePassDto.NewPass,
-		accountUpdatePassDto.Username); err != nil {
+		&account.Username); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
@@ -227,7 +228,7 @@ func UpdateAccountProperty(c *gin.Context) {
 		return
 	}
 	account := util.GetCurrentAccount(c)
-	if err := service.UpdateAccountProperty(util.GetToken(c), account.Username,
+	if err := service.UpdateAccountProperty(util.GetToken(c), &account.Username,
 		accountUpdatePropertyDto.Pass, accountUpdatePropertyDto.Username, accountUpdatePropertyDto.Email); err != nil {
 		vo.Fail(err.Error(), c)
 		return
