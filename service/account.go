@@ -116,7 +116,7 @@ func UpdateAccountProperty(token string, oldUsername *string, pass *string, user
 			return errors.New(constant.OriPassError)
 		}
 
-		if pass != nil && *pass != "" {
+		if pass != nil && *pass != "" && username != nil && *username != "" {
 			if err = RemoveAccount(token, *account.Pass); err != nil {
 				return err
 			}

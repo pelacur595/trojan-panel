@@ -248,8 +248,7 @@ func UpdateAccountPass(oldPass *string, newPass *string, username *string) error
 }
 
 func UpdateAccountProperty(oldUsername *string, pass *string, username *string, email *string) error {
-	sha1String := util.Sha1String(fmt.Sprintf("%s%s", *oldUsername, *pass))
-	where := map[string]interface{}{"username": *oldUsername, "`pass`": sha1String}
+	where := map[string]interface{}{"username": *oldUsername}
 	update := map[string]interface{}{}
 	if username != nil && *username != "" {
 		update["username"] = *username
@@ -259,9 +258,6 @@ func UpdateAccountProperty(oldUsername *string, pass *string, username *string, 
 	}
 	if email != nil && *email != "" {
 		update["email"] = *email
-	}
-	if username != nil && *username != "" {
-		update["username"] = *username
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("account", where, update)
