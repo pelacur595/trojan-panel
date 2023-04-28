@@ -116,8 +116,10 @@ func UpdateAccountProperty(token string, oldUsername *string, pass *string, user
 			return errors.New(constant.OriPassError)
 		}
 
-		if err = RemoveAccount(token, *account.Pass); err != nil {
-			return err
+		if pass != nil && *pass != "" {
+			if err = RemoveAccount(token, *account.Pass); err != nil {
+				return err
+			}
 		}
 
 		if err := dao.UpdateAccountProperty(oldUsername, pass, username, email); err != nil {
