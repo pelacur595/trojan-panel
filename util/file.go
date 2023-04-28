@@ -97,7 +97,7 @@ func InitFile() {
 	exportAccountTemplate := constant.ExportAccountTemplate
 	if !Exists(exportAccountTemplate) {
 		var accountTemplate []map[string]any
-		accountTemplate = append(accountTemplate, map[string]any{"username": "example", "pass": "example", "hash": "example", "role_id": 3, "email": "test@example.com", "expire_time": 4078656000000, "deleted": 0, "quota": -1, "download": 0, "upload": 0})
+		accountTemplate = append(accountTemplate, map[string]any{"username": "example", "pass": "example", "hash": "example", "role_id": 3, "email": "test@example.com", "expire_time": int64(4078656000000), "deleted": 0, "quota": -1, "download": 0, "upload": 0})
 		if err := ExportJson(exportAccountTemplate, accountTemplate); err != nil {
 			logrus.Errorf("创建AccountTemplate.json异常 err: %v", err)
 			panic(err)
