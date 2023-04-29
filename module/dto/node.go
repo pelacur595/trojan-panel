@@ -14,7 +14,7 @@ type NodeCreateDto struct {
 	NodeServerId *uint   `json:"nodeServerId" form:"nodeServerId" validate:"required,gt=0"`
 	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
+	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
@@ -46,7 +46,7 @@ type NodeUpdateDto struct {
 	NodeSubId    *uint   `json:"nodeSubId" form:"nodeSubId" validate:"required,gte=0"`
 	NodeTypeId   *uint   `json:"nodeTypeId" form:"nodeTypeId" validate:"required,gt=0"`
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
-	Domain       *string `json:"domain" form:"domain" validate:"required,fqdn,min=4,max=64"`
+	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
