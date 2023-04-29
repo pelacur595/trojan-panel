@@ -35,8 +35,7 @@ const (
 	FileFormatError string = "文件格式不支持"
 	FileUploadError string = "文件上传失败"
 
-	CsvRowNotEnough string = "数据为空"
-	CsvTitleError   string = "表头不正确"
+	RowNotEnough string = "数据为空"
 
 	SystemEmailError string = "系统邮箱未设置"
 

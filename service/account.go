@@ -1,14 +1,12 @@
 package service
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
-	"io"
 	"mime/multipart"
 	"sync"
 	"time"
@@ -89,20 +87,42 @@ func SelectAccountByUsername(username *string) (*module.Account, error) {
 	return dao.SelectAccountByUsername(username)
 }
 
-func UpdateAccountProfile(token string, oldPass *string, newPass *string, username *string, email *string) error {
+func UpdateAccountPass(token string, oldPass *string, newPass *string, username *string) error {
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
-		if oldPass != nil && *oldPass != "" && newPass != nil && *newPass != "" {
-			password, err := dao.SelectConnectPassword(nil, username)
-			if err != nil {
-				return err
-			}
-			if err = RemoveAccount(token, password); err != nil {
+		account, err := SelectAccountByUsername(username)
+		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
+			return errors.New(constant.OriPassError)
+		}
+
+		if err = RemoveAccount(token, *account.Pass); err != nil {
+			return err
+		}
+
+		if err := dao.UpdateAccountPass(oldPass, newPass, username); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func UpdateAccountProperty(token string, oldUsername *string, pass *string, username *string, email *string) error {
+	var mutex sync.Mutex
+	defer mutex.Unlock()
+	if mutex.TryLock() {
+		account, err := SelectAccountByUsername(oldUsername)
+		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *oldUsername, *pass)) {
+			return errors.New(constant.OriPassError)
+		}
+
+		if pass != nil && *pass != "" && username != nil && *username != "" {
+			if err = RemoveAccount(token, *account.Pass); err != nil {
 				return err
 			}
 		}
-		if err := dao.UpdateAccountProfile(oldPass, newPass, username, email); err != nil {
+
+		if err := dao.UpdateAccountProperty(oldUsername, pass, username, email); err != nil {
 			return err
 		}
 	}
@@ -492,8 +512,8 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 }
 
 func ExportAccount(accountId uint, accountUsername string) error {
-	fileName := fmt.Sprintf("accountExport-%s.csv", time.Now().Format("20060102150405"))
-	filePath := fmt.Sprintf("%s/%s", constant.ExcelPath, fileName)
+	fileName := fmt.Sprintf("accountExport-%s.json", time.Now().Format("20060102150405"))
+	filePath := fmt.Sprintf("%s/%s", constant.ExportPath, fileName)
 
 	var fileTaskType uint = constant.TaskTypeAccountExport
 	var fileTaskStatus = constant.TaskDoing
@@ -521,21 +541,13 @@ func ExportAccount(accountId uint, accountUsername string) error {
 				Status: &fail,
 			}
 
-			var data [][]string
-			titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload", "create_time"}
-			data = append(data, titles)
 			// 查询所有需要导出数据
 			accountExportVo, err := dao.SelectAccountAll()
 			if err != nil {
 				logrus.Errorf("ExportAccount SelectAccountAll err: %v", err)
 			}
-			for _, item := range accountExportVo {
-				element := []string{item.Username, item.Pass, item.Hash, item.RoleId, item.Email, item.ExpireTime,
-					item.Deleted, item.Quota, item.Download, item.Upload, item.CreateTime}
-				data = append(data, element)
-			}
-			if err = util.ExportCsv(filePath, data); err != nil {
-				logrus.Errorf("ExportAccount ExportCsv err: %v", err)
+			if err = util.ExportJson(filePath, accountExportVo); err != nil {
+				logrus.Errorf("ExportAccount ExportJson err: %v", err)
 			} else {
 				fileTask.Status = &success
 			}
@@ -589,46 +601,18 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 				return
 			}
 
-			reader := csv.NewReader(src)
-			// 读取第一行表头
-			titlesRead, err := reader.Read()
-			if err != nil {
-				if err == io.EOF {
-					logrus.Errorf("ImportAccount row no enough err: %v", err)
-					csvRowNotEnough := constant.CsvRowNotEnough
-					fileTask.ErrMsg = &csvRowNotEnough
-					if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-						logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
-					}
-					return
-				}
-				logrus.Errorf("ImportAccount read csv titles err: %s", err.Error())
-			}
-			titles := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted", "quota", "download", "upload"}
-			// 必须以titles作为表头
-			if !util.ArraysEqualPrefix(titles, titlesRead) {
-				logrus.Errorf("ImportAccount title prefix err: %v", err)
-				csvTitleError := constant.CsvTitleError
-				fileTask.ErrMsg = &csvTitleError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
-				}
+			var accounts []module.Account
+			decoder := json.NewDecoder(src)
+			if err = decoder.Decode(&accounts); err != nil {
+				logrus.Errorf("ImportAccount decoder Decode err: %v", err)
 				return
 			}
-			// data 变量中存储CSV文件中的数据
-			var data [][]string
-			for {
-				record, err := reader.Read()
-				if err != nil {
-					if err == io.EOF {
-						break
-					}
-					logrus.Errorf("ImportAccount read csv record err: %s", err.Error())
-				}
-				data = append(data, record)
+			if len(accounts) == 0 {
+				logrus.Errorf("ImportAccount err: %s", constant.RowNotEnough)
+				return
 			}
 			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
-			for _, item := range data {
+			for _, item := range accounts {
 				if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
 					continue
 				}

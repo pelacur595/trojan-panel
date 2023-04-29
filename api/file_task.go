@@ -72,7 +72,7 @@ func DownloadFileTask(c *gin.Context) {
 	c.File(*fileTask.Path)
 }
 
-func DownloadCsvTemplate(c *gin.Context) {
+func DownloadTemplate(c *gin.Context) {
 	var templateRequiredIdDto dto.RequiredIdDto
 	_ = c.ShouldBindJSON(&templateRequiredIdDto)
 	if err := validate.Struct(&templateRequiredIdDto); err != nil {
@@ -82,12 +82,12 @@ func DownloadCsvTemplate(c *gin.Context) {
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("Content-Transfer-Encoding", "binary")
 	if *templateRequiredIdDto.Id == constant.TaskTypeAccountExport {
-		c.Header("Content-Disposition", "attachment; filename=AccountTemplate.csv")
-		c.File(constant.ExcelAccountTemplate)
+		c.Header("Content-Disposition", "attachment; filename=AccountTemplate.json")
+		c.File(constant.ExportAccountTemplate)
 		return
 	} else if *templateRequiredIdDto.Id == constant.TaskTypeNodeServerExport {
-		c.Header("Content-Disposition", "attachment; filename=NodeServerTemplate.csv")
-		c.File(constant.ExcelNodeServerTemplate)
+		c.Header("Content-Disposition", "attachment; filename=NodeServerTemplate.json")
+		c.File(constant.ExportNodeServerTemplate)
 		return
 	}
 	vo.Fail(constant.FileNotExist, c)

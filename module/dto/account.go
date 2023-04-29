@@ -9,11 +9,15 @@ type AccountDto struct {
 	Username *string `json:"username" form:"username" validate:"omitempty,min=0,max=20"`
 }
 
-type AccountUpdateProfileDto struct {
-	Username *string `json:"username" form:"username" validate:"required,min=6,max=20,validateStr"`
-	NewPass  *string `json:"newPass" form:"newPass" validate:"required,min=6,max=20,validateStr"`
-	OldPass  *string `json:"oldPass" form:"oldPass" validate:"required,min=6,max=20,validateStr"`
+type AccountUpdatePassDto struct {
+	NewPass *string `json:"newPass" form:"newPass" validate:"required,min=6,max=20,validateStr"`
+	OldPass *string `json:"oldPass" form:"oldPass" validate:"required,min=6,max=20,validateStr"`
+}
+
+type AccountUpdatePropertyDto struct {
+	Username *string `json:"username" form:"username" validate:"omitempty,min=6,max=20,validateStr"`
 	Email    *string `json:"email" form:"email" validate:"omitempty,validateEmail"`
+	Pass     *string `json:"pass" form:"pass" validate:"required,min=6,max=20,validateStr"`
 }
 
 type AccountCreateDto struct {
@@ -57,10 +61,6 @@ type AccountRegisterDto struct {
 
 type HysteriaAutoDto struct {
 	Payload *string `json:"payload" form:"payload" validate:"required"`
-}
-
-type ImportAccountDto struct {
-	Cover uint `json:"cover" form:"cover" validate:"omitempty,oneof=0 1"` // 是否通过用户名覆盖用户信息
 }
 
 type CaptureDto struct {

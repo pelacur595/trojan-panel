@@ -55,8 +55,10 @@ func Router(router *gin.Engine) {
 			account.GET("/selectAccountPage", api.SelectAccountPage)
 			// 通过id删除账户
 			account.POST("/deleteAccountById", api.DeleteAccountById)
-			// 修改个人信息
-			account.POST("/updateAccountProfile", api.UpdateAccountProfile)
+			// 修改密码
+			account.POST("/updateAccountPass", api.UpdateAccountPass)
+			// 修改用户名或者邮箱
+			account.POST("/updateAccountProperty", api.UpdateAccountProperty)
 			// 修改账户
 			account.POST("/updateAccountById", api.UpdateAccountById)
 			// 获取Clash订阅地址
@@ -152,7 +154,7 @@ func Router(router *gin.Engine) {
 			// 下载文件任务的文件
 			fileTask.POST("/downloadFileTask", api.DownloadFileTask)
 			// 获取文件模板
-			fileTask.POST("/downloadCsvTemplate", api.DownloadCsvTemplate)
+			fileTask.POST("/downloadTemplate", api.DownloadTemplate)
 		}
 	}
 }

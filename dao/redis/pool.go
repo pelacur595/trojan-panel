@@ -36,3 +36,11 @@ func InitRedis() {
 		},
 	}
 }
+
+func CloseRedis() {
+	if pool != nil {
+		if err := pool.Close(); err != nil {
+			logrus.Errorf("redis close err: %v", err)
+		}
+	}
+}
