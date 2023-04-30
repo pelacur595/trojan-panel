@@ -60,9 +60,10 @@ type NodeOneVo struct {
 }
 
 type XrayStreamSettingsEntity struct {
-	Network    string                             `json:"network"`
-	Security   string                             `json:"security"`
-	WsSettings XrayStreamSettingsWsSettingsEntity `json:"wsSettings"`
+	Network         string                                  `json:"network"`
+	Security        string                                  `json:"security"`
+	RealitySettings XrayStreamSettingsRealitySettingsEntity `json:"realitySettings"`
+	WsSettings      XrayStreamSettingsWsSettingsEntity      `json:"wsSettings"`
 }
 
 type XraySettingEntity struct {
@@ -76,6 +77,14 @@ type XrayFallback struct {
 	Path *string `json:"path"`
 	Dest any     `json:"dest"`
 	Xver *uint   `json:"xver"`
+}
+
+type XrayStreamSettingsRealitySettingsEntity struct {
+	Dest        string   `json:"dest"`
+	Xver        int      `json:"xver"`
+	ServerNames []string `json:"serverNames"`
+	PrivateKey  string   `json:"privateKey"`
+	ShortIds    []string `json:"shortIds"`
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {
