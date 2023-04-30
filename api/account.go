@@ -173,7 +173,8 @@ func SelectAccountPage(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	page, err := service.SelectAccountPage(accountPageDto.Username, accountPageDto.PageNum, accountPageDto.PageSize)
+	page, err := service.SelectAccountPage(accountPageDto.Username, accountPageDto.Deleted, accountPageDto.PageNum,
+		accountPageDto.PageSize)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return

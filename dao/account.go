@@ -111,7 +111,7 @@ func CountAccountByUsername(username *string) (int, error) {
 	return count, nil
 }
 
-func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
+func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
 	var (
 		total    uint
 		accounts []module.Account
@@ -121,6 +121,9 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 	var whereCount = map[string]interface{}{}
 	if queryUsername != nil && *queryUsername != "" {
 		whereCount["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
+	}
+	if deleted != nil {
+		whereCount["deleted"] = *deleted
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("account", whereCount, selectFieldsCount)
@@ -135,6 +138,9 @@ func SelectAccountPage(queryUsername *string, pageNum *uint, pageSize *uint) (*v
 		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryUsername != nil && *queryUsername != "" {
 		where["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
+	}
+	if deleted != nil {
+		where["deleted"] = *deleted
 	}
 	selectFields := []string{"id", "username", "role_id", "email", "expire_time", "deleted",
 		"quota", "upload", "download", "create_time"}
