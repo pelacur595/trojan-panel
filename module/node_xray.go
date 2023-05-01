@@ -7,6 +7,7 @@ type NodeXray struct {
 	Protocol       *string    `ddb:"protocol"`
 	XrayFlow       *string    `ddb:"xray_flow"`
 	XraySSMethod   *string    `ddb:"xray_ss_method"`
+	RealityPbk     *string    `ddb:"reality_pbk"`
 	Settings       *string    `ddb:"settings"`
 	StreamSettings *string    `ddb:"stream_settings"`
 	Tag            *string    `ddb:"tag"`

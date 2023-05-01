@@ -191,6 +191,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 				Protocol:       nodeCreateDto.XrayProtocol,
 				XrayFlow:       nodeCreateDto.XrayFlow,
 				XraySSMethod:   nodeCreateDto.XraySSMethod,
+				RealityPbk:     nodeCreateDto.RealityPbk,
 				Settings:       nodeCreateDto.XraySettings,
 				StreamSettings: nodeCreateDto.XrayStreamSettings,
 				Tag:            nodeCreateDto.XrayTag,

@@ -46,6 +46,9 @@ func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
 	if nodeXray.XraySSMethod != nil && *nodeXray.XraySSMethod != "" {
 		nodeXrayCreate["xray_ss_method"] = *nodeXray.XraySSMethod
 	}
+	if nodeXray.RealityPbk != nil && *nodeXray.RealityPbk != "" {
+		nodeXrayCreate["reality_pbk"] = *nodeXray.RealityPbk
+	}
 	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 		nodeXrayCreate["settings"] = *nodeXray.Settings
 	}
@@ -95,6 +98,9 @@ func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
 	}
 	if nodeXray.XraySSMethod != nil && *nodeXray.XraySSMethod != "" {
 		update["xray_ss_method"] = *nodeXray.XraySSMethod
+	}
+	if nodeXray.RealityPbk != nil && *nodeXray.RealityPbk != "" {
+		update["reality_pbk"] = *nodeXray.RealityPbk
 	}
 	if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 		update["settings"] = *nodeXray.Settings

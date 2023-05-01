@@ -39,6 +39,7 @@ type NodeOneVo struct {
 	XrayProtocol             string                   `json:"xrayProtocol"`
 	XrayFlow                 string                   `json:"xrayFlow"`
 	XraySSMethod             string                   `json:"xraySSMethod"`
+	RealityPbk               string                   `json:"realityPbk"`
 	XraySettings             string                   `json:"xraySettings"`
 	XraySettingEntity        XraySettingEntity        `json:"xraySettingsEntity"`
 	XrayStreamSettingsEntity XrayStreamSettingsEntity `json:"xrayStreamSettingsEntity"`

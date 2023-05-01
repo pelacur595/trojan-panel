@@ -17,9 +17,10 @@ type NodeCreateDto struct {
 	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
+	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
 	XraySSMethod       *string `json:"xraySSMethod" form:"xraySSMethod" validate:"omitempty,min=0,max=32"`
-	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
+	RealityPbk         *string `json:"realityPbk" form:"realityPbk" validate:"omitempty,min=0,max=64"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=1024"`
 	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=1024"`
 	XrayTag            *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
@@ -49,9 +50,10 @@ type NodeUpdateDto struct {
 	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
 
+	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
 	XraySSMethod       *string `json:"xraySSMethod" form:"xraySSMethod" validate:"omitempty,min=0,max=32"`
-	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
+	RealityPbk         *string `json:"realityPbk" form:"realityPbk" validate:"omitempty,min=0,max=64"`
 	XraySettings       *string `json:"xraySettings" form:"xraySettings" validate:"omitempty,min=0,max=1024"`
 	XrayStreamSettings *string `json:"xrayStreamSettings" form:"xrayStreamSettings" validate:"omitempty,min=0,max=1024"`
 	XrayTag            *string `json:"xrayTag" form:"xrayTag" validate:"omitempty,min=0,max=64"`
