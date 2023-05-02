@@ -3,8 +3,22 @@ package bo
 type StreamSettings struct {
 	Network         string          `json:"network"`
 	Security        string          `json:"security"`
+	TlsSettings     TlsSettings     `json:"tlsSettings"`
 	RealitySettings RealitySettings `json:"realitySettings"`
 	WsSettings      WsSettings      `json:"wsSettings"`
+}
+
+type TlsSettings struct {
+	Certificates  []Certificate `json:"certificates"`
+	ServerName    string        `json:"serverName"`
+	Alpn          []string      `json:"alpn"`
+	AllowInsecure bool          `json:"allowInsecure"`
+	Fingerprint   string        `json:"fingerprint"`
+}
+
+type Certificate struct {
+	CertificateFile string `json:"certificateFile"`
+	KeyFile         string `json:"keyFile"`
 }
 
 type RealitySettings struct {

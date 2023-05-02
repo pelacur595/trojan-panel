@@ -648,6 +648,13 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 				headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
 				if *nodeXray.Protocol == "vless" {
 					if streamSettings.Security == "reality" {
+						headBuilder.WriteString(fmt.Sprintf("&sni=%s", streamSettings.TlsSettings.ServerName))
+						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.TlsSettings.Fingerprint))
+						if len(streamSettings.TlsSettings.Alpn) > 0 {
+							alpns := strings.Replace(strings.Trim(fmt.Sprint(streamSettings.TlsSettings.Alpn), "[]"), " ", ",", -1)
+							headBuilder.WriteString(fmt.Sprintf("&alpn=%s", alpns))
+						}
+					} else if streamSettings.Security == "reality" {
 						headBuilder.WriteString(fmt.Sprintf("&pbk=%s", *nodeXray.RealityPbk))
 						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.RealitySettings.Fingerprint))
 						if streamSettings.RealitySettings.SpiderX != "" {
