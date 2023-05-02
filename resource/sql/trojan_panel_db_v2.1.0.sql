@@ -330,6 +330,7 @@ CREATE TABLE `node_xray` (
   `protocol` varchar(32) NOT NULL DEFAULT '' COMMENT '协议名称',
   `xray_flow` varchar(32) NOT NULL DEFAULT '' COMMENT 'Xray流控',
   `xray_ss_method` varchar(32) NOT NULL DEFAULT 'aes-256-gcm' COMMENT 'Xray Shadowsocks加密方式',
+  `reality_pbk` varchar(64) NOT NULL DEFAULT '' COMMENT 'reality的公钥',
   `settings` varchar(1024) NOT NULL DEFAULT '' COMMENT 'settings',
   `stream_settings` varchar(1024) NOT NULL DEFAULT '' COMMENT 'streamSettings',
   `tag` varchar(64) NOT NULL DEFAULT '' COMMENT 'tag',
