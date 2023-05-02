@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
@@ -132,58 +133,58 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		return err
 	}
 
-	//systemName := constant.SystemName
-	//systemConfig, err := SelectSystemByName(&systemName)
-	//if err != nil {
-	//	return err
-	//}
+	systemName := constant.SystemName
+	systemConfig, err := SelectSystemByName(&systemName)
+	if err != nil {
+		return err
+	}
 
 	var nodeId uint
 	var mutex sync.Mutex
 	defer mutex.Unlock()
 	if mutex.TryLock() {
 		// Grpc添加节点
-		//if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
-		//	NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
-		//	Port:       uint64(*nodeCreateDto.Port),
-		//	Domain:     *nodeCreateDto.Domain,
-		//
-		//	//  Xray
-		//	XrayTemplate:       systemConfig.XrayTemplate,
-		//	XrayFlow:           *nodeCreateDto.XrayFlow,
-		//	XraySSMethod:       *nodeCreateDto.XraySSMethod,
-		//	XrayProtocol:       *nodeCreateDto.XrayProtocol,
-		//	XraySettings:       *nodeCreateDto.XraySettings,
-		//	XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
-		//	XrayTag:            *nodeCreateDto.XrayTag,
-		//	XraySniffing:       *nodeCreateDto.XraySniffing,
-		//	XrayAllocate:       *nodeCreateDto.XrayAllocate,
-		//	// Trojan Go
-		//	TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
-		//	TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
-		//	TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
-		//	TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
-		//	TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
-		//	TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
-		//	TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
-		//	TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
-		//	// Hysteria
-		//	HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
-		//	HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
-		//	HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
-		//}); err != nil {
-		//	go func() {
-		//		for {
-		//			select {
-		//			case <-time.After(8 * time.Second):
-		//				_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
-		//				return
-		//			}
-		//		}
-		//	}()
-		//
-		//	return err
-		//}
+		if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
+			NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
+			Port:       uint64(*nodeCreateDto.Port),
+			Domain:     *nodeCreateDto.Domain,
+
+			//  Xray
+			XrayTemplate:       systemConfig.XrayTemplate,
+			XrayFlow:           *nodeCreateDto.XrayFlow,
+			XraySSMethod:       *nodeCreateDto.XraySSMethod,
+			XrayProtocol:       *nodeCreateDto.XrayProtocol,
+			XraySettings:       *nodeCreateDto.XraySettings,
+			XrayStreamSettings: *nodeCreateDto.XrayStreamSettings,
+			XrayTag:            *nodeCreateDto.XrayTag,
+			XraySniffing:       *nodeCreateDto.XraySniffing,
+			XrayAllocate:       *nodeCreateDto.XrayAllocate,
+			// Trojan Go
+			TrojanGoSni:             *nodeCreateDto.TrojanGoSni,
+			TrojanGoMuxEnable:       uint64(*nodeCreateDto.TrojanGoMuxEnable),
+			TrojanGoWebsocketEnable: uint64(*nodeCreateDto.TrojanGoWebsocketEnable),
+			TrojanGoWebsocketPath:   *nodeCreateDto.TrojanGoWebsocketPath,
+			TrojanGoWebsocketHost:   *nodeCreateDto.TrojanGoWebsocketHost,
+			TrojanGoSSEnable:        uint64(*nodeCreateDto.TrojanGoSsEnable),
+			TrojanGoSSMethod:        *nodeCreateDto.TrojanGoSsMethod,
+			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
+			// Hysteria
+			HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
+			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
+			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
+		}); err != nil {
+			go func() {
+				for {
+					select {
+					case <-time.After(8 * time.Second):
+						_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
+						return
+					}
+				}
+			}()
+
+			return err
+		}
 		// 数据插入到数据库中
 		if *nodeCreateDto.NodeTypeId == constant.Xray {
 			nodeXray := module.NodeXray{
