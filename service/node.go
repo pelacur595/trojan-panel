@@ -653,7 +653,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.TlsSettings.Fingerprint))
 						if len(streamSettings.TlsSettings.Alpn) > 0 {
 							alpns := strings.Replace(strings.Trim(fmt.Sprint(streamSettings.TlsSettings.Alpn), "[]"), " ", ",", -1)
-							headBuilder.WriteString(fmt.Sprintf("&alpn=%s", alpns))
+							headBuilder.WriteString(fmt.Sprintf("&alpn=%s", url.PathEscape(alpns)))
 						}
 					} else if streamSettings.Security == "reality" {
 						headBuilder.WriteString(fmt.Sprintf("&pbk=%s", *nodeXray.RealityPbk))
