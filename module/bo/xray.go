@@ -1,9 +1,20 @@
 package bo
 
 type StreamSettings struct {
-	Network    string     `json:"network"`
-	Security   string     `json:"security"`
-	WsSettings WsSettings `json:"wsSettings"`
+	Network         string          `json:"network"`
+	Security        string          `json:"security"`
+	RealitySettings RealitySettings `json:"realitySettings"`
+	WsSettings      WsSettings      `json:"wsSettings"`
+}
+
+type RealitySettings struct {
+	Dest        string   `json:"dest"`
+	Xver        int      `json:"xver"`
+	ServerNames []string `json:"serverNames"`
+	Fingerprint string   `json:"fingerprint"`
+	PrivateKey  string   `json:"privateKey"`
+	ShortIds    []string `json:"shortIds"`
+	SpiderX     string   `json:"spiderX"`
 }
 
 type WsSettings struct {
