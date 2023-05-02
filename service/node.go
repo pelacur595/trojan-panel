@@ -648,7 +648,7 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 			if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan" {
 				headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
 				if *nodeXray.Protocol == "vless" {
-					if streamSettings.Security == "reality" {
+					if streamSettings.Security == "tls" {
 						headBuilder.WriteString(fmt.Sprintf("&sni=%s", streamSettings.TlsSettings.ServerName))
 						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.TlsSettings.Fingerprint))
 						if len(streamSettings.TlsSettings.Alpn) > 0 {
