@@ -63,6 +63,7 @@ type NodeOneVo struct {
 type XrayStreamSettingsEntity struct {
 	Network         string                                  `json:"network"`
 	Security        string                                  `json:"security"`
+	TlsSettings     XrayStreamSettingsTlsSettingsEntity     `json:"tlsSettings"`
 	RealitySettings XrayStreamSettingsRealitySettingsEntity `json:"realitySettings"`
 	WsSettings      XrayStreamSettingsWsSettingsEntity      `json:"wsSettings"`
 }
@@ -80,12 +81,21 @@ type XrayFallback struct {
 	Xver *uint   `json:"xver"`
 }
 
+type XrayStreamSettingsTlsSettingsEntity struct {
+	ServerName    string   `json:"serverName"`
+	Alpn          []string `json:"alpn"`
+	AllowInsecure bool     `json:"allowInsecure"`
+	Fingerprint   string   `json:"fingerprint"`
+}
+
 type XrayStreamSettingsRealitySettingsEntity struct {
 	Dest        string   `json:"dest"`
 	Xver        int      `json:"xver"`
 	ServerNames []string `json:"serverNames"`
+	Fingerprint string   `json:"fingerprint"`
 	PrivateKey  string   `json:"privateKey"`
 	ShortIds    []string `json:"shortIds"`
+	SpiderX     string   `json:"spiderX"`
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {
