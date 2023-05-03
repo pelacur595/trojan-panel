@@ -676,8 +676,8 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 				if streamSettings.WsSettings.Path != "" {
 					headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
 				}
-				if streamSettings.WsSettings.Host != "" {
-					headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Host))
+				if streamSettings.WsSettings.Headers.Host != "" {
+					headBuilder.WriteString(fmt.Sprintf("&host=%s", streamSettings.WsSettings.Headers.Host))
 				}
 			}
 		} else if *nodeXray.Protocol == "shadowsocks" {

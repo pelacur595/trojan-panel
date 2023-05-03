@@ -394,7 +394,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				}
 				if streamSettings.Network == "ws" {
 					vless.WsOpts.Path = streamSettings.WsSettings.Path
-					vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+					vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vless)
 				proxies = append(proxies, item.Name)
@@ -420,7 +420,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				}
 				if streamSettings.Network == "ws" {
 					vmess.WsOpts.Path = streamSettings.WsSettings.Path
-					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 				proxies = append(proxies, item.Name)
@@ -435,7 +435,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				trojan.Network = streamSettings.Network
 				if streamSettings.Network == "ws" {
 					trojan.WsOpts.Path = streamSettings.WsSettings.Path
-					trojan.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Host
+					trojan.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
 				proxies = append(proxies, item.Name)

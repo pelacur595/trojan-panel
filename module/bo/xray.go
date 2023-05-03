@@ -32,8 +32,12 @@ type RealitySettings struct {
 }
 
 type WsSettings struct {
-	Path string `json:"path"`
-	Host string `json:"host"`
+	Path    string         `json:"path"`
+	Headers WsSettingsHost `json:"headers"`
+}
+
+type WsSettingsHost struct {
+	Host string `json:"Host"`
 }
 
 type Settings struct {
