@@ -99,5 +99,6 @@ type XrayStreamSettingsRealitySettingsEntity struct {
 }
 
 type XrayStreamSettingsWsSettingsEntity struct {
-	Path string `json:"path"`
+	Path    string            `json:"path"`
+	Headers map[string]string `json:"headers"`
 }
