@@ -84,6 +84,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 				return nil, err
 			}
 			nodeOneVo.HysteriaProtocol = *nodeHysteria.Protocol
+			nodeOneVo.HysteriaObfs = *nodeHysteria.Obfs
 			nodeOneVo.HysteriaUpMbps = *nodeHysteria.UpMbps
 			nodeOneVo.HysteriaDownMbps = *nodeHysteria.DownMbps
 		}

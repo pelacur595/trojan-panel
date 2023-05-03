@@ -12,7 +12,7 @@ import (
 func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 	var nodeHysteria module.NodeHysteria
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "protocol", "up_mbps", "down_mbps"}
+	selectFields := []string{"id", "protocol", "obfs", "up_mbps", "down_mbps"}
 	buildSelect, values, err := builder.BuildSelect("node_hysteria", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -38,6 +38,9 @@ func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
 	nodeHysteriaCreate := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {
 		nodeHysteriaCreate["protocol"] = *nodeHysteria.Protocol
+	}
+	if nodeHysteria.Obfs != nil && *nodeHysteria.Obfs != "" {
+		nodeHysteriaCreate["obfs"] = *nodeHysteria.Obfs
 	}
 	if nodeHysteria.UpMbps != nil {
 		nodeHysteriaCreate["up_mbps"] = *nodeHysteria.UpMbps
@@ -73,6 +76,9 @@ func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
 	update := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {
 		update["protocol"] = *nodeHysteria.Protocol
+	}
+	if nodeHysteria.Obfs != nil && *nodeHysteria.Obfs != "" {
+		update["obfs"] = *nodeHysteria.Obfs
 	}
 	if nodeHysteria.UpMbps != nil {
 		update["up_mbps"] = *nodeHysteria.UpMbps

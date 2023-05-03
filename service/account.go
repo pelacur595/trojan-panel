@@ -491,6 +491,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			hysteria.Port = item.Port
 			hysteria.Type = constant.ProtocolHysteria
 			hysteria.AuthStr = pass
+			hysteria.Obfs = *nodeHysteria.Obfs
 			hysteria.Protocol = *nodeHysteria.Protocol
 			hysteria.Up = *nodeHysteria.UpMbps
 			hysteria.Down = *nodeHysteria.DownMbps
