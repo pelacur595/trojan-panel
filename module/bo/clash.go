@@ -5,23 +5,20 @@ type ClashConfigInterface interface {
 }
 
 type Vless struct {
-	Name           string `yaml:"name"`
-	Type           string `yaml:"type"`
-	Server         string `yaml:"server"`
-	Port           uint   `yaml:"port"`
-	Uuid           string `yaml:"uuid"`
-	Network        string `yaml:"network"`
-	Tls            bool   `yaml:"tls"`
-	Udp            bool   `yaml:"udp"`
-	Flow           string `yaml:"flow"`
-	SkipCertVerify bool   `yaml:"skip-cert-verify"`
-
-	ServerName  string      `yaml:"servername"`
-	RealityOpts RealityOpts `yaml:"reality-opts"`
-
-	ClientFingerprint string `yaml:"client-fingerprint"`
-
-	WsOpts WsOpts `yaml:"ws-opts"`
+	Name              string      `yaml:"name"`
+	Type              string      `yaml:"type"`
+	Server            string      `yaml:"server"`
+	Port              uint        `yaml:"port"`
+	Uuid              string      `yaml:"uuid"`
+	Network           string      `yaml:"network"`
+	Tls               bool        `yaml:"tls"`
+	Udp               bool        `yaml:"udp"`
+	Flow              string      `yaml:"flow"`
+	ClientFingerprint string      `yaml:"client-fingerprint"`
+	ServerName        string      `yaml:"servername"`
+	SkipCertVerify    bool        `yaml:"skip-cert-verify"`
+	RealityOpts       RealityOpts `yaml:"reality-opts"`
+	WsOpts            WsOpts      `yaml:"ws-opts"`
 }
 
 type RealityOpts struct {
@@ -37,8 +34,8 @@ type Vmess struct {
 	Uuid              string `yaml:"uuid"`
 	AlterId           uint   `yaml:"alterId"`
 	Cipher            string `yaml:"cipher"`
-	Tls               bool   `yaml:"tls"`
 	Udp               bool   `yaml:"udp"`
+	Tls               bool   `yaml:"tls"`
 	ClientFingerprint string `yaml:"client-fingerprint"`
 	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
 	ServerName        string `yaml:"servername"`
@@ -47,30 +44,33 @@ type Vmess struct {
 }
 
 type Trojan struct {
-	Name     string `yaml:"name"`
-	Server   string `yaml:"server"`
-	Port     uint   `yaml:"port"`
-	Type     string `yaml:"type"`
-	Password string `yaml:"password"`
-	Udp      bool   `yaml:"udp"`
-	Network  string `yaml:"network"`
-	WsOpts   WsOpts `yaml:"ws-opts"`
+	Name              string `yaml:"name"`
+	Type              string `yaml:"type"`
+	Server            string `yaml:"server"`
+	Port              uint   `yaml:"port"`
+	Password          string `yaml:"password"`
+	ClientFingerprint string `yaml:"client-fingerprint"`
+	Udp               bool   `yaml:"udp"`
+	Sni               string `yaml:"sni"`
+	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
+	WsOpts            WsOpts `yaml:"ws-opts"`
 }
 
 type Shadowsocks struct {
 	Name     string `yaml:"name"`
+	Type     string `yaml:"type"`
 	Server   string `yaml:"server"`
 	Port     uint   `yaml:"port"`
-	Type     string `yaml:"type"`
 	Cipher   string `yaml:"cipher"`
 	Password string `yaml:"password"`
+	Udp      bool   `yaml:"udp"`
 }
 
 type TrojanGo struct {
 	Name     string `yaml:"name"`
+	Type     string `yaml:"type"`
 	Server   string `yaml:"server"`
 	Port     uint   `yaml:"port"`
-	Type     string `yaml:"type"`
 	Password string `yaml:"password"`
 	SNI      string `yaml:"sni"`
 	Udp      bool   `yaml:"udp"`
@@ -80,9 +80,9 @@ type TrojanGo struct {
 
 type Hysteria struct {
 	Name     string `yaml:"name"`
+	Type     string `yaml:"type"`
 	Server   string `yaml:"server"`
 	Port     uint   `yaml:"port"`
-	Type     string `yaml:"type"`
 	AuthStr  string `yaml:"auth_str"`
 	Obfs     string `yaml:"obfs"`
 	Protocol string `yaml:"protocol"`

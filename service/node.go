@@ -48,6 +48,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			nodeOneVo.XrayProtocol = *nodeXray.Protocol
 			nodeOneVo.XrayFlow = *nodeXray.XrayFlow
 			nodeOneVo.XraySSMethod = *nodeXray.XraySSMethod
+			nodeOneVo.RealityPbk = *nodeXray.RealityPbk
 			xraySettingEntity := vo.XraySettingEntity{}
 			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 				if err = json.Unmarshal([]byte(*nodeXray.Settings), &xraySettingEntity); err != nil {

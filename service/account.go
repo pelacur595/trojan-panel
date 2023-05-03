@@ -389,8 +389,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				vless.Udp = true
 				vless.Flow = item.XrayFlow
 				if streamSettings.Security == "tls" {
-					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					vless.ServerName = streamSettings.TlsSettings.ServerName
+					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 				} else if streamSettings.Security == "reality" {
 					vless.ClientFingerprint = streamSettings.RealitySettings.Fingerprint
 					if len(streamSettings.RealitySettings.ServerNames) > 0 {
@@ -420,12 +421,12 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				} else {
 					vmess.Cipher = "none"
 				}
-				vmess.Tls = true
 				vmess.Udp = true
+				vmess.Tls = true
 				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
-					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vmess.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vmess.ServerName = streamSettings.TlsSettings.ServerName
 				}
 				if streamSettings.Network == "ws" {
@@ -437,12 +438,16 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolTrojan:
 				trojan := bo.Trojan{}
 				trojan.Name = item.Name
+				trojan.Type = constant.ProtocolTrojan
 				trojan.Server = item.Domain
 				trojan.Port = item.Port
-				trojan.Type = constant.ProtocolTrojan
 				trojan.Password = pass
 				trojan.Udp = true
-				trojan.Network = streamSettings.Network
+				if streamSettings.Security == "tls" {
+					trojan.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					trojan.Sni = streamSettings.TlsSettings.ServerName
+					trojan.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+				}
 				if streamSettings.Network == "ws" {
 					trojan.WsOpts.Path = streamSettings.WsSettings.Path
 					trojan.WsOpts.Headers.Host = streamSettings.WsSettings.Headers.Host
@@ -452,11 +457,12 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolShadowsocks:
 				shadowsocks := bo.Shadowsocks{}
 				shadowsocks.Name = item.Name
+				shadowsocks.Type = constant.ProtocolShadowsocks
 				shadowsocks.Server = item.Domain
 				shadowsocks.Port = item.Port
-				shadowsocks.Type = constant.ProtocolShadowsocks
 				shadowsocks.Cipher = item.XraySSMethod
 				shadowsocks.Password = pass
+				shadowsocks.Udp = true
 				ClashConfigInterface = append(ClashConfigInterface, shadowsocks)
 				proxies = append(proxies, item.Name)
 			}
@@ -467,12 +473,12 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			trojanGo := bo.TrojanGo{}
 			trojanGo.Name = item.Name
+			trojanGo.Type = constant.ProtocolTrojan
 			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
-			trojanGo.Type = constant.ProtocolTrojan
 			trojanGo.Password = pass
-			trojanGo.Udp = true
 			trojanGo.SNI = *nodeTrojanGo.Sni
+			trojanGo.Udp = true
 			if *nodeTrojanGo.WebsocketEnable == 1 {
 				trojanGo.Network = "ws"
 				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath
@@ -487,9 +493,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			hysteria := bo.Hysteria{}
 			hysteria.Name = item.Name
+			hysteria.Type = constant.ProtocolHysteria
 			hysteria.Server = item.Domain
 			hysteria.Port = item.Port
-			hysteria.Type = constant.ProtocolHysteria
 			hysteria.AuthStr = pass
 			hysteria.Obfs = *nodeHysteria.Obfs
 			hysteria.Protocol = *nodeHysteria.Protocol
