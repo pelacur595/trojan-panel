@@ -55,6 +55,7 @@ type NodeOneVo struct {
 	TrojanGoSsMethod         string                   `json:"trojanGoSsMethod"`
 	TrojanGoSsPassword       string                   `json:"trojanGoSsPassword"`
 	HysteriaProtocol         string                   `json:"hysteriaProtocol"`
+	HysteriaObfs             string                   `json:"hysteriaObfs"`
 	HysteriaUpMbps           int                      `json:"hysteriaUpMbps"`
 	HysteriaDownMbps         int                      `json:"hysteriaDownMbps"`
 	NaiveProxyUsername       string                   `json:"naiveProxyUsername"`

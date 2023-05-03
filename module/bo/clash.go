@@ -5,31 +5,45 @@ type ClashConfigInterface interface {
 }
 
 type Vless struct {
-	Name   string `yaml:"name"`
-	Server string `yaml:"server"`
-	Port   uint   `yaml:"port"`
-	Type   string `yaml:"type"`
-	Uuid   string `yaml:"uuid"`
-	Flow   string `yaml:"flow"`
+	Name           string `yaml:"name"`
+	Type           string `yaml:"type"`
+	Server         string `yaml:"server"`
+	Port           uint   `yaml:"port"`
+	Uuid           string `yaml:"uuid"`
+	Network        string `yaml:"network"`
+	Tls            bool   `yaml:"tls"`
+	Udp            bool   `yaml:"udp"`
+	Flow           string `yaml:"flow"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
 
-	Udp     bool   `yaml:"udp"`
-	Tls     bool   `yaml:"tls"`
-	Network string `yaml:"network"`
-	WsOpts  WsOpts `yaml:"ws-opts"`
+	ServerName  string      `yaml:"servername"`
+	RealityOpts RealityOpts `yaml:"reality-opts"`
+
+	ClientFingerprint string `yaml:"client-fingerprint"`
+
+	WsOpts WsOpts `yaml:"ws-opts"`
+}
+
+type RealityOpts struct {
+	PublicKey string `yaml:"public-key"`
+	ShortId   string `yaml:"short-id"`
 }
 
 type Vmess struct {
-	Name    string `yaml:"name"`
-	Server  string `yaml:"server"`
-	Port    uint   `yaml:"port"`
-	Type    string `yaml:"type"`
-	Uuid    string `yaml:"uuid"`
-	AlterId uint   `yaml:"alterId"`
-	Cipher  string `yaml:"cipher"`
-	Udp     bool   `yaml:"udp"`
-	Tls     bool   `yaml:"tls"`
-	Network string `yaml:"network"`
-	WsOpts  WsOpts `yaml:"ws-opts"`
+	Name              string `yaml:"name"`
+	Type              string `yaml:"type"`
+	Server            string `yaml:"server"`
+	Port              uint   `yaml:"port"`
+	Uuid              string `yaml:"uuid"`
+	AlterId           uint   `yaml:"alterId"`
+	Cipher            string `yaml:"cipher"`
+	Tls               bool   `yaml:"tls"`
+	Udp               bool   `yaml:"udp"`
+	ClientFingerprint string `yaml:"client-fingerprint"`
+	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
+	ServerName        string `yaml:"servername"`
+	Network           string `yaml:"network"`
+	WsOpts            WsOpts `yaml:"ws-opts"`
 }
 
 type Trojan struct {
@@ -76,8 +90,8 @@ type Hysteria struct {
 }
 
 type WsOpts struct {
-	Path          string        `yaml:"path"`
-	WsOptsHeaders WsOptsHeaders `yaml:"headers"`
+	Path    string        `yaml:"path"`
+	Headers WsOptsHeaders `yaml:"headers"`
 }
 
 type WsOptsHeaders struct {

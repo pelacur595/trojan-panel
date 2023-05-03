@@ -170,6 +170,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			TrojanGoSSPassword:      *nodeCreateDto.TrojanGoSsPassword,
 			// Hysteria
 			HysteriaProtocol: *nodeCreateDto.HysteriaProtocol,
+			HysteriaObfs:     *nodeCreateDto.HysteriaObfs,
 			HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
 		}); err != nil {
@@ -220,6 +221,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		} else if *nodeCreateDto.NodeTypeId == constant.Hysteria {
 			hysteria := module.NodeHysteria{
 				Protocol: nodeCreateDto.HysteriaProtocol,
+				Obfs:     nodeCreateDto.HysteriaObfs,
 				UpMbps:   nodeCreateDto.HysteriaUpMbps,
 				DownMbps: nodeCreateDto.HysteriaDownMbps,
 			}
@@ -425,6 +427,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			TrojanGoSSPassword:      *nodeUpdateDto.TrojanGoSsPassword,
 			// Hysteria
 			HysteriaProtocol: *nodeUpdateDto.HysteriaProtocol,
+			HysteriaObfs:     *nodeUpdateDto.HysteriaObfs,
 			HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 			HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
 		}); err != nil {
@@ -467,6 +470,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				nodeHysteria := module.NodeHysteria{
 					Id:       nodeEntity.NodeSubId,
 					Protocol: nodeUpdateDto.HysteriaProtocol,
+					Obfs:     nodeUpdateDto.HysteriaObfs,
 					UpMbps:   nodeUpdateDto.HysteriaUpMbps,
 					DownMbps: nodeUpdateDto.HysteriaDownMbps,
 				}
@@ -509,7 +513,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 
 			// 修改了节点类型
 			var nodeId uint
-			if *nodeUpdateDto.NodeTypeId == 1 {
+			if *nodeUpdateDto.NodeTypeId == constant.Xray {
 				nodeXray := module.NodeXray{
 					Protocol:       nodeUpdateDto.XrayProtocol,
 					XrayFlow:       nodeUpdateDto.XrayFlow,
@@ -524,7 +528,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				if err != nil {
 					return nil
 				}
-			} else if *nodeUpdateDto.NodeTypeId == 2 {
+			} else if *nodeUpdateDto.NodeTypeId == constant.TrojanGo {
 				trojanGo := module.NodeTrojanGo{
 					Sni:             nodeUpdateDto.TrojanGoSni,
 					MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
@@ -539,9 +543,10 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				if err != nil {
 					return nil
 				}
-			} else if *nodeUpdateDto.NodeTypeId == 3 {
+			} else if *nodeUpdateDto.NodeTypeId == constant.Hysteria {
 				hysteria := module.NodeHysteria{
 					Protocol: nodeUpdateDto.HysteriaProtocol,
+					Obfs:     nodeUpdateDto.HysteriaObfs,
 					UpMbps:   nodeUpdateDto.HysteriaUpMbps,
 					DownMbps: nodeUpdateDto.HysteriaDownMbps,
 				}
@@ -724,6 +729,9 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 			password,
 			*nodeHysteria.UpMbps,
 			*nodeHysteria.DownMbps))
+		if nodeHysteria.Obfs != nil && *nodeHysteria.Obfs != "" {
+			headBuilder.WriteString(fmt.Sprintf("&obfs=xplus&obfsParam=%s", *nodeHysteria.Obfs))
+		}
 	} else if *nodeType.Id == constant.NaiveProxy {
 		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))
 	}

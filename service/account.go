@@ -380,30 +380,39 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolVless:
 				vless := bo.Vless{}
 				vless.Name = item.Name
+				vless.Type = constant.ProtocolVless
 				vless.Server = item.Domain
 				vless.Port = item.Port
-				vless.Type = constant.ProtocolVless
 				vless.Uuid = util.GenerateUUID(pass)
-				vless.Flow = item.XrayFlow
-				vless.Udp = true
 				vless.Network = streamSettings.Network
+				vless.Tls = true
+				vless.Udp = true
+				vless.Flow = item.XrayFlow
 				if streamSettings.Security == "tls" {
-					vless.Tls = true
-				} else {
-					vless.Tls = false
+					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+				} else if streamSettings.Security == "reality" {
+					vless.ClientFingerprint = streamSettings.RealitySettings.Fingerprint
+					if len(streamSettings.RealitySettings.ServerNames) > 0 {
+						vless.ServerName = streamSettings.RealitySettings.ServerNames[0]
+					}
+					if len(streamSettings.RealitySettings.ShortIds) > 0 {
+						vless.RealityOpts.ShortId = streamSettings.RealitySettings.ShortIds[0]
+					}
+					vless.RealityOpts.PublicKey = item.RealityPbk
 				}
 				if streamSettings.Network == "ws" {
 					vless.WsOpts.Path = streamSettings.WsSettings.Path
-					vless.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
+					vless.WsOpts.Headers.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vless)
 				proxies = append(proxies, item.Name)
 			case constant.ProtocolVmess:
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
+				vmess.Type = constant.ProtocolVmess
 				vmess.Server = item.Domain
 				vmess.Port = item.Port
-				vmess.Type = constant.ProtocolVmess
 				vmess.Uuid = util.GenerateUUID(pass)
 				vmess.AlterId = 0
 				if settings.Encryption != "none" {
@@ -411,16 +420,17 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				} else {
 					vmess.Cipher = "none"
 				}
+				vmess.Tls = true
 				vmess.Udp = true
 				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
-					vmess.Tls = true
-				} else {
-					vmess.Tls = false
+					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+					vmess.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					vmess.ServerName = streamSettings.TlsSettings.ServerName
 				}
 				if streamSettings.Network == "ws" {
 					vmess.WsOpts.Path = streamSettings.WsSettings.Path
-					vmess.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
+					vmess.WsOpts.Headers.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 				proxies = append(proxies, item.Name)
@@ -435,7 +445,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				trojan.Network = streamSettings.Network
 				if streamSettings.Network == "ws" {
 					trojan.WsOpts.Path = streamSettings.WsSettings.Path
-					trojan.WsOpts.WsOptsHeaders.Host = streamSettings.WsSettings.Headers.Host
+					trojan.WsOpts.Headers.Host = streamSettings.WsSettings.Headers.Host
 				}
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
 				proxies = append(proxies, item.Name)
@@ -466,7 +476,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			if *nodeTrojanGo.WebsocketEnable == 1 {
 				trojanGo.Network = "ws"
 				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath
-				trojanGo.WsOpts.WsOptsHeaders.Host = *nodeTrojanGo.WebsocketHost
+				trojanGo.WsOpts.Headers.Host = *nodeTrojanGo.WebsocketHost
 			}
 			ClashConfigInterface = append(ClashConfigInterface, trojanGo)
 			proxies = append(proxies, item.Name)
