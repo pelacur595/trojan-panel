@@ -9,8 +9,14 @@ const (
 	ProtocolVless       string = "vless"
 	ProtocolVmess       string = "vmess"
 	ProtocolTrojan      string = "trojan"
-	ProtocolShadowsocks string = "ss"
+	ProtocolShadowsocks string = "shadowsocks"
 	ProtocolTrojanGo    string = "trojan-go"
 	ProtocolHysteria    string = "hysteria"
 	ProtocolNaiveProxy  string = "naiveproxy"
+
+	ClashVless       string = "vless"
+	ClashVmess       string = "vmess"
+	ClashTrojan      string = "trojan"
+	ClashShadowsocks string = "ss"
+	ClashSHysteria   string = "hysteria"
 )

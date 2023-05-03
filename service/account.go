@@ -380,7 +380,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolVless:
 				vless := bo.Vless{}
 				vless.Name = item.Name
-				vless.Type = constant.ProtocolVless
+				vless.Type = constant.ClashVless
 				vless.Server = item.Domain
 				vless.Port = item.Port
 				vless.Uuid = util.GenerateUUID(pass)
@@ -411,7 +411,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolVmess:
 				vmess := bo.Vmess{}
 				vmess.Name = item.Name
-				vmess.Type = constant.ProtocolVmess
+				vmess.Type = constant.ClashVmess
 				vmess.Server = item.Domain
 				vmess.Port = item.Port
 				vmess.Uuid = util.GenerateUUID(pass)
@@ -438,7 +438,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolTrojan:
 				trojan := bo.Trojan{}
 				trojan.Name = item.Name
-				trojan.Type = constant.ProtocolTrojan
+				trojan.Type = constant.ClashTrojan
 				trojan.Server = item.Domain
 				trojan.Port = item.Port
 				trojan.Password = pass
@@ -457,7 +457,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			case constant.ProtocolShadowsocks:
 				shadowsocks := bo.Shadowsocks{}
 				shadowsocks.Name = item.Name
-				shadowsocks.Type = constant.ProtocolShadowsocks
+				shadowsocks.Type = constant.ClashShadowsocks
 				shadowsocks.Server = item.Domain
 				shadowsocks.Port = item.Port
 				shadowsocks.Cipher = item.XraySSMethod
@@ -473,7 +473,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			trojanGo := bo.TrojanGo{}
 			trojanGo.Name = item.Name
-			trojanGo.Type = constant.ProtocolTrojan
+			trojanGo.Type = constant.ClashTrojan
 			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
 			trojanGo.Password = pass
@@ -493,7 +493,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			}
 			hysteria := bo.Hysteria{}
 			hysteria.Name = item.Name
-			hysteria.Type = constant.ProtocolHysteria
+			hysteria.Type = constant.ClashSHysteria
 			hysteria.Server = item.Domain
 			hysteria.Port = item.Port
 			hysteria.AuthStr = pass
