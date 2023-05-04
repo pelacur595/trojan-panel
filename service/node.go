@@ -652,33 +652,33 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 				}
 			}
 
-			if *nodeXray.Protocol == "vless" || *nodeXray.Protocol == "trojan" {
+			if *nodeXray.Protocol == "vless" {
 				headBuilder.WriteString(fmt.Sprintf("&flow=%s", *nodeXray.XrayFlow))
-				if *nodeXray.Protocol == "vless" {
-					if streamSettings.Security == "tls" {
-						headBuilder.WriteString(fmt.Sprintf("&sni=%s", streamSettings.TlsSettings.ServerName))
-						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.TlsSettings.Fingerprint))
-						if len(streamSettings.TlsSettings.Alpn) > 0 {
-							alpns := strings.Replace(strings.Trim(fmt.Sprint(streamSettings.TlsSettings.Alpn), "[]"), " ", ",", -1)
-							headBuilder.WriteString(fmt.Sprintf("&alpn=%s", url.PathEscape(alpns)))
-						}
-					} else if streamSettings.Security == "reality" {
-						headBuilder.WriteString(fmt.Sprintf("&pbk=%s", *nodeXray.RealityPbk))
-						headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.RealitySettings.Fingerprint))
-						if streamSettings.RealitySettings.SpiderX != "" {
-							headBuilder.WriteString(fmt.Sprintf("&spx=%s", url.PathEscape(streamSettings.RealitySettings.SpiderX)))
-						}
-						shortIds := streamSettings.RealitySettings.ShortIds
-						if len(shortIds) != 0 {
-							headBuilder.WriteString(fmt.Sprintf("&sid=%s", shortIds[0]))
-						}
-						serverNames := streamSettings.RealitySettings.ServerNames
-						if len(serverNames) != 0 {
-							headBuilder.WriteString(fmt.Sprintf("&sni=%s", serverNames[0]))
-						}
-					}
+			}
+
+			if streamSettings.Security == "tls" {
+				headBuilder.WriteString(fmt.Sprintf("&sni=%s", streamSettings.TlsSettings.ServerName))
+				headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.TlsSettings.Fingerprint))
+				if len(streamSettings.TlsSettings.Alpn) > 0 {
+					alpns := strings.Replace(strings.Trim(fmt.Sprint(streamSettings.TlsSettings.Alpn), "[]"), " ", ",", -1)
+					headBuilder.WriteString(fmt.Sprintf("&alpn=%s", url.PathEscape(alpns)))
+				}
+			} else if streamSettings.Security == "reality" {
+				headBuilder.WriteString(fmt.Sprintf("&pbk=%s", *nodeXray.RealityPbk))
+				headBuilder.WriteString(fmt.Sprintf("&fp=%s", streamSettings.RealitySettings.Fingerprint))
+				if streamSettings.RealitySettings.SpiderX != "" {
+					headBuilder.WriteString(fmt.Sprintf("&spx=%s", url.PathEscape(streamSettings.RealitySettings.SpiderX)))
+				}
+				shortIds := streamSettings.RealitySettings.ShortIds
+				if len(shortIds) != 0 {
+					headBuilder.WriteString(fmt.Sprintf("&sid=%s", shortIds[0]))
+				}
+				serverNames := streamSettings.RealitySettings.ServerNames
+				if len(serverNames) != 0 {
+					headBuilder.WriteString(fmt.Sprintf("&sni=%s", serverNames[0]))
 				}
 			}
+
 			if streamSettings.Network == "ws" {
 				if streamSettings.WsSettings.Path != "" {
 					headBuilder.WriteString(fmt.Sprintf("&path=%s", streamSettings.WsSettings.Path))
