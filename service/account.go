@@ -599,55 +599,51 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 	}
 
 	go func(fileTaskId uint) {
-		var mutex sync.Mutex
-		defer mutex.Unlock()
-		if mutex.TryLock() {
-			var fail = constant.TaskFail
-			var success = constant.TaskSuccess
-			fileTask := module.FileTask{
-				Id:     &fileTaskId,
-				Status: &fail,
-			}
+		var fail = constant.TaskFail
+		var success = constant.TaskSuccess
+		fileTask := module.FileTask{
+			Id:     &fileTaskId,
+			Status: &fail,
+		}
 
-			src, err := file.Open()
-			defer src.Close()
-			if err != nil {
-				logrus.Errorf("ImportAccount file Open err: %v", err)
-				fileUploadError := constant.FileUploadError
-				fileTask.ErrMsg = &fileUploadError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
-				}
-				return
-			}
-
-			var accounts []module.Account
-			decoder := json.NewDecoder(src)
-			if err = decoder.Decode(&accounts); err != nil {
-				logrus.Errorf("ImportAccount decoder Decode err: %v", err)
-				return
-			}
-			if len(accounts) == 0 {
-				logrus.Errorf("ImportAccount err: %s", constant.RowNotEnough)
-				fileUploadError := constant.RowNotEnough
-				fileTask.ErrMsg = &fileUploadError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
-				}
-				return
-			}
-			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
-			for _, item := range accounts {
-				if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
-					continue
-				}
-			}
-
-			fileTask.Status = &success
-			// 更新文件任务状态
+		src, err := file.Open()
+		defer src.Close()
+		if err != nil {
+			logrus.Errorf("ImportAccount file Open err: %v", err)
+			fileUploadError := constant.FileUploadError
+			fileTask.ErrMsg = &fileUploadError
 			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 				logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
 			}
+			return
+		}
+
+		var accounts []module.Account
+		decoder := json.NewDecoder(src)
+		if err = decoder.Decode(&accounts); err != nil {
+			logrus.Errorf("ImportAccount decoder Decode err: %v", err)
+			return
+		}
+		if len(accounts) == 0 {
+			logrus.Errorf("ImportAccount err: %s", constant.RowNotEnough)
+			fileUploadError := constant.RowNotEnough
+			fileTask.ErrMsg = &fileUploadError
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+			}
+			return
+		}
+		// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
+		for _, item := range accounts {
+			if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
+				continue
+			}
+		}
+
+		fileTask.Status = &success
+		// 更新文件任务状态
+		if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+			logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
 		}
 	}(fileTaskId)
 	return nil

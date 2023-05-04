@@ -244,54 +244,50 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 	}
 
 	go func(fileTaskId uint) {
-		var mutex sync.Mutex
-		defer mutex.Unlock()
-		if mutex.TryLock() {
-			var fail = constant.TaskFail
-			var success = constant.TaskSuccess
-			fileTask := module.FileTask{
-				Id:     &fileTaskId,
-				Status: &fail,
-			}
+		var fail = constant.TaskFail
+		var success = constant.TaskSuccess
+		fileTask := module.FileTask{
+			Id:     &fileTaskId,
+			Status: &fail,
+		}
 
-			src, err := file.Open()
-			defer src.Close()
-			if err != nil {
-				logrus.Errorf("ImportNodeServer file Open err: %v", err)
-				fileUploadError := constant.FileUploadError
-				fileTask.ErrMsg = &fileUploadError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
-				}
-				return
-			}
-
-			var nodeServers []module.NodeServer
-			decoder := json.NewDecoder(src)
-			if err = decoder.Decode(&nodeServers); err != nil {
-				logrus.Errorf("ImportNodeServer decoder Decode err: %v", err)
-				return
-			}
-			if len(nodeServers) == 0 {
-				logrus.Errorf("ImportNodeServer err: %s", constant.RowNotEnough)
-				fileUploadError := constant.RowNotEnough
-				fileTask.ErrMsg = &fileUploadError
-				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
-				}
-				return
-			}
-			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
-			for _, item := range nodeServers {
-				if err = dao.CreateOrUpdateNodeServer(item, cover); err != nil {
-					continue
-				}
-			}
-			fileTask.Status = &success
-			// 更新文件任务状态
+		src, err := file.Open()
+		defer src.Close()
+		if err != nil {
+			logrus.Errorf("ImportNodeServer file Open err: %v", err)
+			fileUploadError := constant.FileUploadError
+			fileTask.ErrMsg = &fileUploadError
 			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
 				logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
 			}
+			return
+		}
+
+		var nodeServers []module.NodeServer
+		decoder := json.NewDecoder(src)
+		if err = decoder.Decode(&nodeServers); err != nil {
+			logrus.Errorf("ImportNodeServer decoder Decode err: %v", err)
+			return
+		}
+		if len(nodeServers) == 0 {
+			logrus.Errorf("ImportNodeServer err: %s", constant.RowNotEnough)
+			fileUploadError := constant.RowNotEnough
+			fileTask.ErrMsg = &fileUploadError
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
+			}
+			return
+		}
+		// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
+		for _, item := range nodeServers {
+			if err = dao.CreateOrUpdateNodeServer(item, cover); err != nil {
+				continue
+			}
+		}
+		fileTask.Status = &success
+		// 更新文件任务状态
+		if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+			logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
 		}
 	}(fileTaskId)
 	return nil
