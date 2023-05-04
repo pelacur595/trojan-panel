@@ -184,6 +184,14 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 		}
 	}
 
+	templatePath := constant.TemplatePath
+	if !Exists(templatePath) {
+		if err := os.Mkdir(templatePath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config/template文件夹异常 err: %v", err)
+			panic(err)
+		}
+	}
+
 	clashRuleFilePath := constant.ClashRuleFilePath
 	if !Exists(clashRuleFilePath) {
 		file, err := os.Create(clashRuleFilePath)

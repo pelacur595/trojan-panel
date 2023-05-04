@@ -11,18 +11,19 @@ const (
 	// LogPath 日志文件夹路径
 	LogPath string = "logs"
 	// ConfigPath 配置文件夹路径
-	ConfigPath string = "config"
+	ConfigPath   string = "config"
+	TemplatePath string = "config/template"
 	// LogoImagePath 系统logo文件路径
-	LogoImagePath string = "config/logo.png"
+	LogoImagePath string = "config/template/logo.png"
 	LogoImageUrl  string = "https://raw.githubusercontent.com/trojanpanel/trojanpanel.github.io/main/docs/logo.png"
 	// ConfigFilePath 配置文件路径
 	ConfigFilePath string = "config/config.ini"
 	// RbacModelFilePath rbac配置文件路径
 	RbacModelFilePath string = "config/rbac_model.conf"
 	// ClashRuleFilePath Clash规则默认模板
-	ClashRuleFilePath string = "config/template-clash-rule.yaml"
+	ClashRuleFilePath string = "config/template/template-clash-rule.yaml"
 	// XrayTemplateFilePath Xray模板
-	XrayTemplateFilePath string = "config/template-xray.json"
+	XrayTemplateFilePath string = "config/template/template-xray.json"
 
 	ExportPath               string = "config/export"
 	ExportAccountTemplate    string = "config/export/AccountTemplate.json"
