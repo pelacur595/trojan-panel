@@ -390,10 +390,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				vless.Flow = item.XrayFlow
 				if streamSettings.Security == "tls" {
 					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
-					vless.ServerName = streamSettings.TlsSettings.ServerName
 					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+					vless.ServerName = streamSettings.TlsSettings.ServerName
 				} else if streamSettings.Security == "reality" {
-					vless.ClientFingerprint = streamSettings.RealitySettings.Fingerprint
 					if len(streamSettings.RealitySettings.ServerNames) > 0 {
 						vless.ServerName = streamSettings.RealitySettings.ServerNames[0]
 					}
@@ -401,6 +400,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 						vless.RealityOpts.ShortId = streamSettings.RealitySettings.ShortIds[0]
 					}
 					vless.RealityOpts.PublicKey = item.RealityPbk
+					vless.ClientFingerprint = streamSettings.RealitySettings.Fingerprint
 				}
 				if streamSettings.Network == "ws" {
 					vless.WsOpts.Path = streamSettings.WsSettings.Path
@@ -446,6 +446,7 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				if streamSettings.Security == "tls" {
 					trojan.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					trojan.Sni = streamSettings.TlsSettings.ServerName
+					trojan.Alpn = streamSettings.TlsSettings.Alpn
 					trojan.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 				}
 				if streamSettings.Network == "ws" {
@@ -477,8 +478,8 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			trojanGo.Server = item.Domain
 			trojanGo.Port = item.Port
 			trojanGo.Password = pass
-			trojanGo.SNI = *nodeTrojanGo.Sni
 			trojanGo.Udp = true
+			trojanGo.SNI = *nodeTrojanGo.Sni
 			if *nodeTrojanGo.WebsocketEnable == 1 {
 				trojanGo.Network = "ws"
 				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath

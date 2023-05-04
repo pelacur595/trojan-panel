@@ -44,16 +44,17 @@ type Vmess struct {
 }
 
 type Trojan struct {
-	Name              string `yaml:"name"`
-	Type              string `yaml:"type"`
-	Server            string `yaml:"server"`
-	Port              uint   `yaml:"port"`
-	Password          string `yaml:"password"`
-	ClientFingerprint string `yaml:"client-fingerprint"`
-	Udp               bool   `yaml:"udp"`
-	Sni               string `yaml:"sni"`
-	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
-	WsOpts            WsOpts `yaml:"ws-opts"`
+	Name              string   `yaml:"name"`
+	Type              string   `yaml:"type"`
+	Server            string   `yaml:"server"`
+	Port              uint     `yaml:"port"`
+	Password          string   `yaml:"password"`
+	ClientFingerprint string   `yaml:"client-fingerprint"`
+	Udp               bool     `yaml:"udp"`
+	Sni               string   `yaml:"sni"`
+	SkipCertVerify    bool     `yaml:"skip-cert-verify"`
+	Alpn              []string `yaml:"alpn"`
+	WsOpts            WsOpts   `yaml:"ws-opts"`
 }
 
 type Shadowsocks struct {
@@ -83,7 +84,7 @@ type Hysteria struct {
 	Type     string `yaml:"type"`
 	Server   string `yaml:"server"`
 	Port     uint   `yaml:"port"`
-	AuthStr  string `yaml:"auth_str"`
+	AuthStr  string `yaml:"auth-str"`
 	Obfs     string `yaml:"obfs"`
 	Protocol string `yaml:"protocol"`
 	Up       int    `yaml:"up"`

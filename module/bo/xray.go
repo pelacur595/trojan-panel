@@ -10,10 +10,10 @@ type StreamSettings struct {
 
 type TlsSettings struct {
 	Certificates  []Certificate `json:"certificates"`
+	Fingerprint   string        `json:"fingerprint"`
 	ServerName    string        `json:"serverName"`
 	Alpn          []string      `json:"alpn"`
 	AllowInsecure bool          `json:"allowInsecure"`
-	Fingerprint   string        `json:"fingerprint"`
 }
 
 type Certificate struct {
