@@ -274,6 +274,11 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 			}
 			if len(nodeServers) == 0 {
 				logrus.Errorf("ImportNodeServer err: %s", constant.RowNotEnough)
+				fileUploadError := constant.RowNotEnough
+				fileTask.ErrMsg = &fileUploadError
+				if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+					logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
+				}
 				return
 			}
 			// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
