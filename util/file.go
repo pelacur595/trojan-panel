@@ -77,6 +77,14 @@ func InitFile() {
 		}
 	}
 
+	templatePath := constant.TemplatePath
+	if !Exists(templatePath) {
+		if err := os.Mkdir(templatePath, os.ModePerm); err != nil {
+			logrus.Errorf("创建config/template文件夹异常 err: %v", err)
+			panic(err)
+		}
+	}
+
 	// 创建Logo
 	logoImagePath := constant.LogoImagePath
 	if !Exists(logoImagePath) {
@@ -180,14 +188,6 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 `)
 		if err != nil {
 			logrus.Errorf("rbac_model.conf文件写入异常 err: %v", err)
-			panic(err)
-		}
-	}
-
-	templatePath := constant.TemplatePath
-	if !Exists(templatePath) {
-		if err := os.Mkdir(templatePath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config/template文件夹异常 err: %v", err)
 			panic(err)
 		}
 	}
