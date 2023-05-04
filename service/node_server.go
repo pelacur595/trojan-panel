@@ -267,6 +267,11 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 		decoder := json.NewDecoder(src)
 		if err = decoder.Decode(&nodeServers); err != nil {
 			logrus.Errorf("ImportNodeServer decoder Decode err: %v", err)
+			fileUploadError := constant.RowNotEnough
+			fileTask.ErrMsg = &fileUploadError
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ImportNodeServer UpdateFileTaskById err: %v", err)
+			}
 			return
 		}
 		if len(nodeServers) == 0 {

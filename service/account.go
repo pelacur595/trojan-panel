@@ -622,6 +622,11 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 		decoder := json.NewDecoder(src)
 		if err = decoder.Decode(&accounts); err != nil {
 			logrus.Errorf("ImportAccount decoder Decode err: %v", err)
+			fileUploadError := constant.FileUploadError
+			fileTask.ErrMsg = &fileUploadError
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ImportAccount UpdateFileTaskById err: %v", err)
+			}
 			return
 		}
 		if len(accounts) == 0 {
