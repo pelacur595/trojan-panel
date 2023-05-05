@@ -65,6 +65,6 @@ type HysteriaAutoDto struct {
 }
 
 type CaptureDto struct {
-	CaptchaId   *string `json:"captchaId" form:"captchaId" validate:"required"`
-	CaptchaCode *string `json:"captchaCode" form:"captchaCode" validate:"required"`
+	CaptchaId   *string `json:"captchaId" form:"captchaId" validate:"omitempty"`
+	CaptchaCode *string `json:"captchaCode" form:"captchaCode" validate:"omitempty"`
 }
