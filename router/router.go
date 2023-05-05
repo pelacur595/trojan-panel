@@ -114,6 +114,8 @@ func Router(router *gin.Engine) {
 			node.POST("/nodeQRCode", api.NodeQRCode)
 			// 复制URL
 			node.POST("/nodeURL", api.NodeURL)
+			// 节点部分属性的默认值
+			node.GET("/nodeDefault", api.NodeDefault)
 		}
 		nodeType := trojanApi.Group("/nodeType")
 		{

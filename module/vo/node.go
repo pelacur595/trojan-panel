@@ -103,3 +103,10 @@ type XrayStreamSettingsWsSettingsEntity struct {
 	Path    string            `json:"path"`
 	Headers map[string]string `json:"headers"`
 }
+
+type NodeDefaultVo struct {
+	PublicKey  string `json:"publicKey"`
+	PrivateKey string `json:"privateKey"`
+	ShortId    string `json:"shortId"`
+	SpiderX    string `json:"spiderX"`
+}

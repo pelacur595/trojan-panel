@@ -138,6 +138,15 @@ func NodeURL(c *gin.Context) {
 	vo.Success(url, c)
 }
 
+func NodeDefault(c *gin.Context) {
+	nodeDefault, err := service.NodeDefault()
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(nodeDefault, c)
+}
+
 // ExportNode 导出节点
 func ExportNode(c *gin.Context) {
 

@@ -764,3 +764,16 @@ func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeTypeI
 	}
 	return nil
 }
+
+func NodeDefault() (vo.NodeDefaultVo, error) {
+	var nodeDefaultVo vo.NodeDefaultVo
+	publicKey, privateKey, err := util.ExecuteX25519()
+	if err != nil {
+		return nodeDefaultVo, errors.New(constant.SysError)
+	}
+	nodeDefaultVo.PublicKey = publicKey
+	nodeDefaultVo.PrivateKey = privateKey
+	nodeDefaultVo.ShortId = util.GenerateShortId()
+	nodeDefaultVo.SpiderX = fmt.Sprintf("/%s", util.RandString(8))
+	return nodeDefaultVo, nil
+}
