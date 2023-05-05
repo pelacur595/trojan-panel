@@ -6,6 +6,7 @@ type SystemAccountConfigBo struct {
 	RegisterExpireDays          uint `json:"registerExpireDays"`          // 注册用户过期天数 单位/天
 	ResetDownloadAndUploadMonth uint `json:"resetDownloadAndUploadMonth"` // 是否每月重设下载和上传流量
 	TrafficRankEnable           uint `json:"trafficRankEnable"`           // 是否开启流量排行
+	CaptchaEnable               uint `json:"captchaEnable"`               // 是否验证码登录
 }
 
 type SystemEmailConfigBo struct {

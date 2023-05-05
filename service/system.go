@@ -70,6 +70,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 			RegisterExpireDays:          systemAccountConfigBo.RegisterExpireDays,
 			ResetDownloadAndUploadMonth: systemAccountConfigBo.ResetDownloadAndUploadMonth,
 			TrafficRankEnable:           systemAccountConfigBo.TrafficRankEnable,
+			CaptchaEnable:               systemAccountConfigBo.CaptchaEnable,
 			ExpireWarnEnable:            systemEmailConfigBo.ExpireWarnEnable,
 			ExpireWarnDay:               systemEmailConfigBo.ExpireWarnDay,
 			EmailEnable:                 systemEmailConfigBo.EmailEnable,
@@ -109,6 +110,9 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	if systemDto.TrafficRankEnable != nil {
 		accountConfigBo.TrafficRankEnable = *systemDto.TrafficRankEnable
+	}
+	if systemDto.CaptchaEnable != nil {
+		accountConfigBo.CaptchaEnable = *systemDto.CaptchaEnable
 	}
 	accountConfigBoByte, err := json.Marshal(accountConfigBo)
 	if err != nil {

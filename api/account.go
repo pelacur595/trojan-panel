@@ -29,7 +29,13 @@ func Login(c *gin.Context) {
 		vo.Fail(err.Error(), c)
 		return
 	}
-	if !util.VerifyCaptcha(*accountLoginDto.CaptchaId, *accountLoginDto.CaptchaCode) {
+	systemName := constant.SystemName
+	systemVo, err := service.SelectSystemByName(&systemName)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	if systemVo.CaptchaEnable == 1 && !util.VerifyCaptcha(*accountLoginDto.CaptchaId, *accountLoginDto.CaptchaCode) {
 		vo.Fail(constant.CaptchaError, c)
 		return
 	}
@@ -104,7 +110,13 @@ func Register(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if !util.VerifyCaptcha(*accountRegisterDto.CaptchaId, *accountRegisterDto.CaptchaCode) {
+	systemName := constant.SystemName
+	systemVo, err := service.SelectSystemByName(&systemName)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	if systemVo.CaptchaEnable == 1 && !util.VerifyCaptcha(*accountRegisterDto.CaptchaId, *accountRegisterDto.CaptchaCode) {
 		vo.Fail(constant.CaptchaError, c)
 		return
 	}

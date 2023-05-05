@@ -33,6 +33,7 @@ func Setting(c *gin.Context) {
 		RegisterQuota:      systemVo.RegisterQuota,
 		RegisterExpireDays: systemVo.RegisterExpireDays,
 		TrafficRankEnable:  systemVo.TrafficRankEnable,
+		CaptchaEnable:      systemVo.CaptchaEnable,
 		EmailEnable:        systemVo.EmailEnable,
 		SystemName:         systemVo.SystemName,
 	}

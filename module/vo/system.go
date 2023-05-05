@@ -7,6 +7,7 @@ type SystemVo struct {
 	RegisterExpireDays          uint `json:"registerExpireDays" redis:"registerExpireDays"`
 	ResetDownloadAndUploadMonth uint `json:"resetDownloadAndUploadMonth" redis:"resetDownloadAndUploadMonth"`
 	TrafficRankEnable           uint `json:"trafficRankEnable" redis:"trafficRankEnable"`
+	CaptchaEnable               uint `json:"captchaEnable" redis:"captchaEnable"`
 
 	ExpireWarnEnable uint   `json:"expireWarnEnable" redis:"expireWarnEnable"`
 	ExpireWarnDay    uint   `json:"expireWarnDay" redis:"expireWarnDay"`
@@ -26,6 +27,7 @@ type SettingVo struct {
 	RegisterQuota      int    `json:"registerQuota"`
 	RegisterExpireDays uint   `json:"registerExpireDays"`
 	TrafficRankEnable  uint   `json:"trafficRankEnable"`
+	CaptchaEnable      uint   `json:"captchaEnable" redis:"captchaEnable"`
 	EmailEnable        uint   `json:"emailEnable"`
 	SystemName         string `json:"systemName" redis:"systemName"`
 }

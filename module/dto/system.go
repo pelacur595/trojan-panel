@@ -7,6 +7,7 @@ type SystemUpdateDto struct {
 	RegisterExpireDays          *uint `json:"registerExpireDays" form:"registerExpireDays" validate:"required,gte=0,lte=365"`
 	ResetDownloadAndUploadMonth *uint `json:"resetDownloadAndUploadMonth" form:"resetDownloadAndUploadMonth" validate:"required,oneof=0 1"`
 	TrafficRankEnable           *uint `json:"trafficRankEnable" form:"trafficRankEnable" validate:"required,oneof=0 1"`
+	CaptchaEnable               *uint `json:"captchaEnable" form:"captchaEnable" validate:"required,oneof=0 1"`
 
 	ExpireWarnEnable *uint   `json:"expireWarnEnable" form:"expireWarnEnable" redis:"expireWarnEnable" validate:"required,oneof=0 1"`
 	ExpireWarnDay    *uint   `json:"expireWarnDay" form:"expireWarnDay" redis:"expireWarnDay" validate:"required,gte=0,lte=365"`
