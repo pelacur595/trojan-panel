@@ -75,6 +75,16 @@ func Login(c *gin.Context) {
 					time.Hour.Milliseconds()*2/1000).Result(); err != nil {
 				vo.Fail(constant.SysError, c)
 			} else {
+				// 更新最后一次登录时间
+				milli := uint(time.Now().UnixMilli())
+				account := module.Account{
+					Id:            account.Id,
+					LastLoginTime: &milli,
+				}
+				if err := service.UpdateAccountById(tokenStr, &account); err != nil {
+					vo.Fail(constant.SysError, c)
+					return
+				}
 				accountLoginVo := vo.AccountLoginVo{
 					Token: tokenStr,
 				}
@@ -165,15 +175,16 @@ func SelectAccountById(c *gin.Context) {
 		return
 	}
 	accountVo := vo.AccountVo{
-		Id:         *account.Id,
-		Username:   *account.Username,
-		RoleId:     *account.RoleId,
-		Email:      *account.Email,
-		ExpireTime: *account.ExpireTime,
-		Deleted:    *account.Deleted,
-		Quota:      *account.Quota,
-		Download:   *account.Download,
-		Upload:     *account.Upload,
+		Id:             *account.Id,
+		Username:       *account.Username,
+		RoleId:         *account.RoleId,
+		Email:          *account.Email,
+		ValidityPeriod: *account.ValidityPeriod,
+		ExpireTime:     *account.ExpireTime,
+		Deleted:        *account.Deleted,
+		Quota:          *account.Quota,
+		Download:       *account.Download,
+		Upload:         *account.Upload,
 	}
 	vo.Success(accountVo, c)
 }
@@ -267,14 +278,15 @@ func UpdateAccountById(c *gin.Context) {
 	}
 	toByte := util.ToByte(*accountUpdateDto.Quota)
 	account := module.Account{
-		Id:         accountUpdateDto.Id,
-		Quota:      &toByte,
-		Username:   accountUpdateDto.Username,
-		Pass:       accountUpdateDto.Pass,
-		Email:      accountUpdateDto.Email,
-		RoleId:     accountUpdateDto.RoleId,
-		Deleted:    accountUpdateDto.Deleted,
-		ExpireTime: accountUpdateDto.ExpireTime,
+		Id:             accountUpdateDto.Id,
+		Quota:          &toByte,
+		Username:       accountUpdateDto.Username,
+		Pass:           accountUpdateDto.Pass,
+		Email:          accountUpdateDto.Email,
+		RoleId:         accountUpdateDto.RoleId,
+		Deleted:        accountUpdateDto.Deleted,
+		ValidityPeriod: accountUpdateDto.ValidityPeriod,
+		ExpireTime:     accountUpdateDto.ExpireTime,
 		//IpLimit:            accountUpdateDto.IpLimit,
 		//UploadSpeedLimit:   accountUpdateDto.UploadSpeedLimit,
 		//DownloadSpeedLimit: accountUpdateDto.DownloadSpeedLimit,
@@ -376,6 +388,20 @@ func ImportAccount(c *gin.Context) {
 	account := util.GetCurrentAccount(c)
 	if err := service.ImportAccount(uint(cover), file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
+}
+
+func CreateAccountBatch(c *gin.Context) {
+	var createAccountBatchDto dto.CreateAccountBatchDto
+	_ = c.ShouldBindJSON(&createAccountBatchDto)
+	if err := validate.Struct(&createAccountBatchDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	if err := service.CreateAccountBatch(createAccountBatchDto); err != nil {
+		vo.Fail(err.Error(), c)
 		return
 	}
 	vo.Success(nil, c)

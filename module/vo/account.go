@@ -5,17 +5,19 @@ import (
 )
 
 type AccountVo struct {
-	Id         uint      `json:"id"`
-	Quota      int       `json:"quota"`
-	Download   int       `json:"download"`
-	Upload     int       `json:"upload"`
-	Username   string    `json:"username"`
-	Email      string    `json:"email"`
-	RoleId     uint      `json:"roleId"`
-	Deleted    uint      `json:"deleted"`
-	ExpireTime uint      `json:"expireTime"`
-	CreateTime time.Time `json:"createTime"`
-	Roles      []string  `json:"roles"`
+	Id             uint      `json:"id"`
+	Quota          int       `json:"quota"`
+	Download       int       `json:"download"`
+	Upload         int       `json:"upload"`
+	Username       string    `json:"username"`
+	Email          string    `json:"email"`
+	RoleId         uint      `json:"roleId"`
+	Deleted        uint      `json:"deleted"`
+	ValidityPeriod uint      `json:"validityPeriod"`
+	LastLoginTime  uint      `json:"lastLoginTime"`
+	ExpireTime     uint      `json:"expireTime"`
+	CreateTime     time.Time `json:"createTime"`
+	Roles          []string  `json:"roles"`
 }
 
 type AccountPageVo struct {
@@ -39,17 +41,19 @@ type AccountTrafficRankVo struct {
 }
 
 type AccountExportVo struct {
-	Username   string    `json:"username" ddb:"username"`
-	Pass       string    `json:"pass" ddb:"pass"`
-	Hash       string    `json:"hash" ddb:"hash"`
-	RoleId     uint      `json:"roleId" ddb:"role_id"`
-	Email      string    `json:"email" ddb:"email"`
-	ExpireTime uint      `json:"expireTime" ddb:"expire_time"`
-	Deleted    uint      `json:"deleted" ddb:"deleted"`
-	Quota      int       `json:"quota" ddb:"quota"`
-	Download   int       `json:"download" ddb:"download"`
-	Upload     int       `json:"upload" ddb:"upload"`
-	CreateTime time.Time `json:"createTime" ddb:"create_time"`
+	Username       string    `json:"username" ddb:"username"`
+	Pass           string    `json:"pass" ddb:"pass"`
+	Hash           string    `json:"hash" ddb:"hash"`
+	RoleId         uint      `json:"roleId" ddb:"role_id"`
+	Email          string    `json:"email" ddb:"email"`
+	ValidityPeriod int       `json:"validityPeriod" ddb:"validity_period"`
+	LastLoginTime  uint      `json:"lastLoginTime" ddb:"last_login_time"`
+	ExpireTime     uint      `json:"expireTime" ddb:"expire_time"`
+	Deleted        uint      `json:"deleted" ddb:"deleted"`
+	Quota          int       `json:"quota" ddb:"quota"`
+	Download       int       `json:"download" ddb:"download"`
+	Upload         int       `json:"upload" ddb:"upload"`
+	CreateTime     time.Time `json:"createTime" ddb:"create_time"`
 }
 
 type CaptureVo struct {

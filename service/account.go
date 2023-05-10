@@ -30,14 +30,16 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 		return errors.New(constant.UsernameExist)
 	}
 	toByte := util.ToByte(*accountCreateDto.Quota)
+	lastLoginTime := uint(time.Now().UnixMilli())
 	account := module.Account{
-		Username:   accountCreateDto.Username,
-		Pass:       accountCreateDto.Pass,
-		RoleId:     accountCreateDto.RoleId,
-		Email:      accountCreateDto.Email,
-		ExpireTime: accountCreateDto.ExpireTime,
-		Deleted:    accountCreateDto.Deleted,
-		Quota:      &toByte,
+		Username:      accountCreateDto.Username,
+		Pass:          accountCreateDto.Pass,
+		RoleId:        accountCreateDto.RoleId,
+		Email:         accountCreateDto.Email,
+		LastLoginTime: &lastLoginTime,
+		ExpireTime:    accountCreateDto.ExpireTime,
+		Deleted:       accountCreateDto.Deleted,
+		Quota:         &toByte,
 		//IpLimit:            accountCreateDto.IpLimit,
 		//DownloadSpeedLimit: accountCreateDto.DownloadSpeedLimit,
 		//UploadSpeedLimit:   accountCreateDto.UploadSpeedLimit,
@@ -193,13 +195,15 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 	u := constant.USER
 	milli := util.DayToMilli(systemVo.RegisterExpireDays)
 	registerQuota := util.ToByte(systemVo.RegisterQuota)
+	lastLoginTime := uint(time.Now().UnixMilli())
 	account := module.Account{
-		Quota:      &registerQuota,
-		Username:   accountRegisterDto.Username,
-		Pass:       accountRegisterDto.Pass,
-		RoleId:     &u,
-		Deleted:    new(uint),
-		ExpireTime: &milli,
+		Quota:         &registerQuota,
+		Username:      accountRegisterDto.Username,
+		Pass:          accountRegisterDto.Pass,
+		RoleId:        &u,
+		Deleted:       new(uint),
+		LastLoginTime: &lastLoginTime,
+		ExpireTime:    &milli,
 	}
 	if err = dao.CreateAccount(&account); err != nil {
 		return err
@@ -677,6 +681,26 @@ func LoginVerify(username string) error {
 		}
 		if result >= 3 || result == -1 {
 			return errors.New(constant.LoginLimitError)
+		}
+	}
+	return nil
+}
+
+func CreateAccountBatch(dto dto.CreateAccountBatchDto) error {
+	for i := 0; i < *dto.Num; i++ {
+		username := util.RandString(10)
+		pass := util.RandString(10)
+		role := constant.USER
+		account := module.Account{
+			Username:       &username,
+			Pass:           &pass,
+			RoleId:         &role,
+			ValidityPeriod: dto.ValidityPeriod,
+			Quota:          dto.Quota,
+		}
+		if err := dao.CreateAccount(&account); err != nil {
+			logrus.Errorf("batch create account err: %v", err)
+			continue
 		}
 	}
 	return nil

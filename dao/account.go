@@ -16,7 +16,7 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 	var account module.Account
 
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "username", "role_id", "email", "expire_time", "deleted", "quota",
+	selectFields := []string{"id", "username", "role_id", "email", "validity_period", "expire_time", "deleted", "quota",
 		"download", "upload"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
@@ -55,6 +55,9 @@ func CreateAccount(account *module.Account) error {
 	}
 	if account.Email != nil && *account.Email != "" {
 		accountCreate["`email`"] = *account.Email
+	}
+	if account.ValidityPeriod != nil {
+		accountCreate["validity_period"] = *account.ValidityPeriod
 	}
 	if account.ExpireTime != nil {
 		accountCreate["expire_time"] = *account.ExpireTime
@@ -142,7 +145,7 @@ func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, page
 	if deleted != nil {
 		where["deleted"] = *deleted
 	}
-	selectFields := []string{"id", "username", "role_id", "email", "expire_time", "deleted",
+	selectFields := []string{"id", "username", "role_id", "email", "validity_period", "last_login_time", "expire_time", "deleted",
 		"quota", "upload", "download", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
@@ -165,16 +168,18 @@ func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, page
 	var accountVos = make([]vo.AccountVo, 0)
 	for _, item := range accounts {
 		accountVos = append(accountVos, vo.AccountVo{
-			Id:         *item.Id,
-			Username:   *item.Username,
-			RoleId:     *item.RoleId,
-			Email:      *item.Email,
-			ExpireTime: *item.ExpireTime,
-			Deleted:    *item.Deleted,
-			Quota:      *item.Quota,
-			Download:   *item.Download,
-			Upload:     *item.Upload,
-			CreateTime: *item.CreateTime,
+			Id:             *item.Id,
+			Username:       *item.Username,
+			RoleId:         *item.RoleId,
+			Email:          *item.Email,
+			ValidityPeriod: *item.ValidityPeriod,
+			LastLoginTime:  *item.LastLoginTime,
+			ExpireTime:     *item.ExpireTime,
+			Deleted:        *item.Deleted,
+			Quota:          *item.Quota,
+			Download:       *item.Download,
+			Upload:         *item.Upload,
+			CreateTime:     *item.CreateTime,
 		})
 	}
 
@@ -294,6 +299,12 @@ func UpdateAccountById(account *module.Account) error {
 	if account.Email != nil {
 		update["email"] = *account.Email
 	}
+	if account.ValidityPeriod != nil && *account.ValidityPeriod != 0 {
+		update["validity_period"] = *account.ValidityPeriod
+	}
+	if account.LastLoginTime != nil && *account.LastLoginTime != 0 {
+		update["last_login_time"] = *account.LastLoginTime
+	}
 	if account.ExpireTime != nil {
 		update["expire_time"] = *account.ExpireTime
 	}
@@ -400,7 +411,7 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 
 // 查询禁用或者过期的用户名
 func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
-	buildSelect, values, err := builder.NamedQuery("select username from account where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0",
+	buildSelect, values, err := builder.NamedQuery("select username from account where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0 and last_login_time != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -427,7 +438,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 
 // 用于发邮件
 func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
-	buildSelect, values, err := builder.NamedQuery("select username,email from account where expire_time <= {{expire_time}} and quota != 0",
+	buildSelect, values, err := builder.NamedQuery("select username,email from account where expire_time <= {{expire_time}} and quota != 0 and last_login_time != 0",
 		map[string]interface{}{"expire_time": expireTime})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -528,7 +539,7 @@ func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
 
 func SelectAccountAll() ([]vo.AccountExportVo, error) {
 	var accountExportVo []vo.AccountExportVo
-	selectFields := []string{"username", "pass", "hash", "role_id", "email", "expire_time", "deleted",
+	selectFields := []string{"username", "pass", "hash", "role_id", "email", "validity_period", "last_login_time", "expire_time", "deleted",
 		"quota", "download", "upload", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("account", nil, selectFields)
 	if err != nil {
@@ -576,6 +587,12 @@ func CreateOrUpdateAccount(accountModule module.Account, cover uint) error {
 		if accountModule.Email != nil {
 			accountUpdate["email"] = *accountModule.Email
 		}
+		if accountModule.ValidityPeriod != nil && *accountModule.ValidityPeriod != 0 {
+			accountUpdate["validity_period"] = *accountModule.ValidityPeriod
+		}
+		if accountModule.LastLoginTime != nil && *accountModule.LastLoginTime != 0 {
+			accountUpdate["last_login_time"] = *accountModule.LastLoginTime
+		}
 		if accountModule.ExpireTime != nil && *accountModule.ExpireTime != 0 {
 			accountUpdate["expire_time"] = *accountModule.ExpireTime
 		}
@@ -621,6 +638,12 @@ func CreateOrUpdateAccount(accountModule module.Account, cover uint) error {
 			}
 			if accountModule.Email != nil {
 				accountCreate["email"] = *accountModule.Email
+			}
+			if accountModule.ValidityPeriod != nil && *accountModule.ValidityPeriod != 0 {
+				accountCreate["validity_period"] = *accountModule.ValidityPeriod
+			}
+			if accountModule.LastLoginTime != nil && *accountModule.LastLoginTime != 0 {
+				accountCreate["last_login_time"] = *accountModule.LastLoginTime
 			}
 			if accountModule.ExpireTime != nil && *accountModule.ExpireTime != 0 {
 				accountCreate["expire_time"] = *accountModule.ExpireTime

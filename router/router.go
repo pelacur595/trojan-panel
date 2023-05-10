@@ -69,6 +69,8 @@ func Router(router *gin.Engine) {
 			account.POST("/exportAccount", api.ExportAccount)
 			// 导入用户
 			account.POST("/importAccount", api.ImportAccount)
+			// 批量生成账户
+			account.POST("/createAccountBatch", api.CreateAccountBatch)
 		}
 		role := trojanApi.Group("/role")
 		{
