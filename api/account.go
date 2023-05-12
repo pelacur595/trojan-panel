@@ -77,16 +77,16 @@ func Login(c *gin.Context) {
 			} else {
 				milli := uint(time.Now().UnixMilli())
 				// 第一次登录
-				account := module.Account{
+				accountUpdate := module.Account{
 					Id:            account.Id,
 					LastLoginTime: &milli,
 				}
 				if account.ValidityPeriod != nil && *account.ValidityPeriod >= 0 &&
 					account.LastLoginTime != nil && *account.LastLoginTime == 0 {
 					expireTime := milli + *account.ValidityPeriod*24*60*60*1000
-					account.ExpireTime = &expireTime
+					accountUpdate.ExpireTime = &expireTime
 				}
-				if err := service.UpdateAccountById(tokenStr, &account); err != nil {
+				if err := service.UpdateAccountById(tokenStr, &accountUpdate); err != nil {
 					vo.Fail(constant.SysError, c)
 					return
 				}
