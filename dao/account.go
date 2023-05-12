@@ -462,7 +462,7 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 // TrafficRank 流量排行 前15名
 func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
-	where := map[string]interface{}{"quota <>": 0}
+	where := map[string]interface{}{"quota <>": 0, "last_login_time <>": 0}
 	if roleIds != nil && len(*roleIds) > 0 {
 		where["role_id in"] = *roleIds
 	}
