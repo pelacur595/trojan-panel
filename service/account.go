@@ -705,3 +705,54 @@ func CreateAccountBatch(dto dto.CreateAccountBatchDto) error {
 	}
 	return nil
 }
+
+func ExportAccountUnused(accountId uint, accountUsername string) error {
+	fileName := fmt.Sprintf("accountExport-%s.json", time.Now().Format("20060102150405"))
+	filePath := fmt.Sprintf("%s/%s", constant.ExportPath, fileName)
+
+	var fileTaskType uint = constant.TaskTypeAccountExport
+	var fileTaskStatus = constant.TaskDoing
+	fileTask := module.FileTask{
+		Name:            &fileName,
+		Path:            &filePath,
+		Type:            &fileTaskType,
+		Status:          &fileTaskStatus,
+		AccountId:       &accountId,
+		AccountUsername: &accountUsername,
+	}
+	fileTaskId, err := dao.CreateFileTask(&fileTask)
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		var mutex sync.Mutex
+		defer mutex.Unlock()
+		if mutex.TryLock() {
+			var fail = constant.TaskFail
+			var success = constant.TaskSuccess
+			fileTask := module.FileTask{
+				Id:     &fileTaskId,
+				Status: &fail,
+			}
+
+			// 查询所有需要导出数据
+			accountExportVo, err := dao.SelectAccountUnused()
+			if err != nil {
+				logrus.Errorf("ExportAccount SelectAccountAll err: %v", err)
+			}
+			if err = util.ExportJson(filePath, accountExportVo); err != nil {
+				logrus.Errorf("ExportAccount ExportJson err: %v", err)
+			} else {
+				fileTask.Status = &success
+			}
+
+			// 更新文件任务状态
+			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+				logrus.Errorf("ExportAccount UpdateFileTaskById err: %v", err)
+			}
+		}
+	}()
+
+	return nil
+}

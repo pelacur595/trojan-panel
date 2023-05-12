@@ -537,6 +537,32 @@ func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
 	return &account, nil
 }
 
+// SelectAccountUnused 查询未使用的账户
+func SelectAccountUnused() ([]vo.AccountExportVo, error) {
+	var accountExportVo []vo.AccountExportVo
+	selectFields := []string{"username", "pass", "hash", "role_id", "email", "validity_period", "last_login_time", "expire_time", "deleted",
+		"quota", "download", "upload", "create_time"}
+	where := map[string]interface{}{"last_login_time": 0, "quota": 0}
+	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+
+	rows, err := db.Query(buildSelect, values...)
+	if err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+	defer rows.Close()
+
+	if err = scanner.Scan(rows, &accountExportVo); err != nil {
+		logrus.Errorln(err.Error())
+		return accountExportVo, errors.New(constant.SysError)
+	}
+	return accountExportVo, nil
+}
+
 func SelectAccountAll() ([]vo.AccountExportVo, error) {
 	var accountExportVo []vo.AccountExportVo
 	selectFields := []string{"username", "pass", "hash", "role_id", "email", "validity_period", "last_login_time", "expire_time", "deleted",

@@ -406,3 +406,12 @@ func CreateAccountBatch(c *gin.Context) {
 	}
 	vo.Success(nil, c)
 }
+
+func ExportAccountUnused(c *gin.Context) {
+	accountVo := util.GetCurrentAccount(c)
+	if err := service.ExportAccountUnused(accountVo.Id, accountVo.Username); err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nil, c)
+}

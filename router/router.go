@@ -71,6 +71,8 @@ func Router(router *gin.Engine) {
 			account.POST("/importAccount", api.ImportAccount)
 			// 批量生成账户
 			account.POST("/createAccountBatch", api.CreateAccountBatch)
+			// 导出未使用的账户
+			account.POST("/exportAccountUnused", api.ExportAccountUnused)
 		}
 		role := trojanApi.Group("/role")
 		{
