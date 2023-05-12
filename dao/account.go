@@ -409,7 +409,7 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 	return nil
 }
 
-// 查询禁用或者过期的用户名
+// SelectAccountUsernameByDeletedOrExpireTime 查询禁用或者过期的用户名
 func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 	buildSelect, values, err := builder.NamedQuery("select username from account where (deleted = {{deleted}} or expire_time <= {{expire_time}}) and quota != 0 and last_login_time != 0",
 		map[string]interface{}{"deleted": 1, "expire_time": util.NowMilli()})
@@ -436,7 +436,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 	return usernames, nil
 }
 
-// 用于发邮件
+// SelectAccountsByExpireTime 用于发邮件
 func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 	buildSelect, values, err := builder.NamedQuery("select username,email from account where expire_time <= {{expire_time}} and quota != 0 and last_login_time != 0",
 		map[string]interface{}{"expire_time": expireTime})
