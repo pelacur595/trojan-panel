@@ -166,7 +166,7 @@ func UpdateAccountById(token string, account *module.Account) error {
 			if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
 				return err
 			}
-		} else if *account.ExpireTime <= util.NowMilli() {
+		} else if account.ExpireTime != nil && *account.ExpireTime <= util.NowMilli() {
 			if err := DisableAccount([]string{*account.Username}); err != nil {
 				return err
 			}
