@@ -649,20 +649,19 @@ func LoginVerify(username string) error {
 func CreateAccountBatch(accountId uint, accountUsername string, dto dto.CreateAccountBatchDto) error {
 	var exportVos []vo.AccountUnusedExportVo
 	for i := 0; i < *dto.Num; i++ {
-		username := util.RandString(10)
-		pass := util.RandString(10)
+		randStr := util.RandString(12)
 		role := constant.USER
 		toByte := util.ToByte(*dto.Quota)
 		account := module.Account{
-			Username:       &username,
-			Pass:           &pass,
+			Username:       &randStr,
+			Pass:           &randStr,
 			RoleId:         &role,
 			ValidityPeriod: dto.ValidityPeriod,
 			Quota:          &toByte,
 		}
 		exportVo := vo.AccountUnusedExportVo{
-			Username: username,
-			Pass:     pass,
+			Username: randStr,
+			Pass:     randStr,
 		}
 		exportVos = append(exportVos, exportVo)
 		if err := dao.CreateAccount(&account); err != nil {
@@ -671,7 +670,7 @@ func CreateAccountBatch(accountId uint, accountUsername string, dto dto.CreateAc
 		}
 	}
 	if len(exportVos) > 0 {
-		if err := ExportTaskJson(accountId, accountUsername, constant.TaskTypeAccountExport, "BatchCreateAccountExport", exportVos); err != nil {
+		if err := ExportTaskJson(accountId, accountUsername, constant.TaskTypeAccountExport, "batchCreateAccountExport", exportVos); err != nil {
 			return err
 		}
 	}
@@ -696,7 +695,7 @@ func ExportTaskJson[T any](accountId uint, accountUsername string, fileTaskType 
 
 	var fileTaskStatus = constant.TaskDoing
 	fileTask := module.FileTask{
-		Name:            &fileName,
+		Name:            &fileNameRand,
 		Path:            &filePath,
 		Type:            &fileTaskType,
 		Status:          &fileTaskStatus,

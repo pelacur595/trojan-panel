@@ -213,7 +213,7 @@ func SelectAccountByUsername(username *string) (*module.Account, error) {
 
 	where := map[string]interface{}{"username": *username}
 
-	selectFields := []string{"id", "username", "pass", "role_id", "deleted"}
+	selectFields := []string{"id", "username", "pass", "role_id", "validity_period", "last_login_time", "deleted"}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
