@@ -3,12 +3,10 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"mime/multipart"
 	"sync"
-	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
@@ -176,52 +174,13 @@ func GetNodeServerInfo(token string, nodeServerId *uint) (*core.NodeServerInfoVo
 }
 
 func ExportNodeServer(accountId uint, accountUsername string) error {
-	fileName := fmt.Sprintf("nodeServerExport-%s.json", time.Now().Format("20060102150405"))
-	filePath := fmt.Sprintf("%s/%s", constant.ExportPath, fileName)
-
-	var fileTaskType uint = constant.TaskTypeNodeServerExport
-	var fileTaskStatus = constant.TaskDoing
-	fileTask := module.FileTask{
-		Name:            &fileName,
-		Path:            &filePath,
-		Type:            &fileTaskType,
-		Status:          &fileTaskStatus,
-		AccountId:       &accountId,
-		AccountUsername: &accountUsername,
-	}
-	fileTaskId, err := dao.CreateFileTask(&fileTask)
+	nodeServerExportVos, err := dao.SelectNodeServerAll()
 	if err != nil {
 		return err
 	}
-
-	go func() {
-		var mutex sync.Mutex
-		defer mutex.Unlock()
-		if mutex.TryLock() {
-			var fail = constant.TaskFail
-			var success = constant.TaskSuccess
-			fileTask := module.FileTask{
-				Id:     &fileTaskId,
-				Status: &fail,
-			}
-
-			// 查询所有需要导出数据
-			nodeServerExportVo, err := dao.SelectNodeServerAll()
-			if err != nil {
-				logrus.Errorf("ExportNodeServer SelectNodeServerAll err: %v", err)
-			}
-			if err = util.ExportJson(filePath, nodeServerExportVo); err != nil {
-				logrus.Errorf("ExportAccount ExportJson err: %v", err)
-			} else {
-				fileTask.Status = &success
-			}
-
-			// 更新文件任务状态
-			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-				logrus.Errorf("ExportNodeServer UpdateFileTaskById err: %v", err)
-			}
-		}
-	}()
+	if err = ExportTaskJson(accountId, accountUsername, constant.TaskTypeNodeServerExport, "nodeServerExport", nodeServerExportVos); err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -60,3 +60,8 @@ type CaptureVo struct {
 	CaptchaId  string `json:"captchaId"`
 	CaptchaImg string `json:"captchaImg"`
 }
+
+type AccountUnusedExportVo struct {
+	Username string `json:"username" ddb:"username"`
+	Pass     string `json:"pass" ddb:"pass"`
+}

@@ -400,7 +400,8 @@ func CreateAccountBatch(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	if err := service.CreateAccountBatch(createAccountBatchDto); err != nil {
+	account := util.GetCurrentAccount(c)
+	if err := service.CreateAccountBatch(account.Id, account.Username, createAccountBatchDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
 	}
