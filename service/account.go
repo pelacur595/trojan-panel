@@ -691,12 +691,13 @@ func CreateAccountBatch(dto dto.CreateAccountBatchDto) error {
 		username := util.RandString(10)
 		pass := util.RandString(10)
 		role := constant.USER
+		toByte := util.ToByte(*dto.Quota)
 		account := module.Account{
 			Username:       &username,
 			Pass:           &pass,
 			RoleId:         &role,
 			ValidityPeriod: dto.ValidityPeriod,
-			Quota:          dto.Quota,
+			Quota:          &toByte,
 		}
 		if err := dao.CreateAccount(&account); err != nil {
 			logrus.Errorf("batch create account err: %v", err)
