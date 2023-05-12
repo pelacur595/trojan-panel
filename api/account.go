@@ -77,7 +77,7 @@ func Login(c *gin.Context) {
 			} else {
 				milli := uint(time.Now().UnixMilli())
 				// 第一次登录
-				if account.ValidityPeriod != nil && *account.ValidityPeriod != 0 &&
+				if account.ValidityPeriod != nil && *account.ValidityPeriod > 0 &&
 					account.LastLoginTime != nil && *account.LastLoginTime == 0 {
 					expireTime := milli + *account.ValidityPeriod + 7*24*60*60*1000
 					account := module.Account{
