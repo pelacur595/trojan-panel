@@ -114,7 +114,7 @@ func CountAccountByUsername(username *string) (int, error) {
 	return count, nil
 }
 
-func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
+func SelectAccountPage(queryUsername *string, deleted *uint, lastLoginTime *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
 	var (
 		total    uint
 		accounts []module.Account
@@ -127,6 +127,13 @@ func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, page
 	}
 	if deleted != nil {
 		whereCount["deleted"] = *deleted
+	}
+	if lastLoginTime != nil {
+		if *lastLoginTime == 0 {
+			whereCount["last_login_time"] = 0
+		} else {
+			whereCount["last_login_time <>"] = 0
+		}
 	}
 	selectFieldsCount := []string{"count(1)"}
 	buildSelect, values, err := builder.BuildSelect("account", whereCount, selectFieldsCount)
@@ -144,6 +151,13 @@ func SelectAccountPage(queryUsername *string, deleted *uint, pageNum *uint, page
 	}
 	if deleted != nil {
 		where["deleted"] = *deleted
+	}
+	if lastLoginTime != nil {
+		if *lastLoginTime == 0 {
+			where["last_login_time"] = 0
+		} else {
+			where["last_login_time <>"] = 0
+		}
 	}
 	selectFields := []string{"id", "username", "role_id", "email", "validity_period", "last_login_time", "expire_time", "deleted",
 		"quota", "upload", "download", "create_time"}

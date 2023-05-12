@@ -64,8 +64,8 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 func CountAccountByUsername(username *string) (int, error) {
 	return dao.CountAccountByUsername(username)
 }
-func SelectAccountPage(username *string, deleted *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
-	return dao.SelectAccountPage(username, deleted, pageNum, pageSize)
+func SelectAccountPage(username *string, deleted *uint, lastLoginTime *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
+	return dao.SelectAccountPage(username, deleted, lastLoginTime, pageNum, pageSize)
 }
 func DeleteAccountById(token string, id *uint) error {
 	var mutex sync.Mutex
