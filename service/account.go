@@ -389,13 +389,12 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				vless.Port = item.Port
 				vless.Uuid = util.GenerateUUID(pass)
 				vless.Network = streamSettings.Network
-				tlsTrue := true
-				vless.Tls = &tlsTrue
+				vless.Tls = true
 				vless.Udp = true
 				vless.Flow = item.XrayFlow
 				if streamSettings.Security == "tls" {
-					vless.ClientFingerprint = &streamSettings.TlsSettings.Fingerprint
-					vless.SkipCertVerify = &streamSettings.TlsSettings.AllowInsecure
+					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vless.ServerName = streamSettings.TlsSettings.ServerName
 				} else if streamSettings.Security == "reality" {
 					if len(streamSettings.RealitySettings.ServerNames) > 0 {
@@ -405,11 +404,11 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 						vless.RealityOpts.ShortId = streamSettings.RealitySettings.ShortIds[0]
 					}
 					vless.RealityOpts.PublicKey = item.RealityPbk
-					vless.ClientFingerprint = &streamSettings.RealitySettings.Fingerprint
+					vless.ClientFingerprint = streamSettings.RealitySettings.Fingerprint
 				} else if streamSettings.Security == "none" {
-					vless.Tls = nil
-					vless.SkipCertVerify = nil
-					vless.ClientFingerprint = nil
+					vless.Tls = false
+					vless.SkipCertVerify = false
+					vless.ClientFingerprint = ""
 				}
 				if streamSettings.Network == "ws" {
 					vless.WsOpts.Path = streamSettings.WsSettings.Path
@@ -430,18 +429,17 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				} else {
 					vmess.Cipher = "none"
 				}
-				tlsTrue := true
-				vmess.Tls = &tlsTrue
+				vmess.Tls = true
 				vmess.Udp = true
 				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
-					vmess.ClientFingerprint = &streamSettings.TlsSettings.Fingerprint
-					vmess.SkipCertVerify = &streamSettings.TlsSettings.AllowInsecure
+					vmess.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
+					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vmess.ServerName = streamSettings.TlsSettings.ServerName
 				} else if streamSettings.Security == "none" {
-					vmess.Tls = nil
-					vmess.SkipCertVerify = nil
-					vmess.ClientFingerprint = nil
+					vmess.Tls = false
+					vmess.SkipCertVerify = false
+					vmess.ClientFingerprint = ""
 				}
 				if streamSettings.Network == "ws" {
 					vmess.WsOpts.Path = streamSettings.WsSettings.Path
@@ -462,6 +460,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 					trojan.Sni = streamSettings.TlsSettings.ServerName
 					trojan.Alpn = streamSettings.TlsSettings.Alpn
 					trojan.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+				} else if streamSettings.Security == "none" {
+					trojan.ClientFingerprint = ""
+					trojan.SkipCertVerify = false
 				}
 				if streamSettings.Network == "ws" {
 					trojan.WsOpts.Path = streamSettings.WsSettings.Path
