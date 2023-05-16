@@ -11,12 +11,12 @@ type Vless struct {
 	Port              uint        `yaml:"port"`
 	Uuid              string      `yaml:"uuid"`
 	Network           string      `yaml:"network"`
-	Tls               bool        `yaml:"tls"`
+	Tls               *bool       `yaml:"tls"`
 	Udp               bool        `yaml:"udp"`
 	Flow              string      `yaml:"flow"`
-	ClientFingerprint string      `yaml:"client-fingerprint"`
+	ClientFingerprint *string     `yaml:"client-fingerprint"`
 	ServerName        string      `yaml:"servername"`
-	SkipCertVerify    bool        `yaml:"skip-cert-verify"`
+	SkipCertVerify    *bool       `yaml:"skip-cert-verify"`
 	RealityOpts       RealityOpts `yaml:"reality-opts"`
 	WsOpts            WsOpts      `yaml:"ws-opts"`
 }
@@ -27,20 +27,20 @@ type RealityOpts struct {
 }
 
 type Vmess struct {
-	Name              string `yaml:"name"`
-	Type              string `yaml:"type"`
-	Server            string `yaml:"server"`
-	Port              uint   `yaml:"port"`
-	Uuid              string `yaml:"uuid"`
-	AlterId           uint   `yaml:"alterId"`
-	Cipher            string `yaml:"cipher"`
-	Udp               bool   `yaml:"udp"`
-	Tls               bool   `yaml:"tls"`
-	ClientFingerprint string `yaml:"client-fingerprint"`
-	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
-	ServerName        string `yaml:"servername"`
-	Network           string `yaml:"network"`
-	WsOpts            WsOpts `yaml:"ws-opts"`
+	Name              string  `yaml:"name"`
+	Type              string  `yaml:"type"`
+	Server            string  `yaml:"server"`
+	Port              uint    `yaml:"port"`
+	Uuid              string  `yaml:"uuid"`
+	AlterId           uint    `yaml:"alterId"`
+	Cipher            string  `yaml:"cipher"`
+	Udp               bool    `yaml:"udp"`
+	Tls               *bool   `yaml:"tls"`
+	ClientFingerprint *string `yaml:"client-fingerprint"`
+	SkipCertVerify    *bool   `yaml:"skip-cert-verify"`
+	ServerName        string  `yaml:"servername"`
+	Network           string  `yaml:"network"`
+	WsOpts            WsOpts  `yaml:"ws-opts"`
 }
 
 type Trojan struct {
