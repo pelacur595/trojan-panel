@@ -389,10 +389,10 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 				vless.Port = item.Port
 				vless.Uuid = util.GenerateUUID(pass)
 				vless.Network = streamSettings.Network
-				vless.Tls = true
 				vless.Udp = true
 				vless.Flow = item.XrayFlow
 				if streamSettings.Security == "tls" {
+					vless.Tls = true
 					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vless.ServerName = streamSettings.TlsSettings.ServerName
@@ -426,9 +426,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 					vmess.Cipher = "none"
 				}
 				vmess.Udp = true
-				vmess.Tls = true
 				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
+					vmess.Tls = true
 					vmess.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
 					vmess.ServerName = streamSettings.TlsSettings.ServerName
