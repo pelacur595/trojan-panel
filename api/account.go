@@ -81,7 +81,7 @@ func Login(c *gin.Context) {
 					Id:            account.Id,
 					LastLoginTime: &milli,
 				}
-				if account.ValidityPeriod != nil && *account.ValidityPeriod >= 0 &&
+				if account.ValidityPeriod != nil && *account.ValidityPeriod > 0 &&
 					account.LastLoginTime != nil && *account.LastLoginTime == 0 {
 					expireTime := milli + *account.ValidityPeriod*24*60*60*1000
 					accountUpdate.ExpireTime = &expireTime
