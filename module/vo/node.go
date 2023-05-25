@@ -12,9 +12,7 @@ type NodeVo struct {
 	Domain       string    `json:"domain"`
 	Port         uint      `json:"port"`
 	CreateTime   time.Time `json:"createTime"`
-}
 
-type NodeStateVo struct {
 	Status int `json:"status"`
 }
 

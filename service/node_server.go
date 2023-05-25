@@ -6,12 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"mime/multipart"
+	"sync"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/dto"
 	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
@@ -44,6 +46,45 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 			CreateTime: *item.CreateTime,
 		}
 		nodeServerVos = append(nodeServerVos, nodeServerVo)
+	}
+
+	account := util.GetCurrentAccount(c)
+	if util.IsAdmin(account.Roles) {
+		token := util.GetToken(c)
+		splitNodeServerVos := util.SplitArr(nodeServerVos, 2)
+		var nodeMap sync.Map
+		var wg sync.WaitGroup
+		for i := range splitNodeServerVos {
+			indexI := i
+			wg.Add(1)
+			go func() {
+				for j := range splitNodeServerVos[indexI] {
+					var ip = splitNodeServerVos[indexI][j].Ip
+					var grpcPort = splitNodeServerVos[indexI][j].GrpcPort
+					nodeMapValue, ok := nodeMap.Load(ip)
+					if ok {
+						nodeServerVo := nodeMapValue.(vo.NodeServerVo)
+						splitNodeServerVos[indexI][j].Status = nodeServerVo.Status
+						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = nodeServerVo.TrojanPanelCoreVersion
+					} else {
+						var nodeServerState int
+						var trojanPanelCoreVersion string
+						stateVo, err := core.GetNodeServerState(token, ip, grpcPort)
+						if err != nil {
+							nodeServerState = 0
+						} else {
+							nodeServerState = 1
+							trojanPanelCoreVersion = stateVo.GetVersion()
+						}
+						splitNodeServerVos[indexI][j].Status = nodeServerState
+						splitNodeServerVos[indexI][j].TrojanPanelCoreVersion = trojanPanelCoreVersion
+						nodeMap.Store(ip, splitNodeServerVos[indexI][j])
+					}
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
 	}
 
 	nodeServerPageVo := vo.NodeServerPageVo{
@@ -214,20 +255,4 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 		}
 	}(fileTaskId)
 	return nil
-}
-
-func GetNodeServerState(token string, id *uint) (vo.NodeServerStateVo, error) {
-	var nodeServerStateVo vo.NodeServerStateVo
-	nodeServer, err := dao.SelectNodeServer(map[string]interface{}{"id": *id})
-	if err != nil {
-		return nodeServerStateVo, err
-	}
-	stateVo, err := core.GetNodeServerState(token, *nodeServer.Ip, *nodeServer.GrpcPort)
-	if err != nil {
-		nodeServerStateVo.Status = 0
-	} else {
-		nodeServerStateVo.Status = 1
-		nodeServerStateVo.TrojanPanelCoreVersion = stateVo.GetVersion()
-	}
-	return nodeServerStateVo, nil
 }

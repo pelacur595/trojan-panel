@@ -99,8 +99,6 @@ func Router(router *gin.Engine) {
 			nodeServer.POST("/exportNodeServer", api.ExportNodeServer)
 			// 导出服务器
 			nodeServer.POST("/importNodeServer", api.ImportNodeServer)
-			// 查询服务器状态
-			nodeServer.GET("/getNodeServerState", api.GetNodeServerState)
 		}
 		node := trojanApi.Group("/node")
 		{
@@ -122,8 +120,6 @@ func Router(router *gin.Engine) {
 			node.POST("/nodeURL", api.NodeURL)
 			// 节点部分属性的默认值
 			node.GET("/nodeDefault", api.NodeDefault)
-			// 查询节点状态
-			node.GET("/getNodeState", api.GetNodeState)
 		}
 		nodeType := trojanApi.Group("/nodeType")
 		{

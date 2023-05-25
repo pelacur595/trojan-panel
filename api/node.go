@@ -156,19 +156,3 @@ func ExportNode(c *gin.Context) {
 func ImportNode(c *gin.Context) {
 
 }
-
-// GetNodeState 查询节点状态
-func GetNodeState(c *gin.Context) {
-	var nodeRequireIdDto dto.RequiredIdDto
-	_ = c.ShouldBindQuery(&nodeRequireIdDto)
-	if err := validate.Struct(&nodeRequireIdDto); err != nil {
-		vo.Fail(constant.ValidateFailed, c)
-		return
-	}
-	nodeState, err := service.GetNodeState(util.GetToken(c), nodeRequireIdDto.Id)
-	if err != nil {
-		vo.Fail(constant.SysError, c)
-		return
-	}
-	vo.Success(nodeState, c)
-}

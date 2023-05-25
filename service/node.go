@@ -256,17 +256,71 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	if err != nil {
 		return nil, err
 	}
-	nodeVos := make([]vo.NodeVo, 0)
+	nodeBos := make([]bo.NodeBo, 0)
 	for _, item := range *nodePage {
+		nodeBo := bo.NodeBo{
+			Id:                 *item.Id,
+			NodeServerId:       *item.NodeServerId,
+			NodeSubId:          *item.NodeSubId,
+			NodeTypeId:         *item.NodeTypeId,
+			Name:               *item.Name,
+			NodeServerIp:       *item.NodeServerIp,
+			NodeServerGrpcPort: *item.NodeServerGrpcPort,
+			Domain:             *item.Domain,
+			Port:               *item.Port,
+			CreateTime:         *item.CreateTime,
+		}
+		nodeBos = append(nodeBos, nodeBo)
+	}
+
+	account := util.GetCurrentAccount(c)
+	if util.IsAdmin(account.Roles) {
+		token := util.GetToken(c)
+		splitNodeBos := util.SplitArr(nodeBos, 2)
+		var nodeMap sync.Map
+		var wg sync.WaitGroup
+		for i := range splitNodeBos {
+			indexI := i
+			wg.Add(1)
+			go func() {
+				for j := range splitNodeBos[indexI] {
+					var ip = splitNodeBos[indexI][j].NodeServerIp
+					var grpcPort = splitNodeBos[indexI][j].NodeServerGrpcPort
+					var nodeTypeId = splitNodeBos[indexI][j].NodeTypeId
+					var port = splitNodeBos[indexI][j].Port
+					status, ok := nodeMap.Load(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port))
+					if ok {
+						splitNodeBos[indexI][j].Status = status.(int)
+					} else {
+						var nodeState int
+						nodeStateVo, err := core.GetNodeState(token, ip, grpcPort, nodeTypeId, port)
+						if err != nil || nodeStateVo.GetStatus() == 0 {
+							nodeState = 0
+						} else {
+							nodeState = 1
+						}
+						splitNodeBos[indexI][j].Status = nodeState
+						nodeMap.Store(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port), nodeState)
+					}
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+	}
+
+	nodeVos := make([]vo.NodeVo, 0)
+	for _, item := range nodeBos {
 		nodeVo := vo.NodeVo{
-			Id:           *item.Id,
-			NodeServerId: *item.NodeServerId,
-			NodeSubId:    *item.NodeSubId,
-			NodeTypeId:   *item.NodeTypeId,
-			Name:         *item.Name,
-			Domain:       *item.Domain,
-			Port:         *item.Port,
-			CreateTime:   *item.CreateTime,
+			Id:           item.Id,
+			NodeServerId: item.NodeServerId,
+			NodeSubId:    item.NodeSubId,
+			NodeTypeId:   item.NodeTypeId,
+			Name:         item.Name,
+			Domain:       item.Domain,
+			Port:         item.Port,
+			CreateTime:   item.CreateTime,
+			Status:       item.Status,
 		}
 		nodeVos = append(nodeVos, nodeVo)
 	}
@@ -722,19 +776,4 @@ func NodeDefault() (vo.NodeDefaultVo, error) {
 	nodeDefaultVo.ShortId = util.GenerateShortId()
 	nodeDefaultVo.SpiderX = fmt.Sprintf("/%s", util.RandString(8))
 	return nodeDefaultVo, nil
-}
-
-func GetNodeState(token string, id *uint) (vo.NodeStateVo, error) {
-	var nodeStateVo vo.NodeStateVo
-	node, err := dao.SelectNodeById(id)
-	if err != nil {
-		return nodeStateVo, err
-	}
-	nodeState, err := core.GetNodeState(token, *node.NodeServerIp, *node.NodeServerGrpcPort, *node.NodeTypeId, *node.Port)
-	if err != nil || nodeState.GetStatus() == 0 {
-		nodeStateVo.Status = 0
-	} else {
-		nodeStateVo.Status = 1
-	}
-	return nodeStateVo, nil
 }

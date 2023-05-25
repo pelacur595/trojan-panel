@@ -8,9 +8,7 @@ type NodeServerVo struct {
 	Ip         string    `json:"ip"`
 	GrpcPort   uint      `json:"grpcPort"`
 	CreateTime time.Time `json:"createTime"`
-}
 
-type NodeServerStateVo struct {
 	Status                 int    `json:"status"`
 	TrojanPanelCoreVersion string `json:"trojanPanelCoreVersion"`
 }
