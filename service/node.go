@@ -276,32 +276,29 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	account := util.GetCurrentAccount(c)
 	if util.IsAdmin(account.Roles) {
 		token := util.GetToken(c)
-		splitNodeBos := util.SplitArr(nodeBos, 2)
 		var nodeMap sync.Map
 		var wg sync.WaitGroup
-		for i := range splitNodeBos {
+		wg.Add(len(nodeBos))
+		for i := range nodeBos {
 			indexI := i
-			wg.Add(1)
 			go func() {
-				for j := range splitNodeBos[indexI] {
-					var ip = splitNodeBos[indexI][j].NodeServerIp
-					var grpcPort = splitNodeBos[indexI][j].NodeServerGrpcPort
-					var nodeTypeId = splitNodeBos[indexI][j].NodeTypeId
-					var port = splitNodeBos[indexI][j].Port
-					status, ok := nodeMap.Load(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port))
-					if ok {
-						splitNodeBos[indexI][j].Status = status.(int)
+				var ip = nodeBos[indexI].NodeServerIp
+				var grpcPort = nodeBos[indexI].NodeServerGrpcPort
+				var nodeTypeId = nodeBos[indexI].NodeTypeId
+				var port = nodeBos[indexI].Port
+				status, ok := nodeMap.Load(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port))
+				if ok {
+					nodeBos[indexI].Status = status.(int)
+				} else {
+					var nodeState int
+					nodeStateVo, err := core.GetNodeState(token, ip, grpcPort, nodeTypeId, port)
+					if err != nil || nodeStateVo.GetStatus() == 0 {
+						nodeState = 0
 					} else {
-						var nodeState int
-						nodeStateVo, err := core.GetNodeState(token, ip, grpcPort, nodeTypeId, port)
-						if err != nil || nodeStateVo.GetStatus() == 0 {
-							nodeState = 0
-						} else {
-							nodeState = 1
-						}
-						splitNodeBos[indexI][j].Status = nodeState
-						nodeMap.Store(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port), nodeState)
+						nodeState = 1
 					}
+					nodeBos[indexI].Status = nodeState
+					nodeMap.Store(fmt.Sprintf("%s:%d:%d", ip, nodeTypeId, port), nodeState)
 				}
 				wg.Done()
 			}()

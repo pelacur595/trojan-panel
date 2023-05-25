@@ -92,7 +92,7 @@ func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *Acc
 
 // GetNodeState 查询节点状态
 func GetNodeState(token string, ip string, grpcPort uint, nodeTypeId uint, port uint) (*NodeStateVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 3*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func GetNodeState(token string, ip string, grpcPort uint, nodeTypeId uint, port 
 
 // GetNodeServerState 查询服务器状态
 func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStateVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 3*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
