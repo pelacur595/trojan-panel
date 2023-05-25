@@ -171,3 +171,18 @@ func ImportNodeServer(c *gin.Context) {
 	}
 	vo.Success(nil, c)
 }
+
+func GetNodeServerState(c *gin.Context) {
+	var nodeServerRequireIdDto dto.RequiredIdDto
+	_ = c.ShouldBindQuery(&nodeServerRequireIdDto)
+	if err := validate.Struct(&nodeServerRequireIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	nodeServerState, err := service.GetNodeServerState(util.GetToken(c), nodeServerRequireIdDto.Id)
+	if err != nil {
+		vo.Fail(constant.SysError, c)
+		return
+	}
+	vo.Success(nodeServerState, c)
+}
