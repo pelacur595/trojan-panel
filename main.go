@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"trojan-panel/api"
-	"trojan-panel/app/telegram"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -28,7 +27,6 @@ func init() {
 	middleware.InitCron()
 	middleware.InitRateLimiter()
 	api.InitValidator()
-	telegram.InitTelegramBotApi()
 }
 
 func releaseResource() {
