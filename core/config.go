@@ -17,9 +17,10 @@ func InitConfig() {
 }
 
 type AppConfig struct {
-	MySQLConfig `ini:"mysql"`
-	LogConfig   `ini:"log"`
-	RedisConfig `ini:"redis"`
+	MySQLConfig    `ini:"mysql"`
+	LogConfig      `ini:"log"`
+	RedisConfig    `ini:"redis"`
+	TelegramConfig `ini:"telegram"`
 }
 
 type MySQLConfig struct {
@@ -45,4 +46,8 @@ type RedisConfig struct {
 	MaxIdle   int    `ini:"max_idle"`
 	MaxActive int    `ini:"max_active"`
 	Wait      bool   `ini:"wait"`
+}
+
+type TelegramConfig struct {
+	ApiToken string `ini:"api_token"`
 }
