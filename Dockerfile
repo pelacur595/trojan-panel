@@ -9,6 +9,7 @@ ENV mariadb_ip=127.0.0.1 \
     redis_host=127.0.0.1 \
     redis_port=6378 \
     redis_pass=123456 \
+    server_port=8081 \
     TZ=Asia/Shanghai
 ARG TARGETOS
 ARG TARGETARCH
@@ -26,4 +27,5 @@ ENTRYPOINT chmod 777 ./trojan-panel && \
     -password=${mariadb_pas} \
     -redisHost=${redis_host} \
     -redisPort=${redis_port} \
-    -redisPassword=${redis_pass}
+    -redisPassword=${redis_pass} \
+    -serverPort=${server_port}

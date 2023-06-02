@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"trojan-panel/api"
 	"trojan-panel/core"
@@ -12,9 +13,10 @@ import (
 )
 
 func main() {
+	serverConfig := core.Config.ServerConfig
 	r := gin.Default()
 	router.Router(r)
-	_ = r.Run(":8081")
+	_ = r.Run(fmt.Sprintf(":%d", serverConfig.Port))
 	defer releaseResource()
 }
 

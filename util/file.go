@@ -27,6 +27,7 @@ var (
 	redisMaxIdle   string
 	redisMaxActive string
 	redisWait      string
+	serverPort     string
 	version        bool
 )
 
@@ -42,6 +43,7 @@ func init() {
 	flag.StringVar(&redisMaxIdle, "redisMaxIdle", "2", "Redis最大空闲连接数")
 	flag.StringVar(&redisMaxActive, "redisMaxActive", "2", "Redis最大连接数")
 	flag.StringVar(&redisWait, "redisWait", "true", "Redis是否等待")
+	flag.StringVar(&serverPort, "serverPort", "8081", "服务端口")
 	flag.BoolVar(&version, "version", false, "打印版本信息")
 	flag.Usage = usage
 	flag.Parse()
@@ -152,8 +154,10 @@ db=%s
 max_idle=%s
 max_active=%s
 wait=%s
+[server]
+port=%s
 `, host, user, password, port, redisHost, redisPort, redisPassword, redisDb,
-			redisMaxIdle, redisMaxIdle, redisWait))
+			redisMaxIdle, redisMaxIdle, redisWait, serverPort))
 		if err != nil {
 			logrus.Errorf("config.ini文件写入异常 err: %v", err)
 			panic(err)
