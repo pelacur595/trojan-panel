@@ -243,8 +243,8 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			NodeServerIp:       nodeServer.Ip,
 			NodeServerGrpcPort: nodeServer.GrpcPort,
 			Domain:             nodeCreateDto.Domain,
-			Priority:           nodeCreateDto.Priority,
 			Port:               nodeCreateDto.Port,
+			Priority:           nodeCreateDto.Priority,
 		}
 		if err = dao.CreateNode(&node); err != nil {
 			return err
