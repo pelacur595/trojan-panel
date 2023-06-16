@@ -15,6 +15,7 @@ func InitValidator() {
 	_ = validate.RegisterValidation("validateStr", validateStr)
 	_ = validate.RegisterValidation("validateEmail", validateEmail)
 	_ = validate.RegisterValidation("validatePort", validatePort)
+	_ = validate.RegisterValidation("validateInt", validateInt)
 }
 
 // 字符串必须是字母和数字的组合
@@ -40,6 +41,14 @@ func validateEmail(f validator.FieldLevel) bool {
 func validatePositiveInt(f validator.FieldLevel) bool {
 	field := strconv.FormatUint(f.Field().Uint(), 10)
 	reg := "^[1-9]\\d*$"
+	compile := regexp.MustCompile(reg)
+	return compile.MatchString(field)
+}
+
+// 整数
+func validateInt(f validator.FieldLevel) bool {
+	field := strconv.FormatInt(f.Field().Int(), 10)
+	reg := "^-?\\d+$"
 	compile := regexp.MustCompile(reg)
 	return compile.MatchString(field)
 }

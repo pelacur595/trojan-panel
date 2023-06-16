@@ -12,6 +12,7 @@ type NodeBo struct {
 	NodeServerGrpcPort uint      `json:"nodeServerGrpcPort"`
 	Domain             string    `json:"domain"`
 	Port               uint      `json:"port"`
+	Priority           int       `json:"priority"`
 	CreateTime         time.Time `json:"createTime"`
 
 	Status int `json:"status"`

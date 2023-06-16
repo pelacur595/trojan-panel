@@ -11,6 +11,7 @@ type NodeVo struct {
 	Name         string    `json:"name"`
 	Domain       string    `json:"domain"`
 	Port         uint      `json:"port"`
+	Priority     int       `json:"priority"`
 	CreateTime   time.Time `json:"createTime"`
 
 	Status int `json:"status"`
@@ -30,6 +31,7 @@ type NodeOneVo struct {
 	Name         string    `json:"name"`
 	Domain       string    `json:"domain"`
 	Port         uint      `json:"port"`
+	Priority     int       `json:"priority"`
 	CreateTime   time.Time `json:"createTime"`
 
 	Password string `json:"password"`

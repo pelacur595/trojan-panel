@@ -36,6 +36,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			Name:         *node.Name,
 			Domain:       *node.Domain,
 			Port:         *node.Port,
+			Priority:     *node.Priority,
 			CreateTime:   *node.CreateTime,
 		}
 		nodeTypeId := node.NodeTypeId
@@ -242,6 +243,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			NodeServerIp:       nodeServer.Ip,
 			NodeServerGrpcPort: nodeServer.GrpcPort,
 			Domain:             nodeCreateDto.Domain,
+			Priority:           nodeCreateDto.Priority,
 			Port:               nodeCreateDto.Port,
 		}
 		if err = dao.CreateNode(&node); err != nil {
@@ -268,6 +270,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 			NodeServerGrpcPort: *item.NodeServerGrpcPort,
 			Domain:             *item.Domain,
 			Port:               *item.Port,
+			Priority:           *item.Priority,
 			CreateTime:         *item.CreateTime,
 		}
 		nodeBos = append(nodeBos, nodeBo)
@@ -316,6 +319,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 			Name:         item.Name,
 			Domain:       item.Domain,
 			Port:         item.Port,
+			Priority:     item.Priority,
 			CreateTime:   item.CreateTime,
 			Status:       item.Status,
 		}
@@ -481,7 +485,8 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				*nodeEntity.Name != *nodeUpdateDto.Name ||
 				*nodeEntity.NodeServerIp != *nodeServer.Ip ||
 				*nodeEntity.Domain != *nodeUpdateDto.Domain ||
-				*nodeEntity.Port != *nodeUpdateDto.Port {
+				*nodeEntity.Port != *nodeUpdateDto.Port ||
+				*nodeEntity.Priority != *nodeUpdateDto.Priority {
 				node := module.Node{
 					Id:           nodeUpdateDto.Id,
 					NodeServerId: nodeUpdateDto.NodeServerId,
@@ -489,6 +494,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 					NodeServerIp: nodeServer.Ip,
 					Domain:       nodeUpdateDto.Domain,
 					Port:         nodeUpdateDto.Port,
+					Priority:     nodeUpdateDto.Priority,
 				}
 				if err = dao.UpdateNodeById(&node); err != nil {
 					return err
@@ -565,6 +571,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				NodeServerGrpcPort: nodeServer.GrpcPort,
 				Domain:             nodeUpdateDto.Domain,
 				Port:               nodeUpdateDto.Port,
+				Priority:           nodeUpdateDto.Priority,
 			}
 			if err = dao.UpdateNodeById(&node); err != nil {
 				return err

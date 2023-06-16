@@ -13,7 +13,7 @@ import (
 func SelectNodeById(id *uint) (*module.Node, error) {
 	var node module.Node
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "priority", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -46,6 +46,9 @@ func CreateNode(node *module.Node) error {
 	}
 	if node.Port != nil && *node.Port != 0 {
 		nodeEntity["port"] = *node.Port
+	}
+	if node.Priority != nil {
+		nodeEntity["priority"] = *node.Priority
 	}
 	if node.NodeServerGrpcPort != nil && *node.NodeServerGrpcPort != 0 {
 		nodeEntity["node_server_grpc_port"] = *node.NodeServerGrpcPort
@@ -92,7 +95,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 
 	// 分页查询
 	where := map[string]interface{}{
-		"_orderby": "create_time desc",
+		"_orderby": "priority desc,create_time desc",
 		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryName != nil && *queryName != "" {
 		where["name like"] = fmt.Sprintf("%%%s%%", *queryName)
@@ -100,7 +103,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 	if nodeServerId != nil && *nodeServerId != 0 {
 		where["node_server_id"] = *nodeServerId
 	}
-	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "create_time"}
+	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "priority", "create_time"}
 	selectSQL, values, err := builder.BuildSelect("node", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -161,6 +164,9 @@ func UpdateNodeById(node *module.Node) error {
 	}
 	if node.Port != nil {
 		update["port"] = *node.Port
+	}
+	if node.Priority != nil {
+		update["priority"] = *node.Priority
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node", where, update)
@@ -237,7 +243,9 @@ func CountNodeByNameAndNodeServerId(id *uint, queryName *string, nodeServerId *u
 func SelectNodesIpAndPort() ([]module.Node, error) {
 	var nodes []module.Node
 
-	buildSelect, values, err := builder.BuildSelect("node", nil, []string{"id", "node_server_id", "port"})
+	where := map[string]interface{}{
+		"_orderby": "priority desc,create_time desc"}
+	buildSelect, values, err := builder.BuildSelect("node", where, []string{"id", "node_server_id", "port"})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nodes, errors.New(constant.SysError)

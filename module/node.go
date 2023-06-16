@@ -12,6 +12,7 @@ type Node struct {
 	NodeServerGrpcPort *uint      `ddb:"node_server_grpc_port"`
 	Domain             *string    `ddb:"domain"`
 	Port               *uint      `ddb:"port"`
+	Priority           *int       `ddb:"priority"`
 	CreateTime         *time.Time `ddb:"create_time"`
 	UpdateTime         *time.Time `ddb:"update_time"`
 }

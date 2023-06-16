@@ -16,6 +16,7 @@ type NodeCreateDto struct {
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	Priority     *int    `json:"priority" form:"priority" validate:"required,validateInt"`
 
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
@@ -50,6 +51,7 @@ type NodeUpdateDto struct {
 	Name         *string `json:"name" form:"name" validate:"required,min=2,max=20"`
 	Domain       *string `json:"domain" form:"domain" validate:"required,ip|fqdn,min=4,max=64"`
 	Port         *uint   `json:"port" form:"port" validate:"required,validatePort"`
+	Priority     *int    `json:"priority" form:"priority" validate:"required,validateInt"`
 
 	XrayProtocol       *string `json:"xrayProtocol" form:"xrayProtocol" validate:"omitempty,min=0,max=32"`
 	XrayFlow           *string `json:"xrayFlow" form:"xrayFlow" validate:"omitempty,min=0,max=32"`
