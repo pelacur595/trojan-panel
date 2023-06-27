@@ -2,9 +2,10 @@ package service
 
 import (
 	"os"
-	"sync"
 	"trojan-panel/dao"
+	"trojan-panel/dao/redis"
 	"trojan-panel/module"
+	"trojan-panel/module/constant"
 	"trojan-panel/module/vo"
 )
 
@@ -13,20 +14,21 @@ func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, 
 }
 
 func DeleteFileTaskById(id *uint) error {
-	var mutex sync.Mutex
-	defer mutex.TryLock()
-	if mutex.TryLock() {
-		fileTask, err := dao.SelectFileTaskById(id)
-		if err != nil {
-			return err
-		}
-		if err = os.Remove(*fileTask.Path); err != nil {
-			return err
-		}
-		if err := dao.DeleteFileTaskById(id); err != nil {
-			return err
-		}
+	mutex, err := redis.RsLock(constant.DeleteFileTaskByIdLock)
+	if err != nil {
+		return err
 	}
+	fileTask, err := dao.SelectFileTaskById(id)
+	if err != nil {
+		return err
+	}
+	if err = os.Remove(*fileTask.Path); err != nil {
+		return err
+	}
+	if err := dao.DeleteFileTaskById(id); err != nil {
+		return err
+	}
+	redis.RsUnLock(mutex)
 	return nil
 }
 

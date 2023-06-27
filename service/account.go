@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"mime/multipart"
-	"sync"
 	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
@@ -68,20 +67,21 @@ func SelectAccountPage(username *string, deleted *uint, lastLoginTime *uint, pag
 	return dao.SelectAccountPage(username, deleted, lastLoginTime, pageNum, pageSize)
 }
 func DeleteAccountById(token string, id *uint) error {
-	var mutex sync.Mutex
-	defer mutex.Unlock()
-	if mutex.TryLock() {
-		password, err := dao.SelectConnectPassword(id, nil)
-		if err != nil {
-			return err
-		}
-		if err = RemoveAccount(token, password); err != nil {
-			return err
-		}
-		if err = dao.DeleteAccountById(id); err != nil {
-			return err
-		}
+	mutex, err := redis.RsLock(constant.DeleteAccountByIdLock)
+	if err != nil {
+		return err
 	}
+	password, err := dao.SelectConnectPassword(id, nil)
+	if err != nil {
+		return err
+	}
+	if err = RemoveAccount(token, password); err != nil {
+		return err
+	}
+	if err = dao.DeleteAccountById(id); err != nil {
+		return err
+	}
+	redis.RsUnLock(mutex)
 	return nil
 }
 
@@ -90,44 +90,47 @@ func SelectAccountByUsername(username *string) (*module.Account, error) {
 }
 
 func UpdateAccountPass(token string, oldPass *string, newPass *string, username *string) error {
-	var mutex sync.Mutex
-	defer mutex.Unlock()
-	if mutex.TryLock() {
-		account, err := SelectAccountByUsername(username)
-		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
-			return errors.New(constant.OriPassError)
-		}
-
-		if err = RemoveAccount(token, *account.Pass); err != nil {
-			return err
-		}
-
-		if err := dao.UpdateAccountPass(oldPass, newPass, username); err != nil {
-			return err
-		}
+	mutex, err := redis.RsLock(constant.UpdateAccountPassLock)
+	if err != nil {
+		return err
 	}
+
+	account, err := SelectAccountByUsername(username)
+	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *username, *oldPass)) {
+		return errors.New(constant.OriPassError)
+	}
+
+	if err = RemoveAccount(token, *account.Pass); err != nil {
+		return err
+	}
+
+	if err := dao.UpdateAccountPass(oldPass, newPass, username); err != nil {
+		return err
+	}
+	redis.RsUnLock(mutex)
 	return nil
 }
 
 func UpdateAccountProperty(token string, oldUsername *string, pass *string, username *string, email *string) error {
-	var mutex sync.Mutex
-	defer mutex.Unlock()
-	if mutex.TryLock() {
-		account, err := SelectAccountByUsername(oldUsername)
-		if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *oldUsername, *pass)) {
-			return errors.New(constant.OriPassError)
-		}
+	mutex, err := redis.RsLock(constant.UpdateAccountPropertyLock)
+	if err != nil {
+		return err
+	}
+	account, err := SelectAccountByUsername(oldUsername)
+	if err != nil || !util.Sha1Match(*account.Pass, fmt.Sprintf("%s%s", *oldUsername, *pass)) {
+		return errors.New(constant.OriPassError)
+	}
 
-		if pass != nil && *pass != "" && username != nil && *username != "" {
-			if err = RemoveAccount(token, *account.Pass); err != nil {
-				return err
-			}
-		}
-
-		if err := dao.UpdateAccountProperty(oldUsername, pass, username, email); err != nil {
+	if pass != nil && *pass != "" && username != nil && *username != "" {
+		if err = RemoveAccount(token, *account.Pass); err != nil {
 			return err
 		}
 	}
+
+	if err := dao.UpdateAccountProperty(oldUsername, pass, username, email); err != nil {
+		return err
+	}
+	redis.RsUnLock(mutex)
 	return nil
 }
 
@@ -147,31 +150,32 @@ func GetAccountInfo(c *gin.Context) (*vo.AccountInfo, error) {
 }
 
 func UpdateAccountById(token string, account *module.Account) error {
-	var mutex sync.Mutex
-	defer mutex.Unlock()
-	if mutex.TryLock() {
-		if account.Pass != nil && *account.Pass != "" {
-			password, err := dao.SelectConnectPassword(account.Id, nil)
-			if err != nil {
-				return err
-			}
-			if err = RemoveAccount(token, password); err != nil {
-				return err
-			}
-		}
-		if err := dao.UpdateAccountById(account); err != nil {
+	mutex, err := redis.RsLock(constant.UpdateAccountByIdLock)
+	if err != nil {
+		return err
+	}
+	if account.Pass != nil && *account.Pass != "" {
+		password, err := dao.SelectConnectPassword(account.Id, nil)
+		if err != nil {
 			return err
 		}
-		if account.Deleted != nil && *account.Deleted == 1 {
-			if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
-				return err
-			}
-		} else if account.ExpireTime != nil && *account.ExpireTime <= util.NowMilli() {
-			if err := DisableAccount([]string{*account.Username}); err != nil {
-				return err
-			}
+		if err = RemoveAccount(token, password); err != nil {
+			return err
 		}
 	}
+	if err := dao.UpdateAccountById(account); err != nil {
+		return err
+	}
+	if account.Deleted != nil && *account.Deleted == 1 {
+		if err := PullAccountWhiteOrBlackByUsername([]string{*account.Username}, true); err != nil {
+			return err
+		}
+	} else if account.ExpireTime != nil && *account.ExpireTime <= util.NowMilli() {
+		if err := DisableAccount([]string{*account.Username}); err != nil {
+			return err
+		}
+	}
+	redis.RsUnLock(mutex)
 	return nil
 }
 
@@ -719,27 +723,28 @@ func ExportTaskJson[T any](accountId uint, accountUsername string, fileTaskType 
 	}
 
 	go func(data []T) {
-		var mutex sync.Mutex
-		defer mutex.Unlock()
-		if mutex.TryLock() {
-			var fail = constant.TaskFail
-			var success = constant.TaskSuccess
-			fileTask := module.FileTask{
-				Id:     &fileTaskId,
-				Status: &fail,
-			}
-
-			if err = util.ExportJson(filePath, data); err != nil {
-				logrus.Errorf("ExportJson err: %v", err)
-			} else {
-				fileTask.Status = &success
-			}
-
-			// 更新文件任务状态
-			if err = dao.UpdateFileTaskById(&fileTask); err != nil {
-				logrus.Errorf("ExportJson UpdateFileTaskById err: %v", err)
-			}
+		mutex, err := redis.RsLock(constant.ExportTaskJsonLock)
+		if err != nil {
+			return
 		}
+		var fail = constant.TaskFail
+		var success = constant.TaskSuccess
+		fileTask := module.FileTask{
+			Id:     &fileTaskId,
+			Status: &fail,
+		}
+
+		if err = util.ExportJson(filePath, data); err != nil {
+			logrus.Errorf("ExportJson err: %v", err)
+		} else {
+			fileTask.Status = &success
+		}
+
+		// 更新文件任务状态
+		if err = dao.UpdateFileTaskById(&fileTask); err != nil {
+			logrus.Errorf("ExportJson UpdateFileTaskById err: %v", err)
+		}
+		redis.RsUnLock(mutex)
 	}(data)
 
 	return nil
