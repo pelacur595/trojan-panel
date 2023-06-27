@@ -81,11 +81,12 @@ func Login(c *gin.Context) {
 					Id:            account.Id,
 					LastLoginTime: &milli,
 				}
-				if account.ValidityPeriod != nil && *account.ValidityPeriod > 0 &&
+				if account.PresetExpire != nil && *account.PresetExpire > 0 &&
 					account.LastLoginTime != nil && *account.LastLoginTime == 0 &&
 					account.ExpireTime != nil && *account.ExpireTime == 0 {
-					expireTime := milli + *account.ValidityPeriod*24*60*60*1000
+					expireTime := milli + *account.PresetExpire*24*60*60*1000
 					accountUpdate.ExpireTime = &expireTime
+					accountUpdate.Quota = account.PresetQuota
 				}
 				if err := service.UpdateAccountById(tokenStr, &accountUpdate); err != nil {
 					vo.Fail(constant.SysError, c)
@@ -181,16 +182,17 @@ func SelectAccountById(c *gin.Context) {
 		return
 	}
 	accountVo := vo.AccountVo{
-		Id:             *account.Id,
-		Username:       *account.Username,
-		RoleId:         *account.RoleId,
-		Email:          *account.Email,
-		ValidityPeriod: *account.ValidityPeriod,
-		ExpireTime:     *account.ExpireTime,
-		Deleted:        *account.Deleted,
-		Quota:          *account.Quota,
-		Download:       *account.Download,
-		Upload:         *account.Upload,
+		Id:           *account.Id,
+		Username:     *account.Username,
+		RoleId:       *account.RoleId,
+		Email:        *account.Email,
+		PresetExpire: *account.PresetExpire,
+		PresetQuota:  *account.PresetQuota,
+		ExpireTime:   *account.ExpireTime,
+		Deleted:      *account.Deleted,
+		Quota:        *account.Quota,
+		Download:     *account.Download,
+		Upload:       *account.Upload,
 	}
 	vo.Success(accountVo, c)
 }

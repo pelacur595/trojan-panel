@@ -71,7 +71,7 @@ type CaptureDto struct {
 }
 
 type CreateAccountBatchDto struct {
-	Num            *int  `json:"num" form:"num" validate:"required,gte=5,lte=500"`
-	Quota          *int  `json:"quota" form:"quota" validate:"required,gte=-1,lte=1024000"`
-	ValidityPeriod *uint `json:"validityPeriod" form:"validityPeriod" validate:"required,gte=1,lte=365"`
+	Num          *int  `json:"num" form:"num" validate:"required,gte=5,lte=500"`
+	PresetExpire *uint `json:"presetExpire" form:"presetExpire" validate:"required,gte=1,lte=365"`
+	PresetQuota  *int  `json:"presetQuota" form:"presetQuota" validate:"required,gte=-1,lte=1024000"`
 }

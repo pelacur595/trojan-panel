@@ -666,13 +666,13 @@ func CreateAccountBatch(accountId uint, accountUsername string, dto dto.CreateAc
 	for i := 0; i < *dto.Num; i++ {
 		randStr := util.RandString(12)
 		role := constant.USER
-		toByte := util.ToByte(*dto.Quota)
+		toByte := util.ToByte(*dto.PresetQuota)
 		account := module.Account{
-			Username:       &randStr,
-			Pass:           &randStr,
-			RoleId:         &role,
-			ValidityPeriod: dto.ValidityPeriod,
-			Quota:          &toByte,
+			Username:     &randStr,
+			Pass:         &randStr,
+			RoleId:       &role,
+			PresetExpire: dto.PresetExpire,
+			PresetQuota:  &toByte,
 		}
 		exportVo := vo.AccountUnusedExportVo{
 			Username: randStr,
