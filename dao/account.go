@@ -429,7 +429,7 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 
 // SelectAccountUsernameByDeletedOrExpireTime 查询禁用或者过期的用户名
 func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
-	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (deleted = 1 or expire_time <= unix_timestamp(NOW()) * 1000)",
+	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (quota < download + upload or expire_time <= unix_timestamp(NOW()) * 1000 or deleted = 1)",
 		nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -456,7 +456,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 
 // SelectAccountsByExpireTime 用于发邮件
 func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
-	buildSelect, values, err := builder.NamedQuery("select username,email from account where quota != 0 and expire_time <= {{expire_time}} and last_login_time != 0",
+	buildSelect, values, err := builder.NamedQuery("select username,email from account where quota != 0 and expire_time <= {{expire_time}}",
 		map[string]interface{}{"expire_time": expireTime})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -480,7 +480,7 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 // TrafficRank 流量排行 前15名
 func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
-	where := map[string]interface{}{"quota <>": 0, "last_login_time <>": 0}
+	where := map[string]interface{}{"quota <>": 0}
 	if roleIds != nil && len(*roleIds) > 0 {
 		where["role_id in"] = *roleIds
 	}
@@ -560,7 +560,7 @@ func SelectAccountUnused() ([]vo.AccountExportVo, error) {
 	var accountExportVo []vo.AccountExportVo
 	selectFields := []string{"username", "pass", "hash", "role_id", "email", "preset_expire", "preset_quota", "last_login_time", "expire_time", "deleted",
 		"quota", "download", "upload", "create_time"}
-	where := map[string]interface{}{"last_login_time": 0, "quota <>": 0}
+	where := map[string]interface{}{"last_login_time": 0}
 	buildSelect, values, err := builder.BuildSelect("account", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
