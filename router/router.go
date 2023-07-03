@@ -63,6 +63,8 @@ func Router(router *gin.Engine) {
 			account.POST("/updateAccountById", api.UpdateAccountById)
 			// 获取Clash订阅地址
 			account.GET("/clashSubscribe", api.ClashSubscribe)
+			// 获取指定人的Clash订阅地址
+			account.GET("/clashSubscribeForSb", api.ClashSubscribeForSb)
 			// 重设下载和上传流量
 			account.POST("/resetAccountDownloadAndUpload", api.ResetAccountDownloadAndUpload)
 			// 导出用户

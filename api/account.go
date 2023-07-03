@@ -305,9 +305,26 @@ func UpdateAccountById(c *gin.Context) {
 	vo.Success(nil, c)
 }
 
+// ClashSubscribe 获取Clash订阅地址
 func ClashSubscribe(c *gin.Context) {
 	accountVo := util.GetCurrentAccount(c)
 	password, err := service.SelectConnectPassword(&accountVo.Id, &accountVo.Username)
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return
+	}
+	vo.Success(fmt.Sprintf("/api/auth/subscribe/%s", base64.StdEncoding.EncodeToString([]byte(password))), c)
+}
+
+// ClashSubscribeForSb 获取指定人的Clash订阅地址
+func ClashSubscribeForSb(c *gin.Context) {
+	var accountRequiredIdDto dto.RequiredIdDto
+	_ = c.ShouldBindQuery(&accountRequiredIdDto)
+	if err := validate.Struct(&accountRequiredIdDto); err != nil {
+		vo.Fail(constant.ValidateFailed, c)
+		return
+	}
+	password, err := service.SelectConnectPassword(accountRequiredIdDto.Id,nil)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
