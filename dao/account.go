@@ -429,7 +429,7 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 
 // SelectAccountUsernameByDeletedOrExpireTime 查询禁用或者过期的用户名
 func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
-	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (deleted = 1 or expire_time <= unix_timestamp(NOW()) * 1000",
+	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (deleted = 1 or expire_time <= unix_timestamp(NOW()) * 1000)",
 		nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
