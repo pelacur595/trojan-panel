@@ -59,6 +59,9 @@ func CreateAccount(account *module.Account) error {
 	if account.PresetExpire != nil {
 		accountCreate["preset_expire"] = *account.PresetExpire
 	}
+	if account.PresetQuota != nil {
+		accountCreate["preset_quota"] = *account.PresetQuota
+	}
 	if account.ExpireTime != nil {
 		accountCreate["expire_time"] = *account.ExpireTime
 	}
