@@ -76,14 +76,15 @@ func Login(c *gin.Context) {
 				vo.Fail(constant.SysError, c)
 			} else {
 				milli := uint(time.Now().UnixMilli())
-				// 第一次登录
+				// 记录最后登录时间
 				accountUpdate := module.Account{
 					Id:            account.Id,
 					LastLoginTime: &milli,
 				}
-				if account.PresetExpire != nil && *account.PresetExpire > 0 &&
-					account.LastLoginTime != nil && *account.LastLoginTime == 0 &&
-					account.ExpireTime != nil && *account.ExpireTime == 0 {
+				// 第一次登录且有预设
+				if account.LastLoginTime != nil && *account.LastLoginTime == 0 &&
+					account.PresetExpire != nil && *account.PresetExpire >= 1 &&
+					account.PresetQuota != nil && *account.PresetQuota >= -1 {
 					expireTime := milli + *account.PresetExpire*24*60*60*1000
 					accountUpdate.ExpireTime = &expireTime
 					accountUpdate.Quota = account.PresetQuota
@@ -324,7 +325,7 @@ func ClashSubscribeForSb(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	password, err := service.SelectConnectPassword(accountRequiredIdDto.Id,nil)
+	password, err := service.SelectConnectPassword(accountRequiredIdDto.Id, nil)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
