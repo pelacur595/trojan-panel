@@ -62,6 +62,9 @@ func CreateAccount(account *module.Account) error {
 	if account.PresetQuota != nil {
 		accountCreate["preset_quota"] = *account.PresetQuota
 	}
+	if account.LastLoginTime != nil {
+		accountCreate["last_login_time"] = *account.LastLoginTime
+	}
 	if account.ExpireTime != nil {
 		accountCreate["expire_time"] = *account.ExpireTime
 	}
