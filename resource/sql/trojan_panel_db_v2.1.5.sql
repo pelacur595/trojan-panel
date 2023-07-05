@@ -383,7 +383,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'sysadmin','系统管理员',0,'',1,'2022-04-01 00:00:00','2022-04-01 00:00:00'),(2,'admin','管理员',1,'1-',2,'2022-04-01 00:00:00','2022-04-01 00:00:00'),(3,'user','普通用户',2,'1-2-',3,'2022-04-01 00:00:00','2022-04-01 00:00:00');
+INSERT INTO `role` VALUES (1,'sysadmin','System Admin',0,'',1,'2022-04-01 00:00:00','2022-04-01 00:00:00'),(2,'admin','Admin',1,'1-',2,'2022-04-01 00:00:00','2022-04-01 00:00:00'),(3,'user','User',2,'1-2-',3,'2022-04-01 00:00:00','2022-04-01 00:00:00');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
