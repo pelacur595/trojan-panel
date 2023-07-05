@@ -518,11 +518,9 @@ func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 
 // ResetAccountDownloadAndUpload 重设下载和上传流量
 func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
-	where := map[string]interface{}{"_or_quota": []map[string]interface{}{{
-		"quota <": "0",
-	}, {
-		"quota >": "download + upload",
-	}}}
+	where := map[string]interface{}{
+		"quota <>": 0,
+	}
 	if id != nil {
 		where["id"] = *id
 	}
