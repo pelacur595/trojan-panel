@@ -402,7 +402,7 @@ func SelectConnectPassword(id *uint, username *string) (string, error) {
 	return "", errors.New(constant.SysError)
 }
 
-func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {
+func UpdateAccountByUsernames(usernames []string, quota *int, download *uint, upload *uint, deleted *uint) error {
 	where := map[string]interface{}{"username in": usernames}
 
 	update := map[string]interface{}{}
@@ -434,9 +434,9 @@ func UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames []string
 }
 
 // SelectAccountUsernameByDeletedOrExpireTime
-// 三种该情况账户会被禁用 1. 流量不足 2. 账户过去 3. 账户拉黑
+// 无效账户 1. 账户过期 2. 账户被拉黑
 func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
-	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (quota > 0 and quota < download + upload or expire_time <= unix_timestamp(NOW()) * 1000 or deleted = 1)",
+	buildSelect, values, err := builder.NamedQuery("select username from account where quota != 0 and (expire_time <= unix_timestamp(NOW()) * 1000 or deleted = 1)",
 		nil)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -463,7 +463,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 
 // SelectAccountsByExpireTime 用于发邮件
 func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
-	buildSelect, values, err := builder.NamedQuery("select username,email from account where quota != 0 and expire_time <= {{expire_time}}",
+	buildSelect, values, err := builder.NamedQuery("select username,email from account where (quota < 0 or quota > download + upload) and expire_time <= {{expire_time}}",
 		map[string]interface{}{"expire_time": expireTime})
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -487,7 +487,11 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 // TrafficRank 流量排行 前15名
 func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
-	where := map[string]interface{}{"quota <>": 0}
+	where := map[string]interface{}{"_or_quota": []map[string]interface{}{{
+		"quota <": "0",
+	}, {
+		"quota >": "download + upload",
+	}}}
 	if roleIds != nil && len(*roleIds) > 0 {
 		where["role_id in"] = *roleIds
 	}
@@ -514,7 +518,11 @@ func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
 
 // ResetAccountDownloadAndUpload 重设下载和上传流量
 func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
-	where := map[string]interface{}{"quota <>": 0}
+	where := map[string]interface{}{"_or_quota": []map[string]interface{}{{
+		"quota <": "0",
+	}, {
+		"quota >": "download + upload",
+	}}}
 	if id != nil {
 		where["id"] = *id
 	}

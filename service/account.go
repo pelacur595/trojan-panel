@@ -57,15 +57,19 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 	}
 	return nil
 }
+
 func SelectAccountById(id *uint) (*module.Account, error) {
 	return dao.SelectAccountById(id)
 }
+
 func CountAccountByUsername(username *string) (int, error) {
 	return dao.CountAccountByUsername(username)
 }
+
 func SelectAccountPage(username *string, deleted *uint, lastLoginTime *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
 	return dao.SelectAccountPage(username, deleted, lastLoginTime, pageNum, pageSize)
 }
+
 func DeleteAccountById(token string, id *uint) error {
 	mutex, err := redis.RsLock(constant.DeleteAccountByIdLock)
 	if err != nil {
@@ -224,7 +228,7 @@ func PullAccountWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 		} else {
 			deleted = 0
 		}
-		if err := dao.UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
+		if err := dao.UpdateAccountByUsernames(usernames, new(int), new(uint), new(uint), &deleted); err != nil {
 			return err
 		}
 	}
@@ -234,7 +238,7 @@ func PullAccountWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 // DisableAccount 清空流量/禁用用户连接节点
 func DisableAccount(usernames []string) error {
 	if len(usernames) > 0 {
-		if err := dao.UpdateAccountQuotaOrDownloadOrUploadOrDeletedByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
+		if err := dao.UpdateAccountByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
 			return err
 		}
 	}
