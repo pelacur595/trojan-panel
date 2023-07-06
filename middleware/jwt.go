@@ -7,7 +7,7 @@ import (
 	"trojan-panel/dao/redis"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/vo"
-	"trojan-panel/util"
+	"trojan-panel/service"
 )
 
 // jwt认证中间件
@@ -28,7 +28,7 @@ func JWTHandler() gin.HandlerFunc {
 			return
 		}
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
-		myClaims, err := util.ParseToken(parts[1])
+		myClaims, err := service.ParseToken(parts[1])
 		if err != nil {
 			vo.Fail(err.Error(), c)
 			c.Abort()

@@ -6,7 +6,7 @@ import (
 	"trojan-panel/dao"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/vo"
-	"trojan-panel/util"
+	"trojan-panel/service"
 )
 
 // casbin鉴权中间件
@@ -22,7 +22,7 @@ func CasbinHandler() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		split := strings.Split(path, "?")
 		// 获取当前用户
-		accountVo := util.GetCurrentAccount(c)
+		accountVo := service.GetCurrentAccount(c)
 		roleVo, err := dao.SelectRoleById(&accountVo.RoleId)
 		if err != nil {
 			vo.Fail(err.Error(), c)

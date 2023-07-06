@@ -1,4 +1,4 @@
-package util
+package service
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"trojan-panel/dao/redis"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/vo"
+	"trojan-panel/util"
 )
 
 // TokenExpireDuration 过期时间默认2小时
@@ -72,7 +73,7 @@ func GetJWTKey() ([]byte, error) {
 		return reply, nil
 	} else {
 		// jwt key 72小时更新一次
-		key := []byte(RandString(32))
+		key := []byte(util.RandString(32))
 		_, err := redis.Client.String.Set("trojan-panel:jwt-key", key, time.Hour.Milliseconds()*72/1000).Result()
 		if err != nil {
 			return nil, errors.New(constant.SysError)

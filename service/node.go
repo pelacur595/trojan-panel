@@ -100,7 +100,7 @@ func SelectNodeInfo(id *uint, c *gin.Context) (*vo.NodeOneVo, error) {
 	if err != nil {
 		return nil, err
 	}
-	accountInfo := util.GetCurrentAccount(c)
+	accountInfo := GetCurrentAccount(c)
 	account, err := dao.SelectAccountByUsername(&accountInfo.Username)
 	if err != nil {
 		return nil, err
@@ -265,7 +265,7 @@ func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSi
 		nodeBos = append(nodeBos, nodeBo)
 	}
 
-	account := util.GetCurrentAccount(c)
+	account := GetCurrentAccount(c)
 	if util.IsAdmin(account.Roles) {
 		token := util.GetToken(c)
 		var nodeMap sync.Map

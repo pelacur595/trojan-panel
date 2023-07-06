@@ -140,7 +140,7 @@ func UpdateAccountProperty(token string, oldUsername *string, pass *string, user
 
 // GetAccountInfo 获取当前请求账户信息
 func GetAccountInfo(c *gin.Context) (*vo.AccountInfo, error) {
-	accountVo := util.GetCurrentAccount(c)
+	accountVo := GetCurrentAccount(c)
 	roles, err := dao.SelectRoleNameByParentId(&accountVo.RoleId, true)
 	if err != nil {
 		return nil, err
@@ -752,4 +752,16 @@ func ExportTaskJson[T any](accountId uint, accountUsername string, fileTaskType 
 	}(data)
 
 	return nil
+}
+
+// GetCurrentAccount 获取当前用户
+func GetCurrentAccount(c *gin.Context) *vo.AccountVo {
+	// 解析token获取当前用户信息
+	myClaims, err := ParseToken(util.GetToken(c))
+	if err != nil {
+		vo.Fail(err.Error(), c)
+		return nil
+	}
+	accountVo := myClaims.AccountVo
+	return &accountVo
 }

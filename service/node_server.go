@@ -48,7 +48,7 @@ func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pag
 		nodeServerVos = append(nodeServerVos, nodeServerVo)
 	}
 
-	account := util.GetCurrentAccount(c)
+	account := GetCurrentAccount(c)
 	if util.IsAdmin(account.Roles) {
 		token := util.GetToken(c)
 		var nodeMap sync.Map

@@ -66,7 +66,7 @@ func Login(c *gin.Context) {
 			Deleted:  *account.Deleted,
 			Roles:    roles,
 		}
-		tokenStr, err := util.GenToken(accountVo)
+		tokenStr, err := service.GenToken(accountVo)
 		if err != nil {
 			vo.Fail(constant.SysError, c)
 		} else {
@@ -146,7 +146,7 @@ func Register(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if _, err := redis.Client.Key.
 		Del(fmt.Sprintf("trojan-panel:token:%s", account.Username)).
 		Result(); err != nil {
@@ -244,7 +244,7 @@ func UpdateAccountPass(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if err := service.UpdateAccountPass(util.GetToken(c), accountUpdatePassDto.OldPass, accountUpdatePassDto.NewPass,
 		&account.Username); err != nil {
 		vo.Fail(err.Error(), c)
@@ -260,7 +260,7 @@ func UpdateAccountProperty(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if err := service.UpdateAccountProperty(util.GetToken(c), &account.Username,
 		accountUpdatePropertyDto.Pass, accountUpdatePropertyDto.Username, accountUpdatePropertyDto.Email); err != nil {
 		vo.Fail(err.Error(), c)
@@ -308,7 +308,7 @@ func UpdateAccountById(c *gin.Context) {
 
 // ClashSubscribe 获取Clash订阅地址
 func ClashSubscribe(c *gin.Context) {
-	accountVo := util.GetCurrentAccount(c)
+	accountVo := service.GetCurrentAccount(c)
 	password, err := service.SelectConnectPassword(&accountVo.Id, &accountVo.Username)
 	if err != nil {
 		vo.Fail(err.Error(), c)
@@ -379,7 +379,7 @@ func ResetAccountDownloadAndUpload(c *gin.Context) {
 
 // ExportAccount 导出用户
 func ExportAccount(c *gin.Context) {
-	accountVo := util.GetCurrentAccount(c)
+	accountVo := service.GetCurrentAccount(c)
 	if err := service.ExportAccount(accountVo.Id, accountVo.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
@@ -410,7 +410,7 @@ func ImportAccount(c *gin.Context) {
 		vo.Fail(constant.FileFormatError, c)
 		return
 	}
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if err := service.ImportAccount(uint(cover), file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
@@ -425,7 +425,7 @@ func CreateAccountBatch(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if err := service.CreateAccountBatch(account.Id, account.Username, createAccountBatchDto); err != nil {
 		vo.Fail(err.Error(), c)
 		return
@@ -434,7 +434,7 @@ func CreateAccountBatch(c *gin.Context) {
 }
 
 func ExportAccountUnused(c *gin.Context) {
-	accountVo := util.GetCurrentAccount(c)
+	accountVo := service.GetCurrentAccount(c)
 	if err := service.ExportAccountUnused(accountVo.Id, accountVo.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return

@@ -133,7 +133,7 @@ func GetNodeServerInfo(c *gin.Context) {
 
 // ExportNodeServer 导出服务器
 func ExportNodeServer(c *gin.Context) {
-	accountVo := util.GetCurrentAccount(c)
+	accountVo := service.GetCurrentAccount(c)
 	if err := service.ExportNodeServer(accountVo.Id, accountVo.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
@@ -164,7 +164,7 @@ func ImportNodeServer(c *gin.Context) {
 		vo.Fail(constant.FileFormatError, c)
 		return
 	}
-	account := util.GetCurrentAccount(c)
+	account := service.GetCurrentAccount(c)
 	if err := service.ImportNodeServer(uint(cover), file, account.Id, account.Username); err != nil {
 		vo.Fail(constant.SysError, c)
 		return
