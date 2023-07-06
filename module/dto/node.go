@@ -41,6 +41,9 @@ type NodeCreateDto struct {
 	HysteriaObfs     *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
 	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
 	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
+	ServerName       *string `json:"serverName" form:"serverName" validate:"omitempty,min=0,max=64"`
+	Insecure         *uint   `json:"insecure" form:"insecure" validate:"omitempty,oneof=0 1"`
+	FastOpen         *uint   `json:"fastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
 }
 
 type NodeUpdateDto struct {
@@ -76,4 +79,7 @@ type NodeUpdateDto struct {
 	HysteriaObfs     *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
 	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
 	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
+	ServerName       *string `json:"serverName" form:"serverName" validate:"omitempty,min=0,max=64"`
+	Insecure         *uint   `json:"insecure" form:"insecure" validate:"omitempty,oneof=0 1"`
+	FastOpen         *uint   `json:"fastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
 }

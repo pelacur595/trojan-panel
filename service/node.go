@@ -89,6 +89,9 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			nodeOneVo.HysteriaObfs = *nodeHysteria.Obfs
 			nodeOneVo.HysteriaUpMbps = *nodeHysteria.UpMbps
 			nodeOneVo.HysteriaDownMbps = *nodeHysteria.DownMbps
+			nodeOneVo.HysteriaServerName = *nodeHysteria.ServerName
+			nodeOneVo.HysteriaInsecure = *nodeHysteria.Insecure
+			nodeOneVo.HysteriaFastOpen = *nodeHysteria.FastOpen
 		}
 		return &nodeOneVo, nil
 	}
@@ -212,10 +215,13 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		}
 	} else if *nodeCreateDto.NodeTypeId == constant.Hysteria {
 		hysteria := module.NodeHysteria{
-			Protocol: nodeCreateDto.HysteriaProtocol,
-			Obfs:     nodeCreateDto.HysteriaObfs,
-			UpMbps:   nodeCreateDto.HysteriaUpMbps,
-			DownMbps: nodeCreateDto.HysteriaDownMbps,
+			Protocol:   nodeCreateDto.HysteriaProtocol,
+			Obfs:       nodeCreateDto.HysteriaObfs,
+			UpMbps:     nodeCreateDto.HysteriaUpMbps,
+			DownMbps:   nodeCreateDto.HysteriaDownMbps,
+			ServerName: nodeCreateDto.ServerName,
+			Insecure:   nodeCreateDto.Insecure,
+			FastOpen:   nodeCreateDto.FastOpen,
 		}
 		nodeId, err = dao.CreateNodeHysteria(&hysteria)
 		if err != nil {
@@ -458,11 +464,14 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 		} else if *nodeEntity.NodeTypeId == constant.Hysteria {
 			nodeHysteria := module.NodeHysteria{
-				Id:       nodeEntity.NodeSubId,
-				Protocol: nodeUpdateDto.HysteriaProtocol,
-				Obfs:     nodeUpdateDto.HysteriaObfs,
-				UpMbps:   nodeUpdateDto.HysteriaUpMbps,
-				DownMbps: nodeUpdateDto.HysteriaDownMbps,
+				Id:         nodeEntity.NodeSubId,
+				Protocol:   nodeUpdateDto.HysteriaProtocol,
+				Obfs:       nodeUpdateDto.HysteriaObfs,
+				UpMbps:     nodeUpdateDto.HysteriaUpMbps,
+				DownMbps:   nodeUpdateDto.HysteriaDownMbps,
+				ServerName: nodeUpdateDto.ServerName,
+				Insecure:   nodeUpdateDto.Insecure,
+				FastOpen:   nodeUpdateDto.FastOpen,
 			}
 			if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
 				return err
@@ -537,10 +546,13 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 		} else if *nodeUpdateDto.NodeTypeId == constant.Hysteria {
 			hysteria := module.NodeHysteria{
-				Protocol: nodeUpdateDto.HysteriaProtocol,
-				Obfs:     nodeUpdateDto.HysteriaObfs,
-				UpMbps:   nodeUpdateDto.HysteriaUpMbps,
-				DownMbps: nodeUpdateDto.HysteriaDownMbps,
+				Protocol:   nodeUpdateDto.HysteriaProtocol,
+				Obfs:       nodeUpdateDto.HysteriaObfs,
+				UpMbps:     nodeUpdateDto.HysteriaUpMbps,
+				DownMbps:   nodeUpdateDto.HysteriaDownMbps,
+				ServerName: nodeUpdateDto.ServerName,
+				Insecure:   nodeUpdateDto.Insecure,
+				FastOpen:   nodeUpdateDto.FastOpen,
 			}
 			nodeId, err = dao.CreateNodeHysteria(&hysteria)
 			if err != nil {
@@ -724,6 +736,15 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 			*nodeHysteria.DownMbps))
 		if nodeHysteria.Obfs != nil && *nodeHysteria.Obfs != "" {
 			headBuilder.WriteString(fmt.Sprintf("&obfs=xplus&obfsParam=%s", *nodeHysteria.Obfs))
+		}
+		if nodeHysteria.ServerName != nil && *nodeHysteria.ServerName != "" {
+			headBuilder.WriteString(fmt.Sprintf("&peer=%s", *nodeHysteria.ServerName))
+		}
+		if nodeHysteria.Insecure != nil {
+			headBuilder.WriteString(fmt.Sprintf("&insecure=%d", *nodeHysteria.Insecure))
+		}
+		if nodeHysteria.FastOpen != nil {
+			headBuilder.WriteString(fmt.Sprintf("&fastopen=%d", *nodeHysteria.FastOpen))
 		}
 	} else if *nodeType.Id == constant.NaiveProxy {
 		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))

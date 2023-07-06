@@ -80,15 +80,18 @@ type TrojanGo struct {
 }
 
 type Hysteria struct {
-	Name     string `yaml:"name"`
-	Type     string `yaml:"type"`
-	Server   string `yaml:"server"`
-	Port     uint   `yaml:"port"`
-	AuthStr  string `yaml:"auth-str"`
-	Obfs     string `yaml:"obfs"`
-	Protocol string `yaml:"protocol"`
-	Up       int    `yaml:"up"`
-	Down     int    `yaml:"down"`
+	Name           string `yaml:"name"`
+	Type           string `yaml:"type"`
+	Server         string `yaml:"server"`
+	Port           uint   `yaml:"port"`
+	AuthStr        string `yaml:"auth-str"`
+	Obfs           string `yaml:"obfs"`
+	Protocol       string `yaml:"protocol"`
+	Up             int    `yaml:"up"`
+	Down           int    `yaml:"down"`
+	Sni            string `yaml:"sni"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+	FastOpen       bool   `yaml:"fast-open"`
 }
 
 type WsOpts struct {

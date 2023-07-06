@@ -12,7 +12,7 @@ import (
 func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 	var nodeHysteria module.NodeHysteria
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "protocol", "obfs", "up_mbps", "down_mbps"}
+	selectFields := []string{"id", "protocol", "obfs", "up_mbps", "down_mbps", "server_name", "insecure", "fast_open"}
 	buildSelect, values, err := builder.BuildSelect("node_hysteria", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -47,6 +47,15 @@ func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
 	}
 	if nodeHysteria.DownMbps != nil {
 		nodeHysteriaCreate["down_mbps"] = *nodeHysteria.DownMbps
+	}
+	if nodeHysteria.ServerName != nil && *nodeHysteria.ServerName != "" {
+		nodeHysteriaCreate["server_name"] = *nodeHysteria.ServerName
+	}
+	if nodeHysteria.Insecure != nil {
+		nodeHysteriaCreate["insecure"] = *nodeHysteria.Insecure
+	}
+	if nodeHysteria.FastOpen != nil {
+		nodeHysteriaCreate["fast_open"] = *nodeHysteria.FastOpen
 	}
 	if len(nodeHysteriaCreate) > 0 {
 		var data []map[string]interface{}
@@ -85,6 +94,15 @@ func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
 	}
 	if nodeHysteria.DownMbps != nil {
 		update["down_mbps"] = *nodeHysteria.DownMbps
+	}
+	if nodeHysteria.ServerName != nil && *nodeHysteria.ServerName != "" {
+		update["server_name"] = *nodeHysteria.ServerName
+	}
+	if nodeHysteria.Insecure != nil {
+		update["insecure"] = *nodeHysteria.Insecure
+	}
+	if nodeHysteria.FastOpen != nil {
+		update["fast_open"] = *nodeHysteria.FastOpen
 	}
 	if len(update) > 0 {
 		buildUpdate, values, err := builder.BuildUpdate("node_hysteria", where, update)

@@ -525,6 +525,9 @@ func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, 
 			hysteria.Protocol = *nodeHysteria.Protocol
 			hysteria.Up = *nodeHysteria.UpMbps
 			hysteria.Down = *nodeHysteria.DownMbps
+			hysteria.Sni = *nodeHysteria.ServerName
+			hysteria.SkipCertVerify = *nodeHysteria.Insecure == 1
+			hysteria.FastOpen = *nodeHysteria.FastOpen == 1
 			ClashConfigInterface = append(ClashConfigInterface, hysteria)
 			proxies = append(proxies, item.Name)
 		}
