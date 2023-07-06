@@ -37,13 +37,13 @@ type NodeCreateDto struct {
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
 
-	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
-	HysteriaObfs     *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
-	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
-	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
-	ServerName       *string `json:"serverName" form:"serverName" validate:"omitempty,min=0,max=64"`
-	Insecure         *uint   `json:"insecure" form:"insecure" validate:"omitempty,oneof=0 1"`
-	FastOpen         *uint   `json:"fastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
+	HysteriaProtocol   *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
+	HysteriaObfs       *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
+	HysteriaUpMbps     *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaDownMbps   *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaServerName *string `json:"hysteriaServerName" form:"hysteriaServerName" validate:"omitempty,min=0,max=64"`
+	HysteriaInsecure   *uint   `json:"hysteriaInsecure" form:"hysteriaInsecure" validate:"omitempty,oneof=0 1"`
+	HysteriaFastOpen   *uint   `json:"hysteriaFastOpen" form:"hysteriaFastOpen" validate:"omitempty,oneof=0 1"`
 }
 
 type NodeUpdateDto struct {
@@ -75,11 +75,11 @@ type NodeUpdateDto struct {
 	TrojanGoSsMethod        *string `json:"trojanGoSsMethod" form:"trojanGoSsMethod" validate:"omitempty,min=0,max=32"`
 	TrojanGoSsPassword      *string `json:"trojanGoSsPassword" form:"trojanGoSsPassword" validate:"omitempty,min=0,max=64"`
 
-	HysteriaProtocol *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
-	HysteriaObfs     *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
-	HysteriaUpMbps   *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
-	HysteriaDownMbps *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
-	ServerName       *string `json:"serverName" form:"serverName" validate:"omitempty,min=0,max=64"`
-	Insecure         *uint   `json:"insecure" form:"insecure" validate:"omitempty,oneof=0 1"`
-	FastOpen         *uint   `json:"fastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
+	HysteriaProtocol   *string `json:"hysteriaProtocol" form:"hysteriaProtocol" validate:"omitempty,min=0,max=32"`
+	HysteriaObfs       *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
+	HysteriaUpMbps     *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaDownMbps   *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
+	HysteriaServerName *string `json:"hysteriaServerName" form:"serverName" validate:"omitempty,min=0,max=64"`
+	HysteriaInsecure   *uint   `json:"hysteriaInsecure" form:"insecure" validate:"omitempty,oneof=0 1"`
+	HysteriaFastOpen   *uint   `json:"hysteriaFastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
 }

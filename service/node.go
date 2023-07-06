@@ -219,9 +219,9 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			Obfs:       nodeCreateDto.HysteriaObfs,
 			UpMbps:     nodeCreateDto.HysteriaUpMbps,
 			DownMbps:   nodeCreateDto.HysteriaDownMbps,
-			ServerName: nodeCreateDto.ServerName,
-			Insecure:   nodeCreateDto.Insecure,
-			FastOpen:   nodeCreateDto.FastOpen,
+			ServerName: nodeCreateDto.HysteriaServerName,
+			Insecure:   nodeCreateDto.HysteriaInsecure,
+			FastOpen:   nodeCreateDto.HysteriaFastOpen,
 		}
 		nodeId, err = dao.CreateNodeHysteria(&hysteria)
 		if err != nil {
@@ -469,9 +469,9 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				Obfs:       nodeUpdateDto.HysteriaObfs,
 				UpMbps:     nodeUpdateDto.HysteriaUpMbps,
 				DownMbps:   nodeUpdateDto.HysteriaDownMbps,
-				ServerName: nodeUpdateDto.ServerName,
-				Insecure:   nodeUpdateDto.Insecure,
-				FastOpen:   nodeUpdateDto.FastOpen,
+				ServerName: nodeUpdateDto.HysteriaServerName,
+				Insecure:   nodeUpdateDto.HysteriaInsecure,
+				FastOpen:   nodeUpdateDto.HysteriaFastOpen,
 			}
 			if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
 				return err
@@ -550,9 +550,9 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				Obfs:       nodeUpdateDto.HysteriaObfs,
 				UpMbps:     nodeUpdateDto.HysteriaUpMbps,
 				DownMbps:   nodeUpdateDto.HysteriaDownMbps,
-				ServerName: nodeUpdateDto.ServerName,
-				Insecure:   nodeUpdateDto.Insecure,
-				FastOpen:   nodeUpdateDto.FastOpen,
+				ServerName: nodeUpdateDto.HysteriaServerName,
+				Insecure:   nodeUpdateDto.HysteriaInsecure,
+				FastOpen:   nodeUpdateDto.HysteriaFastOpen,
 			}
 			nodeId, err = dao.CreateNodeHysteria(&hysteria)
 			if err != nil {
