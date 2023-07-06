@@ -235,7 +235,7 @@ func PullAccountWhiteOrBlackByUsername(usernames []string, isBlack bool) error {
 	return nil
 }
 
-// DisableAccount 清空流量/禁用用户连接节点
+// DisableAccount 清空流量
 func DisableAccount(usernames []string) error {
 	if len(usernames) > 0 {
 		if err := dao.UpdateAccountByUsernames(usernames, new(int), new(uint), new(uint), nil); err != nil {
@@ -254,9 +254,9 @@ func CronScanAccounts() {
 
 	if len(usernames) > 0 {
 		if err = DisableAccount(usernames); err != nil {
-			logrus.Errorf("定时扫描用户任务禁用用户异常 usernames: %s error: %v", usernames, err)
+			logrus.Errorf("定时任务：扫描无效用户异常 usernames: %s error: %v", usernames, err)
 		}
-		logrus.Infof("定时扫描用户任务禁用用户 usernames: %s", usernames)
+		logrus.Infof("定时任务：扫描无效用户 usernames: %s", usernames)
 	}
 }
 
