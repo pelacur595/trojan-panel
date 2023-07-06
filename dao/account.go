@@ -485,7 +485,7 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 }
 
 // TrafficRank 流量排行 前15名
-func TrafficRank(roleIds *[]uint) ([]vo.AccountTrafficRankVo, error) {
+func TrafficRank(roleIds []uint) ([]vo.AccountTrafficRankVo, error) {
 	accountTrafficRankVos := make([]vo.AccountTrafficRankVo, 0)
 	buildSelect, values, err := builder.NamedQuery("select username,upload + download as trafficUsed from account where (quota < 0 or quota > download + upload) and role_id in {{roleIds}} order by trafficUsed desc limit 15",
 		map[string]interface{}{

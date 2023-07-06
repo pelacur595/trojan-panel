@@ -21,7 +21,7 @@ func CronTrafficRank() {
 
 func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
 	roleIds := []uint{constant.USER}
-	trafficRank, err := dao.TrafficRank(&roleIds)
+	trafficRank, err := dao.TrafficRank(roleIds)
 	for index, item := range trafficRank {
 		usernameLen := len(item.Username)
 		prefix := item.Username[0:2]
