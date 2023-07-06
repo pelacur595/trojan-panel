@@ -9,7 +9,8 @@ ENV mariadb_ip=127.0.0.1 \
     redis_port=6378 \
     redis_pass=123456 \
     server_port=8081 \
-    TZ=Asia/Shanghai
+    TZ=Asia/Shanghai \
+    GIN_MODE=release
 ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT
