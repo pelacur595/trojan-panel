@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/avast/retry-go"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -30,69 +31,96 @@ func newGrpcInstance(token string, ip string, grpcPort uint, timeout time.Durati
 		conn.Close()
 	}
 	if err != nil {
-		logrus.Errorf("gRPC初始化失败 err: %v", err)
+		logrus.Errorf("gRPC instance init err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		err = errors.New(constant.GrpcError)
 	}
 	return
 }
 
 func AddNode(token string, ip string, grpcPort uint, nodeAddDto *NodeAddDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
-	defer clo()
-	if err != nil {
-		return err
-	}
-	client := NewApiNodeServiceClient(conn)
-	send, err := client.AddNode(ctx, nodeAddDto)
-	if err != nil {
-		logrus.Errorf("gRPC添加节点异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+	if err := retry.Do(func() error {
+		conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
+		defer clo()
+		if err != nil {
+			return err
+		}
+		client := NewApiNodeServiceClient(conn)
+		send, err := client.AddNode(ctx, nodeAddDto)
+		if err != nil {
+			return err
+		}
+		if send.Success {
+			return nil
+		}
+		return errors.New(send.Msg)
+	}, []retry.Option{
+		retry.Delay(8 * time.Second),
+		retry.Attempts(3),
+		retry.LastErrorOnly(true),
+	}...); err != nil {
+		logrus.Errorf("api AddNode err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
-	if send.Success {
-		return nil
-	}
-	return errors.New(send.Msg)
+	return nil
 }
 
 func RemoveNode(token string, ip string, grpcPort uint, nodeRemoveDto *NodeRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
-	defer clo()
-	if err != nil {
-		return err
-	}
-	client := NewApiNodeServiceClient(conn)
-	send, err := client.RemoveNode(ctx, nodeRemoveDto)
-	if err != nil {
-		logrus.Errorf("gRPC删除节点异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+	if err := retry.Do(func() error {
+		conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
+		defer clo()
+		if err != nil {
+			return err
+		}
+		client := NewApiNodeServiceClient(conn)
+		send, err := client.RemoveNode(ctx, nodeRemoveDto)
+		if err != nil {
+			return err
+		}
+		if send.Success {
+			return nil
+		}
+		return errors.New(send.Msg)
+	}, []retry.Option{
+		retry.Delay(8 * time.Second),
+		retry.Attempts(3),
+		retry.LastErrorOnly(true),
+	}...); err != nil {
+		logrus.Errorf("api RemoveNode err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
-	if send.Success {
-		return nil
-	}
-	return errors.New(send.Msg)
+	return nil
 }
 
 func RemoveAccount(token string, ip string, grpcPort uint, accountRemoveDto *AccountRemoveDto) error {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
-	defer clo()
-	if err != nil {
-		return err
-	}
-	client := NewApiAccountServiceClient(conn)
-	send, err := client.RemoveAccount(ctx, accountRemoveDto)
-	if err != nil {
-		logrus.Errorf("gRPC删除用户异常 ip: %s grpc porr: %d err: %v", ip, grpcPort, err)
+	if err := retry.Do(func() error {
+		conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
+		defer clo()
+		if err != nil {
+			return err
+		}
+		client := NewApiAccountServiceClient(conn)
+		send, err := client.RemoveAccount(ctx, accountRemoveDto)
+		if err != nil {
+			return err
+		}
+		if send.Success {
+			return nil
+		}
+		return errors.New(send.Msg)
+	}, []retry.Option{
+		retry.Delay(8 * time.Second),
+		retry.Attempts(3),
+		retry.LastErrorOnly(true),
+	}...); err != nil {
+		logrus.Errorf("api RemoveAccount err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		return errors.New(constant.GrpcError)
 	}
-	if send.Success {
-		return nil
-	}
-	return errors.New(send.Msg)
+	return nil
 }
 
 // GetNodeState 查询节点状态
 func GetNodeState(token string, ip string, grpcPort uint, nodeTypeId uint, port uint) (*NodeStateVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 3*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
@@ -104,24 +132,24 @@ func GetNodeState(token string, ip string, grpcPort uint, nodeTypeId uint, port 
 	}
 	send, err := client.GetNodeState(ctx, &nodeStateDto)
 	if err != nil {
-		logrus.Errorf("gRPC GetNodeState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		logrus.Errorf("gRPC GetNodeState err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		var nodeStateVo NodeStateVo
 		if err = anypb.UnmarshalTo(send.Data, &nodeStateVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("gRPC GetNodeState 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			logrus.Errorf("api GetNodeState UnmarshalTo err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
 		return &nodeStateVo, nil
 	}
-	logrus.Errorf("gRPC GetNodeState 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
-	return nil, errors.New(send.Msg)
+	logrus.Errorf("api GetNodeState err ip: %s grpcPort: %d err: %s", ip, grpcPort, send.Msg)
+	return nil, errors.New(constant.GrpcError)
 }
 
 // GetNodeServerState 查询服务器状态
 func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStateVo, error) {
-	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 3*time.Second)
+	conn, ctx, clo, err := newGrpcInstance(token, ip, grpcPort, 4*time.Second)
 	defer clo()
 	if err != nil {
 		return nil, err
@@ -130,19 +158,19 @@ func GetNodeServerState(token string, ip string, grpcPort uint) (*NodeServerStat
 	nodeServerStateDto := NodeServerStateDto{}
 	send, err := client.GetNodeServerState(ctx, &nodeServerStateDto)
 	if err != nil {
-		logrus.Errorf("gRPC GetNodeServerState 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		logrus.Errorf("gRPC GetNodeServerState err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		var nodeServerStateVo NodeServerStateVo
 		if err = anypb.UnmarshalTo(send.Data, &nodeServerStateVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("gRPC GetNodeServerState 返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			logrus.Errorf("api GetNodeServerState UnmarshalTo err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
 		return &nodeServerStateVo, nil
 	}
-	logrus.Errorf("gRPC GetNodeServerState 失败 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
-	return nil, errors.New(send.Msg)
+	logrus.Errorf("api GetNodeServerState err ip: %s grpcPort: %d err: %s", ip, grpcPort, send.Msg)
+	return nil, errors.New(constant.GrpcError)
 }
 
 func GetNodeServerInfo(token string, ip string, grpcPort uint) (*NodeServerInfoVo, error) {
@@ -155,16 +183,17 @@ func GetNodeServerInfo(token string, ip string, grpcPort uint) (*NodeServerInfoV
 	nodeServerInfoDto := NodeServerInfoDto{}
 	send, err := client.GetNodeServerInfo(ctx, &nodeServerInfoDto)
 	if err != nil {
-		logrus.Errorf("gRPC 查询服务器状态 异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+		logrus.Errorf("gRPC GetNodeServerInfo err ip: %s port: %d err: %v", ip, grpcPort, err)
 		return nil, errors.New(constant.GrpcError)
 	}
 	if send.Success {
 		var nodeServerInfoVo NodeServerInfoVo
 		if err = anypb.UnmarshalTo(send.Data, &nodeServerInfoVo, proto.UnmarshalOptions{}); err != nil {
-			logrus.Errorf("查询服务器状态返序列化异常 ip: %s grpc port: %d err: %v", ip, grpcPort, err)
+			logrus.Errorf("api GetNodeServerInfo UnmarshalTo err ip: %s port: %d err: %v", ip, grpcPort, err)
 			return nil, errors.New(constant.GrpcError)
 		}
 		return &nodeServerInfoVo, nil
 	}
-	return nil, errors.New(send.Msg)
+	logrus.Errorf("api GetNodeServerInfo err ip: %s grpcPort: %d err: %s", ip, grpcPort, send.Msg)
+	return nil, errors.New(constant.GrpcError)
 }

@@ -11,7 +11,6 @@ import (
 	"net/url"
 	"strings"
 	"sync"
-	"time"
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
@@ -149,7 +148,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		return err
 	}
 	// Grpc添加节点
-	if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
+	GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
 		NodeTypeId: uint64(*nodeCreateDto.NodeTypeId),
 		Port:       uint64(*nodeCreateDto.Port),
 		Domain:     *nodeCreateDto.Domain,
@@ -178,19 +177,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		HysteriaObfs:     *nodeCreateDto.HysteriaObfs,
 		HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 		HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
-	}); err != nil {
-		go func() {
-			for {
-				select {
-				case <-time.After(8 * time.Second):
-					_ = GrpcRemoveNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, *nodeCreateDto.Port, *nodeCreateDto.NodeTypeId)
-					return
-				}
-			}
-		}()
-
-		return err
-	}
+	})
 	// 数据插入到数据库中
 	if *nodeCreateDto.NodeTypeId == constant.Xray {
 		nodeXray := module.NodeXray{
@@ -349,7 +336,7 @@ func DeleteNodeById(token string, id *uint) error {
 	if err != nil {
 		return err
 	}
-	_ = GrpcRemoveNode(token, *node.NodeServerIp, *node.NodeServerGrpcPort, *node.Port, *node.NodeTypeId)
+	GrpcRemoveNode(token, *node.NodeServerIp, *node.NodeServerGrpcPort, *node.Port, *node.NodeTypeId)
 	if *node.NodeTypeId == 1 {
 		if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
 			return err
@@ -406,10 +393,8 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		return err
 	}
 	// Grpc的操作
-	if err = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.NodeServerGrpcPort, *nodeEntity.Port, *nodeEntity.NodeTypeId); err != nil {
-		return err
-	}
-	if err = GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
+	GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.NodeServerGrpcPort, *nodeEntity.Port, *nodeEntity.NodeTypeId)
+	GrpcAddNode(token, *nodeServer.Ip, *nodeServer.GrpcPort, &core.NodeAddDto{
 		NodeTypeId: uint64(*nodeUpdateDto.NodeTypeId),
 		Port:       uint64(*nodeUpdateDto.Port),
 		Domain:     *nodeUpdateDto.Domain,
@@ -438,10 +423,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		HysteriaObfs:     *nodeUpdateDto.HysteriaObfs,
 		HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 		HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
-	}); err != nil {
-		_ = GrpcRemoveNode(token, *nodeEntity.NodeServerIp, *nodeEntity.NodeServerGrpcPort, *nodeEntity.Port, *nodeEntity.NodeTypeId)
-		return err
-	}
+	})
 
 	if *nodeUpdateDto.NodeTypeId == *nodeEntity.NodeTypeId {
 		// 没有修改节点类型的情况
@@ -757,21 +739,15 @@ func CountNode() (int, error) {
 	return dao.CountNode()
 }
 
-func GrpcAddNode(token string, ip string, grpcPort uint, nodeAddDto *core.NodeAddDto) error {
-	if err := core.AddNode(token, ip, grpcPort, nodeAddDto); err != nil {
-		return err
-	}
-	return nil
+func GrpcAddNode(token string, ip string, grpcPort uint, nodeAddDto *core.NodeAddDto) {
+	_ = core.AddNode(token, ip, grpcPort, nodeAddDto)
 }
 
-func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeTypeId uint) error {
-	if err := core.RemoveNode(token, ip, grpcPort, &core.NodeRemoveDto{
+func GrpcRemoveNode(token string, ip string, grpcPort uint, port uint, nodeTypeId uint) {
+	_ = core.RemoveNode(token, ip, grpcPort, &core.NodeRemoveDto{
 		NodeTypeId: uint64(nodeTypeId),
 		Port:       uint64(port),
-	}); err != nil {
-		return err
-	}
-	return nil
+	})
 }
 
 func NodeDefault() (vo.NodeDefaultVo, error) {
