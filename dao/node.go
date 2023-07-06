@@ -240,12 +240,13 @@ func CountNodeByNameAndNodeServerId(id *uint, queryName *string, nodeServerId *u
 	return count, nil
 }
 
-func SelectNodesIpAndPort() ([]module.Node, error) {
+func SelectNodes() ([]module.Node, error) {
 	var nodes []module.Node
 
 	where := map[string]interface{}{
 		"_orderby": "priority desc,create_time desc"}
-	buildSelect, values, err := builder.BuildSelect("node", where, []string{"id", "node_server_id", "port"})
+	buildSelect, values, err := builder.BuildSelect("node", where, []string{
+		"id", "node_sub_id", "node_type_id", "name", "domain", "port"})
 	if err != nil {
 		logrus.Errorln(err.Error())
 		return nodes, errors.New(constant.SysError)

@@ -147,9 +147,7 @@ func Register(c *gin.Context) {
 
 func Logout(c *gin.Context) {
 	account := service.GetCurrentAccount(c)
-	if _, err := redis.Client.Key.
-		Del(fmt.Sprintf("trojan-panel:token:%s", account.Username)).
-		Result(); err != nil {
+	if err := redis.Client.Key.RetryDel(fmt.Sprintf("trojan-panel:token:%s", account.Username)); err != nil {
 		vo.Fail(constant.LogOutError, c)
 		return
 	}

@@ -191,11 +191,6 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	if err := dao.UpdateSystemById(&system); err != nil {
 		return err
 	}
-	redis.Client.Key.Del("trojan-panel:system")
-	go func() {
-		time.AfterFunc(2*time.Second, func() {
-			redis.Client.Key.Del("trojan-panel:system")
-		})
-	}()
+	_ = redis.Client.Key.RetryDel("trojan-panel:system")
 	return nil
 }
