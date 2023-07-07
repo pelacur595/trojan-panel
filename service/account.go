@@ -70,7 +70,7 @@ func SelectAccountPage(
 	username *string,
 	deleted *uint,
 	lastLoginTime *uint,
-	orderFields *[]string,
+	orderFields *string,
 	orderBy *string,
 	pageNum *uint,
 	pageSize *uint) (*vo.AccountPageVo, error) {
