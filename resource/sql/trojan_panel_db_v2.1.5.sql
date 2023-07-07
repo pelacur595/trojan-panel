@@ -223,6 +223,9 @@ CREATE TABLE `node_hysteria` (
   `obfs` varchar(64) NOT NULL DEFAULT '' COMMENT '混淆密码',
   `up_mbps` int(10) NOT NULL DEFAULT '100' COMMENT '单客户端最大上传速度 单位:Mbps',
   `down_mbps` int(10) NOT NULL DEFAULT '100' COMMENT '单客户端最大下载速度 单位:Mbps',
+  `server_name` varchar(64) NOT NULL DEFAULT '' COMMENT '用于验证服务端证书的 hostname',
+  `insecure` tinyint NOT NULL DEFAULT 0 COMMENT '忽略一切证书错误',
+  `fast_open` tinyint NOT NULL DEFAULT 0 COMMENT '启用 Fast Open (降低连接建立延迟)',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
