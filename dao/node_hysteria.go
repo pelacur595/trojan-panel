@@ -95,7 +95,7 @@ func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
 	if nodeHysteria.DownMbps != nil {
 		update["down_mbps"] = *nodeHysteria.DownMbps
 	}
-	if nodeHysteria.ServerName != nil && *nodeHysteria.ServerName != "" {
+	if nodeHysteria.ServerName != nil {
 		update["server_name"] = *nodeHysteria.ServerName
 	}
 	if nodeHysteria.Insecure != nil {
