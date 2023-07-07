@@ -207,7 +207,7 @@ func SelectAccountPage(c *gin.Context) {
 		accountPageDto.Username,
 		accountPageDto.Deleted,
 		accountPageDto.LastLoginTime,
-		accountPageDto.OrderField,
+		accountPageDto.OrderFields,
 		accountPageDto.OrderBy,
 		accountPageDto.PageNum,
 		accountPageDto.PageSize)

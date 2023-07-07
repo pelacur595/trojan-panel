@@ -70,11 +70,11 @@ func SelectAccountPage(
 	username *string,
 	deleted *uint,
 	lastLoginTime *uint,
-	orderField *string,
+	orderFields *[]string,
 	orderBy *string,
 	pageNum *uint,
 	pageSize *uint) (*vo.AccountPageVo, error) {
-	return dao.SelectAccountPage(username, deleted, lastLoginTime, orderField, orderBy, pageNum, pageSize)
+	return dao.SelectAccountPage(username, deleted, lastLoginTime, orderFields, orderBy, pageNum, pageSize)
 }
 
 func DeleteAccountById(token string, id *uint) error {

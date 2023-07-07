@@ -6,6 +6,7 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
+	"strings"
 	"trojan-panel/module"
 	"trojan-panel/module/constant"
 	"trojan-panel/module/vo"
@@ -124,7 +125,7 @@ func SelectAccountPage(
 	queryUsername *string,
 	deleted *uint,
 	lastLoginTime *uint,
-	orderField *string,
+	orderFields *[]string,
 	orderBy *string,
 	pageNum *uint,
 	pageSize *uint) (*vo.AccountPageVo, error) {
@@ -171,8 +172,8 @@ func SelectAccountPage(
 			where["last_login_time <>"] = 0
 		}
 	}
-	if orderField != nil && *orderField != "" {
-		orderByStr := *orderField
+	if orderFields != nil && len(*orderFields) > 0 {
+		orderByStr := strings.Replace(strings.Trim(fmt.Sprint(*orderFields), "[]"), " ", ",", -1)
 		if orderBy != nil && *orderBy != "" {
 			orderByStr = fmt.Sprintf("%s %s", orderByStr, *orderBy)
 		}
