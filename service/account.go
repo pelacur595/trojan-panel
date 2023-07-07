@@ -66,8 +66,15 @@ func CountAccountByUsername(username *string) (int, error) {
 	return dao.CountAccountByUsername(username)
 }
 
-func SelectAccountPage(username *string, deleted *uint, lastLoginTime *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
-	return dao.SelectAccountPage(username, deleted, lastLoginTime, pageNum, pageSize)
+func SelectAccountPage(
+	username *string,
+	deleted *uint,
+	lastLoginTime *uint,
+	orderField *string,
+	orderBy *string,
+	pageNum *uint,
+	pageSize *uint) (*vo.AccountPageVo, error) {
+	return dao.SelectAccountPage(username, deleted, lastLoginTime, orderField, orderBy, pageNum, pageSize)
 }
 
 func DeleteAccountById(token string, id *uint) error {

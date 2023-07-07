@@ -9,6 +9,8 @@ type AccountDto struct {
 	Username      *string `json:"username" form:"username" validate:"omitempty,min=0,max=20"`
 	Deleted       *uint   `json:"deleted" form:"deleted" validate:"omitempty,oneof=0 1"`
 	LastLoginTime *uint   `json:"lastLoginTime" form:"lastLoginTime" validate:"omitempty,oneof=0 1"`
+	OrderField    *string `json:"orderField" form:"orderField" validate:"omitempty,min=0,max=20"`
+	OrderBy       *string `json:"orderBy" form:"orderBy" validate:"omitempty,oneof=asc desc"`
 }
 
 type AccountUpdatePassDto struct {

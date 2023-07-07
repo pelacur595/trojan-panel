@@ -120,7 +120,14 @@ func CountAccountByUsername(username *string) (int, error) {
 	return count, nil
 }
 
-func SelectAccountPage(queryUsername *string, deleted *uint, lastLoginTime *uint, pageNum *uint, pageSize *uint) (*vo.AccountPageVo, error) {
+func SelectAccountPage(
+	queryUsername *string,
+	deleted *uint,
+	lastLoginTime *uint,
+	orderField *string,
+	orderBy *string,
+	pageNum *uint,
+	pageSize *uint) (*vo.AccountPageVo, error) {
 	var (
 		total    uint
 		accounts []module.Account
@@ -150,8 +157,7 @@ func SelectAccountPage(queryUsername *string, deleted *uint, lastLoginTime *uint
 
 	// 分页查询
 	where := map[string]interface{}{
-		"_orderby": "role_id,create_time desc",
-		"_limit":   []uint{(*pageNum - 1) * *pageSize, *pageSize}}
+		"_limit": []uint{(*pageNum - 1) * *pageSize, *pageSize}}
 	if queryUsername != nil && *queryUsername != "" {
 		where["username like"] = fmt.Sprintf("%%%s%%", *queryUsername)
 	}
@@ -164,6 +170,13 @@ func SelectAccountPage(queryUsername *string, deleted *uint, lastLoginTime *uint
 		} else {
 			where["last_login_time <>"] = 0
 		}
+	}
+	if orderField != nil && *orderField != "" {
+		orderByStr := *orderField
+		if orderBy != nil && *orderBy != "" {
+			orderByStr = fmt.Sprintf("%s %s", orderByStr, *orderBy)
+		}
+		where["_orderby"] = orderByStr
 	}
 	selectFields := []string{"id", "username", "role_id", "email", "preset_expire", "preset_quota", "last_login_time", "expire_time", "deleted",
 		"quota", "upload", "download", "create_time"}

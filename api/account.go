@@ -203,7 +203,13 @@ func SelectAccountPage(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	page, err := service.SelectAccountPage(accountPageDto.Username, accountPageDto.Deleted, accountPageDto.LastLoginTime, accountPageDto.PageNum,
+	page, err := service.SelectAccountPage(
+		accountPageDto.Username,
+		accountPageDto.Deleted,
+		accountPageDto.LastLoginTime,
+		accountPageDto.OrderField,
+		accountPageDto.OrderBy,
+		accountPageDto.PageNum,
 		accountPageDto.PageSize)
 	if err != nil {
 		vo.Fail(err.Error(), c)
