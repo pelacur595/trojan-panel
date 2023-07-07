@@ -625,8 +625,10 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 		}
 		// 在这里可以处理数据并将其存储到数据库中 todo 这里可能存在性能问题
 		for _, item := range accounts {
-			if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
-				continue
+			if item.RoleId != nil && *item.RoleId != constant.SYSADMIN {
+				if err = dao.CreateOrUpdateAccount(item, cover); err != nil {
+					continue
+				}
 			}
 		}
 
