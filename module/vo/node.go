@@ -60,9 +60,9 @@ type NodeOneVo struct {
 	HysteriaObfs             string                   `json:"hysteriaObfs"`
 	HysteriaUpMbps           int                      `json:"hysteriaUpMbps"`
 	HysteriaDownMbps         int                      `json:"hysteriaDownMbps"`
-	HysteriaServerName       string                   `ddb:"hysteriaServerName"`
-	HysteriaInsecure         uint                     `ddb:"hysteriaInsecure"`
-	HysteriaFastOpen         uint                     `ddb:"hysteriaFastOpen"`
+	HysteriaServerName       string                   `json:"hysteriaServerName"`
+	HysteriaInsecure         uint                     `json:"hysteriaInsecure"`
+	HysteriaFastOpen         uint                     `json:"hysteriaFastOpen"`
 	NaiveProxyUsername       string                   `json:"naiveProxyUsername"`
 }
 
