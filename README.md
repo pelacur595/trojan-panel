@@ -1,22 +1,23 @@
-# Trojan Panel
+## Trojan Panel
 
-Trojan Panel后端
+Trojan Panel Backend
 
-# 编译命令
+## Compile
 
 [compile.bat](./compile.bat)
 
-# Author
+## Author
 
 [jonssonyan](https://github.com/jonssonyan)
 
-# Community
+## Community
 
-- Telegram Channel: [Trojan Panel](https://t.me/TrojanPanel)
+Telegram Channel: [Trojan Panel](https://t.me/TrojanPanel)
 
-# Thanks
+## Support
 
-- [trojan-gfw](https://github.com/trojan-gfw/trojan)
+- [trojan](https://github.com/trojan-gfw/trojan)
 - [trojan-go](https://github.com/p4gefau1t/trojan-go)
+- [Xray-core](https://github.com/XTLS/Xray-core)
 - [hysteria](https://github.com/HyNetwork/hysteria)
 - [naiveproxy](https://github.com/klzgrad/naiveproxy)
