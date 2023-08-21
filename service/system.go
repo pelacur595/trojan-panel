@@ -25,7 +25,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 	}
 	if len(bytes) > 0 {
 		if err = json.Unmarshal(bytes, &systemVo); err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo 反序列化失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo deserialization err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		return systemVo, nil
@@ -37,29 +37,29 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 
 		systemAccountConfigBo := bo.SystemAccountConfigBo{}
 		if err = json.Unmarshal([]byte(*system.AccountConfig), &systemAccountConfigBo); err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemAccountConfigBo 反序列化失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemAccountConfigBo deserialization err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		systemEmailConfigBo := bo.SystemEmailConfigBo{}
 		if err = json.Unmarshal([]byte(*system.EmailConfig), &systemEmailConfigBo); err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemEmailConfigBo 反序列化失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemEmailConfigBo deserialization err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		systemTemplateConfigBo := bo.SystemTemplateConfigBo{}
 		if err = json.Unmarshal([]byte(*system.TemplateConfig), &systemTemplateConfigBo); err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemTemplateConfigBo 反序列化失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemTemplateConfigBo deserialization err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		// 读取Clash规则默认模板文件
 		clashRuleContent, err := os.ReadFile(constant.ClashRuleFilePath)
 		if err != nil {
-			logrus.Errorln(fmt.Sprintf("读取Clash规则默认模板失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("failed to read default template of Clash rule err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		// 读取Xray默认模板文件
 		xrayTemplateContent, err := os.ReadFile(constant.XrayTemplateFilePath)
 		if err != nil {
-			logrus.Errorln(fmt.Sprintf("读取Xray默认模板文件失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("failed to read Xray default template file err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 
@@ -85,7 +85,7 @@ func SelectSystemByName(name *string) (vo.SystemVo, error) {
 
 		systemVoJson, err := json.Marshal(systemVo)
 		if err != nil {
-			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo 序列化失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("SelectSystemByName SystemVo serialization err: %v", err))
 			return systemVo, errors.New(constant.SysError)
 		}
 		redis.Client.String.Set("trojan-panel:system", systemVoJson, time.Minute.Milliseconds()*30/1000)
@@ -116,7 +116,7 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	accountConfigBoByte, err := json.Marshal(accountConfigBo)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemAccountConfigBo 序列化异常err: %v", err))
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemAccountConfigBo serialization err: %v", err))
 	}
 	accountConfigBoJsonStr := string(accountConfigBoByte)
 
@@ -144,7 +144,7 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	systemEmailConfigBoByte, err := json.Marshal(systemEmailConfigBo)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemEmailConfigBo 序列化异常err: %v", err))
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemEmailConfigBo serialization err: %v", err))
 	}
 	systemEmailConfigBoStr := string(systemEmailConfigBoByte)
 
@@ -155,7 +155,7 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	if systemDto.ClashRule != nil {
 		// 修改Clash规则默认模板文件
 		if err := os.WriteFile(constant.ClashRuleFilePath, []byte(*systemDto.ClashRule), 0666); err != nil {
-			logrus.Errorln(fmt.Sprintf("写入Clash规则默认模板文件异常err: %v", err))
+			logrus.Errorln(fmt.Sprintf("write Clash rule default template file err: %v", err))
 		}
 	}
 	if systemDto.XrayTemplate != nil {
@@ -163,21 +163,21 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 		xrayConfigBo := bo.XrayConfigBo{}
 		// 将json字符串映射到模板对象
 		if err = json.Unmarshal([]byte(*systemDto.XrayTemplate), &xrayConfigBo); err != nil {
-			logrus.Errorf("SystemDto XrayTemplate反序列化异常 err: %v", err)
+			logrus.Errorf("systemDto XrayTemplate deserialization err: %v", err)
 			return err
 		}
 		xrayConfigBoStr, err := json.MarshalIndent(xrayConfigBo, "", "    ")
 		if err != nil {
-			logrus.Errorf("XrayConfigBo序列化异常 err: %v", err)
+			logrus.Errorf("xrayConfigBo serialization err: %v", err)
 			return err
 		}
 		if err := os.WriteFile(constant.XrayTemplateFilePath, xrayConfigBoStr, 0666); err != nil {
-			logrus.Errorln(fmt.Sprintf("写入Xray默认模板文件异常err: %v", err))
+			logrus.Errorln(fmt.Sprintf("write Xray default template file err: %v", err))
 		}
 	}
 	systemTemplateConfigBoByte, err := json.Marshal(systemTemplateConfigBo)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemTemplateConfigBo 序列化异常err: %v", err))
+		logrus.Errorln(fmt.Sprintf("UpdateSystemById SystemTemplateConfigBo serialization err: %v", err))
 	}
 	systemTemplateConfigBoStr := string(systemTemplateConfigBoByte)
 

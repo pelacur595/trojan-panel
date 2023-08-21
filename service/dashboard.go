@@ -33,7 +33,7 @@ func TrafficRank() ([]vo.AccountTrafficRankVo, error) {
 	}
 	trafficRankJson, err := json.Marshal(trafficRank)
 	if err != nil {
-		logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo JSON转换失败 err: %v", err))
+		logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo serialization err: %v", err))
 		return nil, errors.New(constant.SysError)
 	}
 	redis.Client.String.Set("trojan-panel:trafficRank", trafficRankJson, time.Hour.Milliseconds()*2/1000)

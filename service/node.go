@@ -53,7 +53,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			xraySettingEntity := vo.XraySettingEntity{}
 			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
 				if err = json.Unmarshal([]byte(*nodeXray.Settings), &xraySettingEntity); err != nil {
-					logrus.Errorln(fmt.Sprintf("Settings JSON反转失败 err: %v", err))
+					logrus.Errorln(fmt.Sprintf("Settings deserialization err: %v", err))
 					return nil, errors.New(constant.SysError)
 				}
 			}
@@ -61,7 +61,7 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			xrayStreamSettingsEntity := vo.XrayStreamSettingsEntity{}
 			if nodeXray.StreamSettings != nil && *nodeXray.StreamSettings != "" {
 				if err = json.Unmarshal([]byte(*nodeXray.StreamSettings), &xrayStreamSettingsEntity); err != nil {
-					logrus.Errorln(fmt.Sprintf("StreamSettings JSON反转失败 err: %v", err))
+					logrus.Errorln(fmt.Sprintf("StreamSettings deserialization err: %v", err))
 					return nil, errors.New(constant.SysError)
 				}
 			}
