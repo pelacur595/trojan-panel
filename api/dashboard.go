@@ -31,7 +31,7 @@ func TrafficRank(c *gin.Context) {
 	if len(bytes) > 0 {
 		var accountTrafficRankVo []vo.AccountTrafficRankVo
 		if err := json.Unmarshal(bytes, &accountTrafficRankVo); err != nil {
-			logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo JSON反转失败 err: %v", err))
+			logrus.Errorln(fmt.Sprintf("AccountTrafficRankVo deserialization err: %v", err))
 			vo.Fail(constant.SysError, c)
 			return
 		}

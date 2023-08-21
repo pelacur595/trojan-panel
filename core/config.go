@@ -29,19 +29,19 @@ var (
 )
 
 func init() {
-	flag.StringVar(&host, "host", "localhost", "数据库地址")
-	flag.StringVar(&user, "user", "root", "数据库用户名")
-	flag.StringVar(&password, "password", "123456", "数据库密码")
-	flag.StringVar(&port, "port", "3306", "数据库端口")
-	flag.StringVar(&redisHost, "redisHost", "127.0.0.1", "Redis地址")
-	flag.StringVar(&redisPort, "redisPort", "6379", "Redis端口")
-	flag.StringVar(&redisPassword, "redisPassword", "123456", "Redis密码")
-	flag.StringVar(&redisDb, "redisDb", "0", "Redis默认数据库")
-	flag.StringVar(&redisMaxIdle, "redisMaxIdle", strconv.FormatInt(int64(runtime.NumCPU()*2), 10), "Redis最大空闲连接数")
-	flag.StringVar(&redisMaxActive, "redisMaxActive", strconv.FormatInt(int64(runtime.NumCPU()*2+2), 10), "Redis最大连接数")
-	flag.StringVar(&redisWait, "redisWait", "true", "Redis是否等待")
-	flag.StringVar(&serverPort, "serverPort", "8081", "服务端口")
-	flag.BoolVar(&version, "version", false, "打印版本信息")
+	flag.StringVar(&host, "host", "localhost", "database address")
+	flag.StringVar(&user, "user", "root", "database username")
+	flag.StringVar(&password, "password", "123456", "database password")
+	flag.StringVar(&port, "port", "3306", "database port")
+	flag.StringVar(&redisHost, "redisHost", "127.0.0.1", "redis address")
+	flag.StringVar(&redisPort, "redisPort", "6379", "redis port")
+	flag.StringVar(&redisPassword, "redisPassword", "123456", "redis password")
+	flag.StringVar(&redisDb, "redisDb", "0", "redis default database")
+	flag.StringVar(&redisMaxIdle, "redisMaxIdle", strconv.FormatInt(int64(runtime.NumCPU()*2), 10), "redis maximum number of idle connections")
+	flag.StringVar(&redisMaxActive, "redisMaxActive", strconv.FormatInt(int64(runtime.NumCPU()*2+2), 10), "redis maximum number of connections")
+	flag.StringVar(&redisWait, "redisWait", "true", "does Redis wait")
+	flag.StringVar(&serverPort, "serverPort", "8081", "service port")
+	flag.BoolVar(&version, "version", false, "print version info")
 	flag.Usage = usage
 	flag.Parse()
 	if version {
@@ -52,7 +52,7 @@ func init() {
 	logPath := constant.LogPath
 	if !util.Exists(logPath) {
 		if err := os.Mkdir(logPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建logs文件夹异常 err: %v", err)
+			logrus.Errorf("create logs folder err: %v", err)
 			panic(err)
 		}
 	}
@@ -60,7 +60,7 @@ func init() {
 	webFilePath := constant.WebFilePath
 	if !util.Exists(webFilePath) {
 		if err := os.Mkdir(webFilePath, os.ModePerm); err != nil {
-			logrus.Errorf("创建webfile文件夹异常 err: %v", err)
+			logrus.Errorf("create webfile folder err: %v", err)
 			panic(err)
 		}
 	}
@@ -68,7 +68,7 @@ func init() {
 	configPath := constant.ConfigPath
 	if !util.Exists(configPath) {
 		if err := os.Mkdir(configPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config文件夹异常 err: %v", err)
+			logrus.Errorf("create config folder err: %v", err)
 			panic(err)
 		}
 	}
@@ -76,7 +76,7 @@ func init() {
 	templatePath := constant.TemplatePath
 	if !util.Exists(templatePath) {
 		if err := os.Mkdir(templatePath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config/template文件夹异常 err: %v", err)
+			logrus.Errorf("create config/template folder err: %v", err)
 			panic(err)
 		}
 	}
@@ -85,14 +85,14 @@ func init() {
 	logoImagePath := constant.LogoImagePath
 	if !util.Exists(logoImagePath) {
 		if err := util.DownloadFile(constant.LogoImageUrl, logoImagePath); err != nil {
-			logrus.Errorf("创建logo.png文件异常 err: %v", err)
+			logrus.Errorf("create file logo.png err: %v", err)
 		}
 	}
 
 	ExportPath := constant.ExportPath
 	if !util.Exists(ExportPath) {
 		if err := os.Mkdir(ExportPath, os.ModePerm); err != nil {
-			logrus.Errorf("创建config/export文件夹异常 err: %v", err)
+			logrus.Errorf("create config/export folder err: %v", err)
 			panic(err)
 		}
 	}
@@ -103,7 +103,7 @@ func init() {
 		var accountTemplate []map[string]any
 		accountTemplate = append(accountTemplate, map[string]any{"username": "example", "pass": "example", "hash": "example", "role_id": 3, "email": "test@example.com", "expire_time": int64(4078656000000), "deleted": 0, "quota": -1, "download": 0, "upload": 0})
 		if err := util.ExportJson(exportAccountTemplate, accountTemplate); err != nil {
-			logrus.Errorf("创建AccountTemplate.json异常 err: %v", err)
+			logrus.Errorf("create file AccountTemplate.json err: %v", err)
 			panic(err)
 		}
 	}
@@ -114,7 +114,7 @@ func init() {
 		var nodeServerTemplate []map[string]any
 		nodeServerTemplate = append(nodeServerTemplate, map[string]any{"ip": "127.0.0.1", "name": "example", "grpc_port": 8100})
 		if err := util.ExportJson(exportNodeServerTemplate, nodeServerTemplate); err != nil {
-			logrus.Errorf("创建NodeServerTemplate.json异常 err: %v", err)
+			logrus.Errorf("create file NodeServerTemplate.json err: %v", err)
 			panic(err)
 		}
 	}
@@ -123,7 +123,7 @@ func init() {
 	if !util.Exists(configFilePath) {
 		file, err := os.Create(configFilePath)
 		if err != nil {
-			logrus.Errorf("创建config.ini文件异常 err: %v", err)
+			logrus.Errorf("create file config.ini err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
@@ -153,7 +153,7 @@ port=%s
 `, host, user, password, port, redisHost, redisPort, redisPassword, redisDb,
 			redisMaxIdle, redisMaxActive, redisWait, serverPort))
 		if err != nil {
-			logrus.Errorf("config.ini文件写入异常 err: %v", err)
+			logrus.Errorf("config.ini file write err: %v", err)
 			panic(err)
 		}
 
@@ -163,7 +163,7 @@ port=%s
 	if !util.Exists(rbacModelConfigPath) {
 		file, err := os.Create(rbacModelConfigPath)
 		if err != nil {
-			logrus.Errorf("创建rbac_model.conf文件异常 err: %v", err)
+			logrus.Errorf("create file rbac_model.conf err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
@@ -185,7 +185,7 @@ e = some(where (p.eft == allow))
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 `)
 		if err != nil {
-			logrus.Errorf("rbac_model.conf文件写入异常 err: %v", err)
+			logrus.Errorf("rbac_model.conf file write err: %v", err)
 			panic(err)
 		}
 	}
@@ -194,14 +194,14 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 	if !util.Exists(clashRuleFilePath) {
 		file, err := os.Create(clashRuleFilePath)
 		if err != nil {
-			logrus.Errorf("创建clash-rule.yaml文件异常 err: %v", err)
+			logrus.Errorf("create file clash-rule.yaml err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
 
 		_, err = file.WriteString(constant.ClashRules)
 		if err != nil {
-			logrus.Errorf("clash-rule.yaml文件写入异常 err: %v", err)
+			logrus.Errorf("clash-rule.yaml file wirte err: %v", err)
 			panic(err)
 		}
 	}
@@ -210,7 +210,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 	if !util.Exists(xrayTemplateFilePath) {
 		file, err := os.Create(xrayTemplateFilePath)
 		if err != nil {
-			logrus.Errorf("创建template-xray.json文件异常 err: %v", err)
+			logrus.Errorf("create file template-xray.json err: %v", err)
 			panic(err)
 		}
 		defer file.Close()
@@ -259,7 +259,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
   }
 }`)
 		if err != nil {
-			logrus.Errorf("template-xray.json文件写入异常 err: %v", err)
+			logrus.Errorf("template-xray.json file write err: %v", err)
 			panic(err)
 		}
 	}
@@ -276,7 +276,7 @@ var Config = new(AppConfig)
 // InitConfig 初始化全局配置文件
 func InitConfig() {
 	if err := ini.MapTo(Config, constant.ConfigFilePath); err != nil {
-		logrus.Errorf("配置文件加载失败 err: %v", err)
+		logrus.Errorf("configuration file failed to load err: %v", err)
 		panic(err)
 	}
 }
