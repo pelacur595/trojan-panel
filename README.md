@@ -2,7 +2,7 @@
 
 Trojan Panel Backend
 
-## Compile
+## Compile command
 
 [compile.bat](./compile.bat)
 

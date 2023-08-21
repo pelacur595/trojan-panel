@@ -5,7 +5,7 @@ export PATH
 init_var() {
   ECHO_TYPE="echo -e"
 
-  trojan_panel_version=2.1.5
+  trojan_panel_version=2.2.0
 
   arch_arr="linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x"
 }
@@ -37,25 +37,25 @@ echo_content() {
 }
 
 main() {
-  echo_content skyBlue "start build trojan-panel CPU架构：${arch_arr}"
+  echo_content skyBlue "start build trojan-panel CPU：${arch_arr}"
 
   docker buildx build -t jonssonyan/trojan-panel:latest --platform ${arch_arr} --push .
   if [[ "$?" == "0" ]]; then
-    echo_content green "trojan-panel Version：latest CPU架构：${arch_arr} build success"
+    echo_content green "trojan-panel Version：latest CPU：${arch_arr} build success"
 
     if [[ ${trojan_panel_version} != "latest" ]]; then
       docker buildx build -t jonssonyan/trojan-panel:${trojan_panel_version} --platform ${arch_arr} --push .
       if [[ "$?" == "0" ]]; then
-        echo_content green "trojan-panel-linux Version：${trojan_panel_version} CPU架构：${arch_arr} build success"
+        echo_content green "trojan-panel-linux Version：${trojan_panel_version} CPU：${arch_arr} build success"
       else
-        echo_content red "trojan-panel-linux Version：${trojan_panel_version} CPU架构：${arch_arr} build failed"
+        echo_content red "trojan-panel-linux Version：${trojan_panel_version} CPU：${arch_arr} build failed"
       fi
     fi
   else
-    echo_content red "trojan-panel-linux Version：latest CPU架构：${arch_arr} build failed"
+    echo_content red "trojan-panel-linux Version：latest CPU：${arch_arr} build failed"
   fi
 
-  echo_content skyBlue "trojan-panel CPU架构：${arch_arr} build finished"
+  echo_content skyBlue "trojan-panel CPU：${arch_arr} build finished"
 }
 
 init_var
