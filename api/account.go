@@ -266,7 +266,7 @@ func UpdateAccountProperty(c *gin.Context) {
 	}
 	account := service.GetCurrentAccount(c)
 	// 校验用户名是否重复
-	count, err := service.CountAccountByUsername(&account.Username)
+	count, err := service.CountAccountByUsername(accountUpdatePropertyDto.Username)
 	if err != nil {
 		vo.Fail(err.Error(), c)
 		return
