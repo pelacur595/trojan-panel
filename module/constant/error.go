@@ -10,6 +10,7 @@ const (
 	TokenExpiredError string = "login expired"
 	LogOutError       string = "you are not logged in"
 
+	NoDeleteSysadmin     string = "cannot delete sysadmin account"
 	OriPassError         string = "the original password was entered incorrectly"
 	UsernameOrPassError  string = "wrong username or password"
 	NodeURLError         string = "url generation failed"

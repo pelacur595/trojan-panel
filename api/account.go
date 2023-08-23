@@ -231,7 +231,7 @@ func DeleteAccountById(c *gin.Context) {
 		return
 	}
 	if *account.RoleId == constant.SYSADMIN {
-		vo.Fail("不能删除超级管理员账户", c)
+		vo.Fail(constant.NoDeleteSysadmin, c)
 		return
 	}
 	if err := service.DeleteAccountById(util.GetToken(c), accountRequiredIdDto.Id); err != nil {
