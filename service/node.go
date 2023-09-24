@@ -92,6 +92,16 @@ func SelectNodeById(id *uint) (*vo.NodeOneVo, error) {
 			nodeOneVo.HysteriaServerName = *nodeHysteria.ServerName
 			nodeOneVo.HysteriaInsecure = *nodeHysteria.Insecure
 			nodeOneVo.HysteriaFastOpen = *nodeHysteria.FastOpen
+		case constant.Hysteria2:
+			nodeHysteria2, err := dao.SelectNodeHysteria2ById(node.NodeSubId)
+			if err != nil {
+				return nil, err
+			}
+			nodeOneVo.Hysteria2ObfsPassword = *nodeHysteria2.ObfsPassword
+			nodeOneVo.Hysteria2UpMbps = *nodeHysteria2.UpMbps
+			nodeOneVo.Hysteria2DownMbps = *nodeHysteria2.DownMbps
+			nodeOneVo.Hysteria2ServerName = *nodeHysteria2.ServerName
+			nodeOneVo.Hysteria2Insecure = *nodeHysteria2.Insecure
 		}
 		return &nodeOneVo, nil
 	}
@@ -180,6 +190,10 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 		HysteriaObfs:     *nodeCreateDto.HysteriaObfs,
 		HysteriaUpMbps:   int64(*nodeCreateDto.HysteriaUpMbps),
 		HysteriaDownMbps: int64(*nodeCreateDto.HysteriaDownMbps),
+		// Hysteria2
+		Hysteria2ObfsPassword: *nodeCreateDto.Hysteria2ObfsPassword,
+		Hysteria2UpMbps:       int64(*nodeCreateDto.Hysteria2UpMbps),
+		Hysteria2DownMbps:     int64(*nodeCreateDto.Hysteria2DownMbps),
 	})
 	// 数据插入到数据库中
 	if *nodeCreateDto.NodeTypeId == constant.Xray {
@@ -224,6 +238,18 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			FastOpen:   nodeCreateDto.HysteriaFastOpen,
 		}
 		nodeId, err = dao.CreateNodeHysteria(&hysteria)
+		if err != nil {
+			return err
+		}
+	} else if *nodeCreateDto.NodeTypeId == constant.Hysteria2 {
+		hysteria2 := model.NodeHysteria2{
+			ObfsPassword: nodeCreateDto.Hysteria2ObfsPassword,
+			UpMbps:       nodeCreateDto.Hysteria2UpMbps,
+			DownMbps:     nodeCreateDto.Hysteria2DownMbps,
+			ServerName:   nodeCreateDto.Hysteria2ServerName,
+			Insecure:     nodeCreateDto.Hysteria2Insecure,
+		}
+		nodeId, err = dao.CreateNodeHysteria2(&hysteria2)
 		if err != nil {
 			return err
 		}
@@ -343,16 +369,20 @@ func DeleteNodeById(token string, id *uint) error {
 		return err
 	}
 	GrpcRemoveNode(token, *node.NodeServerIp, *node.NodeServerGrpcPort, *node.Port, *node.NodeTypeId)
-	if *node.NodeTypeId == 1 {
+	if *node.NodeTypeId == constant.Xray {
 		if err := dao.DeleteNodeXrayById(node.NodeSubId); err != nil {
 			return err
 		}
-	} else if *node.NodeTypeId == 2 {
+	} else if *node.NodeTypeId == constant.TrojanGo {
 		if err := dao.DeleteNodeTrojanGoById(node.NodeSubId); err != nil {
 			return err
 		}
-	} else if *node.NodeTypeId == 3 {
+	} else if *node.NodeTypeId == constant.Hysteria {
 		if err := dao.DeleteNodeHysteriaById(node.NodeSubId); err != nil {
+			return err
+		}
+	} else if *node.NodeTypeId == constant.Hysteria2 {
+		if err := dao.DeleteNodeHysteria2ById(node.NodeSubId); err != nil {
 			return err
 		}
 	}
@@ -429,6 +459,10 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		HysteriaObfs:     *nodeUpdateDto.HysteriaObfs,
 		HysteriaUpMbps:   int64(*nodeUpdateDto.HysteriaUpMbps),
 		HysteriaDownMbps: int64(*nodeUpdateDto.HysteriaDownMbps),
+		// Hysteria2
+		Hysteria2ObfsPassword: *nodeUpdateDto.Hysteria2ObfsPassword,
+		Hysteria2UpMbps:       int64(*nodeUpdateDto.Hysteria2UpMbps),
+		Hysteria2DownMbps:     int64(*nodeUpdateDto.Hysteria2DownMbps),
 	})
 
 	if *nodeUpdateDto.NodeTypeId == *nodeEntity.NodeTypeId {
@@ -476,6 +510,18 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			if err = dao.UpdateNodeHysteriaById(&nodeHysteria); err != nil {
 				return err
 			}
+		} else if *nodeEntity.NodeTypeId == constant.Hysteria2 {
+			nodeHysteria2 := model.NodeHysteria2{
+				Id:           nodeEntity.NodeSubId,
+				ObfsPassword: nodeUpdateDto.Hysteria2ObfsPassword,
+				UpMbps:       nodeUpdateDto.Hysteria2UpMbps,
+				DownMbps:     nodeUpdateDto.Hysteria2DownMbps,
+				ServerName:   nodeUpdateDto.Hysteria2ServerName,
+				Insecure:     nodeUpdateDto.Hysteria2Insecure,
+			}
+			if err = dao.UpdateNodeHysteria2ById(&nodeHysteria2); err != nil {
+				return err
+			}
 		}
 		if *nodeEntity.NodeServerId != *nodeUpdateDto.NodeServerId ||
 			*nodeEntity.Name != *nodeUpdateDto.Name ||
@@ -498,16 +544,20 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		}
 	} else {
 		// 修改了节点类型的情况 需要删除分库的数据，然后重新再插入
-		if *nodeEntity.NodeTypeId == 1 {
+		if *nodeEntity.NodeTypeId == constant.Xray {
 			if err = dao.DeleteNodeXrayById(nodeEntity.NodeSubId); err != nil {
 				return err
 			}
-		} else if *nodeEntity.NodeTypeId == 2 {
+		} else if *nodeEntity.NodeTypeId == constant.TrojanGo {
 			if err = dao.DeleteNodeTrojanGoById(nodeEntity.NodeSubId); err != nil {
 				return err
 			}
-		} else if *nodeEntity.NodeTypeId == 3 {
+		} else if *nodeEntity.NodeTypeId == constant.Hysteria {
 			if err = dao.DeleteNodeHysteriaById(nodeEntity.NodeSubId); err != nil {
+				return err
+			}
+		} else if *nodeEntity.NodeTypeId == constant.Hysteria2 {
+			if err = dao.DeleteNodeHysteria2ById(nodeEntity.NodeSubId); err != nil {
 				return err
 			}
 		}
@@ -555,6 +605,18 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				FastOpen:   nodeUpdateDto.HysteriaFastOpen,
 			}
 			nodeId, err = dao.CreateNodeHysteria(&hysteria)
+			if err != nil {
+				return nil
+			}
+		} else if *nodeUpdateDto.NodeTypeId == constant.Hysteria2 {
+			hysteria2 := model.NodeHysteria2{
+				ObfsPassword: nodeUpdateDto.Hysteria2ObfsPassword,
+				UpMbps:       nodeUpdateDto.Hysteria2UpMbps,
+				DownMbps:     nodeUpdateDto.Hysteria2DownMbps,
+				ServerName:   nodeUpdateDto.Hysteria2ServerName,
+				Insecure:     nodeUpdateDto.Hysteria2Insecure,
+			}
+			nodeId, err = dao.CreateNodeHysteria2(&hysteria2)
 			if err != nil {
 				return nil
 			}
@@ -745,6 +807,24 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 		}
 		if nodeHysteria.FastOpen != nil {
 			headBuilder.WriteString(fmt.Sprintf("&fastopen=%d", *nodeHysteria.FastOpen))
+		}
+	} else if *nodeType.Id == constant.Hysteria2 {
+		nodeHysteria2, err := dao.SelectNodeHysteria2ById(node.NodeSubId)
+		if err != nil {
+			return "", 0, errors.New(constant.NodeURLError)
+		}
+		headBuilder.WriteString(fmt.Sprintf("hysteria2://%s@%s:%d/?",
+			password,
+			*node.Domain,
+			*node.Port))
+		if nodeHysteria2.ObfsPassword != nil && *nodeHysteria2.ObfsPassword != "" {
+			headBuilder.WriteString(fmt.Sprintf("&obfs=salamander&obfs-password=%s", *nodeHysteria2.ObfsPassword))
+		}
+		if nodeHysteria2.ServerName != nil && *nodeHysteria2.ServerName != "" {
+			headBuilder.WriteString(fmt.Sprintf("&sni=%s", *nodeHysteria2.ServerName))
+		}
+		if nodeHysteria2.Insecure != nil {
+			headBuilder.WriteString(fmt.Sprintf("&insecure=%d", *nodeHysteria2.Insecure))
 		}
 	} else if *nodeType.Id == constant.NaiveProxy {
 		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))

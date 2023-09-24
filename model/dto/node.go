@@ -44,6 +44,12 @@ type NodeCreateDto struct {
 	HysteriaServerName *string `json:"hysteriaServerName" form:"hysteriaServerName" validate:"omitempty,min=0,max=64"`
 	HysteriaInsecure   *uint   `json:"hysteriaInsecure" form:"hysteriaInsecure" validate:"omitempty,oneof=0 1"`
 	HysteriaFastOpen   *uint   `json:"hysteriaFastOpen" form:"hysteriaFastOpen" validate:"omitempty,oneof=0 1"`
+
+	Hysteria2ObfsPassword *string `json:"hysteria2ObfsPassword" form:"hysteria2ObfsPassword" validate:"omitempty,min=0,max=64"`
+	Hysteria2UpMbps       *int    `json:"hysteria2UpMbps" form:"hysteria2UpMbps" validate:"required,gt=0,lte=9999999999"`
+	Hysteria2DownMbps     *int    `json:"hysteria2DownMbps" form:"hysteria2DownMbps" validate:"required,gt=0,lte=9999999999"`
+	Hysteria2ServerName   *string `json:"hysteria2ServerName" form:"hysteria2ServerName" validate:"omitempty,min=0,max=64"`
+	Hysteria2Insecure     *uint   `json:"hysteria2Insecure" form:"hysteria2Insecure" validate:"omitempty,oneof=0 1"`
 }
 
 type NodeUpdateDto struct {
@@ -79,7 +85,13 @@ type NodeUpdateDto struct {
 	HysteriaObfs       *string `json:"hysteriaObfs" form:"hysteriaObfs" validate:"omitempty,min=0,max=64"`
 	HysteriaUpMbps     *int    `json:"hysteriaUpMbps" form:"hysteriaUpMbps" validate:"required,gt=0,lte=9999999999"`
 	HysteriaDownMbps   *int    `json:"hysteriaDownMbps" form:"hysteriaDownMbps" validate:"required,gt=0,lte=9999999999"`
-	HysteriaServerName *string `json:"hysteriaServerName" form:"serverName" validate:"omitempty,min=0,max=64"`
-	HysteriaInsecure   *uint   `json:"hysteriaInsecure" form:"insecure" validate:"omitempty,oneof=0 1"`
-	HysteriaFastOpen   *uint   `json:"hysteriaFastOpen" form:"fastOpen" validate:"omitempty,oneof=0 1"`
+	HysteriaServerName *string `json:"hysteriaServerName" form:"hysteriaServerName" validate:"omitempty,min=0,max=64"`
+	HysteriaInsecure   *uint   `json:"hysteriaInsecure" form:"hysteriaInsecure" validate:"omitempty,oneof=0 1"`
+	HysteriaFastOpen   *uint   `json:"hysteriaFastOpen" form:"hysteriaFastOpen" validate:"omitempty,oneof=0 1"`
+
+	Hysteria2ObfsPassword *string `json:"hysteria2ObfsPassword" form:"hysteria2ObfsPassword" validate:"omitempty,min=0,max=64"`
+	Hysteria2UpMbps       *int    `json:"hysteria2UpMbps" form:"hysteria2UpMbps" validate:"required,gt=0,lte=9999999999"`
+	Hysteria2DownMbps     *int    `json:"hysteria2DownMbps" form:"hysteria2DownMbps" validate:"required,gt=0,lte=9999999999"`
+	Hysteria2ServerName   *string `json:"hysteria2ServerName" form:"hysteria2ServerName" validate:"omitempty,min=0,max=64"`
+	Hysteria2Insecure     *uint   `json:"hysteria2Insecure" form:"hysteria2Insecure" validate:"omitempty,oneof=0 1"`
 }
