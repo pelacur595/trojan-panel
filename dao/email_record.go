@@ -6,15 +6,15 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
 func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint, pageSize *uint) (*vo.EmailRecordPageVo, error) {
 	var (
 		total        uint
-		emailRecords []module.EmailRecord
+		emailRecords []model.EmailRecord
 	)
 
 	// 查询总数
@@ -91,7 +91,7 @@ func SelectEmailRecordPage(queryToEmail *string, queryState *int, pageNum *uint,
 }
 
 // 创建邮件记录并返回主键
-func CreateEmailRecord(emailRecord module.EmailRecord) (uint, error) {
+func CreateEmailRecord(emailRecord model.EmailRecord) (uint, error) {
 	var data []map[string]interface{}
 	data = append(data, map[string]interface{}{
 		"to_email": *emailRecord.ToEmail,

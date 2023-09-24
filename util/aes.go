@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 )
 
 var aesKey = []byte(RandString(32))

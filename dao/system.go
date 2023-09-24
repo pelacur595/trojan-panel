@@ -5,12 +5,12 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
 )
 
-func SelectSystemByName(name *string) (*module.System, error) {
-	var system module.System
+func SelectSystemByName(name *string) (*model.System, error) {
+	var system model.System
 	buildSelect, values, err := builder.NamedQuery(
 		"select id,account_config,email_config,template_config from `system` where name = {{name}}",
 		map[string]interface{}{"name": *name})
@@ -36,7 +36,7 @@ func SelectSystemByName(name *string) (*module.System, error) {
 	return &system, nil
 }
 
-func UpdateSystemById(system *module.System) error {
+func UpdateSystemById(system *model.System) error {
 	where := map[string]interface{}{"id": *system.Id}
 	update := map[string]interface{}{}
 	if system.AccountConfig != nil {

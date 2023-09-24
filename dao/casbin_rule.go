@@ -2,7 +2,7 @@ package dao
 
 import (
 	"errors"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 
 	sqladapter "github.com/Blank-Xu/sql-adapter"
 	"github.com/casbin/casbin/v2"

@@ -5,12 +5,12 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
 )
 
-func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
-	var nodeXray module.NodeXray
+func SelectNodeXrayById(id *uint) (*model.NodeXray, error) {
+	var nodeXray model.NodeXray
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`protocol`", "xray_flow", "xray_ss_method", "reality_pbk", "settings", "stream_settings", "tag", "sniffing", "allocate"}
 	buildSelect, values, err := builder.BuildSelect("node_xray", where, selectFields)
@@ -35,7 +35,7 @@ func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
 	return &nodeXray, nil
 }
 
-func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
+func CreateNodeXray(nodeXray *model.NodeXray) (uint, error) {
 	nodeXrayCreate := map[string]interface{}{}
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {
 		nodeXrayCreate["protocol"] = *nodeXray.Protocol
@@ -87,7 +87,7 @@ func CreateNodeXray(nodeXray *module.NodeXray) (uint, error) {
 	return 0, errors.New(constant.SysError)
 }
 
-func UpdateNodeXrayById(nodeXray *module.NodeXray) error {
+func UpdateNodeXrayById(nodeXray *model.NodeXray) error {
 	where := map[string]interface{}{"id": *nodeXray.Id}
 	update := map[string]interface{}{}
 	if nodeXray.Protocol != nil && *nodeXray.Protocol != "" {

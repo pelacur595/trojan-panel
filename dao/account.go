@@ -6,14 +6,14 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 	"trojan-panel/util"
 )
 
-func SelectAccountById(id *uint) (*module.Account, error) {
-	var account module.Account
+func SelectAccountById(id *uint) (*model.Account, error) {
+	var account model.Account
 
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "username", "role_id", "email", "preset_expire", "preset_quota", "expire_time", "deleted", "quota",
@@ -40,7 +40,7 @@ func SelectAccountById(id *uint) (*module.Account, error) {
 	return &account, nil
 }
 
-func CreateAccount(account *module.Account) error {
+func CreateAccount(account *model.Account) error {
 	// 密码加密
 	encryPass := util.Sha1String(fmt.Sprintf("%s%s", *account.Username, *account.Pass))
 	hash := util.SHA224String(encryPass)
@@ -130,7 +130,7 @@ func SelectAccountPage(
 	pageSize *uint) (*vo.AccountPageVo, error) {
 	var (
 		total    uint
-		accounts []module.Account
+		accounts []model.Account
 	)
 
 	// 查询总数
@@ -242,8 +242,8 @@ func DeleteAccountById(id *uint) error {
 	return nil
 }
 
-func SelectAccountByUsername(username *string) (*module.Account, error) {
-	var account module.Account
+func SelectAccountByUsername(username *string) (*model.Account, error) {
+	var account model.Account
 
 	where := map[string]interface{}{"username": *username}
 
@@ -319,7 +319,7 @@ func UpdateAccountProperty(oldUsername *string, pass *string, username *string, 
 	return nil
 }
 
-func UpdateAccountById(account *module.Account) error {
+func UpdateAccountById(account *model.Account) error {
 	where := map[string]interface{}{"id": *account.Id}
 	update := map[string]interface{}{}
 	if account.Pass != nil && *account.Pass != "" {
@@ -377,7 +377,7 @@ func UpdateAccountById(account *module.Account) error {
 }
 
 func SelectConnectPassword(id *uint, username *string) (string, error) {
-	var account module.Account
+	var account model.Account
 	where := map[string]interface{}{}
 	if id != nil && *id != 0 {
 		where["id"] = *id
@@ -475,7 +475,7 @@ func SelectAccountUsernameByDeletedOrExpireTime() ([]string, error) {
 }
 
 // SelectAccountsByExpireTime 用于发邮件
-func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
+func SelectAccountsByExpireTime(expireTime uint) ([]model.Account, error) {
 	buildSelect, values, err := builder.NamedQuery("select username,email from account where (quota < 0 or quota > download + upload) and expire_time <= {{expire_time}}",
 		map[string]interface{}{"expire_time": expireTime})
 	if err != nil {
@@ -489,7 +489,7 @@ func SelectAccountsByExpireTime(expireTime uint) ([]module.Account, error) {
 	}
 	defer rows.Close()
 
-	var accounts []module.Account
+	var accounts []model.Account
 	if err = scanner.Scan(rows, &accounts); err != nil {
 		logrus.Errorln(err.Error())
 		return nil, errors.New(constant.SysError)
@@ -547,8 +547,8 @@ func ResetAccountDownloadAndUpload(id *uint, roleIds *[]uint) error {
 	return nil
 }
 
-func SelectAccountClashSubscribe(pass string) (*module.Account, error) {
-	var account module.Account
+func SelectAccountClashSubscribe(pass string) (*model.Account, error) {
+	var account model.Account
 
 	where := map[string]interface{}{"pass": pass}
 	selectFields := []string{"id", "username", "pass", "expire_time", "quota", "download", "upload"}
@@ -625,7 +625,7 @@ func SelectAccountAll() ([]vo.AccountExportVo, error) {
 }
 
 // CreateOrUpdateAccount 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
-func CreateOrUpdateAccount(accountModule module.Account, cover uint) error {
+func CreateOrUpdateAccount(accountModule model.Account, cover uint) error {
 	// 如果存在则更新
 	account, err := SelectAccountByUsername(accountModule.Username)
 	if err != nil && err.Error() != constant.UsernameOrPassError {

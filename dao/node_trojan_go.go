@@ -5,12 +5,12 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
 )
 
-func SelectNodeTrojanGoById(id *uint) (*module.NodeTrojanGo, error) {
-	var nodeTrojanGo module.NodeTrojanGo
+func SelectNodeTrojanGoById(id *uint) (*model.NodeTrojanGo, error) {
+	var nodeTrojanGo model.NodeTrojanGo
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "`sni`", "mux_enable", "websocket_enable", "websocket_path", "websocket_host", "ss_enable", "ss_method", "ss_password"}
 	buildSelect, values, err := builder.BuildSelect("node_trojan_go", where, selectFields)
@@ -35,7 +35,7 @@ func SelectNodeTrojanGoById(id *uint) (*module.NodeTrojanGo, error) {
 	return &nodeTrojanGo, nil
 }
 
-func CreateNodeTrojanGo(nodeTrojanGo *module.NodeTrojanGo) (uint, error) {
+func CreateNodeTrojanGo(nodeTrojanGo *model.NodeTrojanGo) (uint, error) {
 	nodeTrojanGoCreate := map[string]interface{}{}
 	if nodeTrojanGo.Sni != nil && *nodeTrojanGo.Sni != "" {
 		nodeTrojanGoCreate["sni"] = *nodeTrojanGo.Sni
@@ -84,7 +84,7 @@ func CreateNodeTrojanGo(nodeTrojanGo *module.NodeTrojanGo) (uint, error) {
 	return 0, errors.New(constant.SysError)
 }
 
-func UpdateNodeTrojanGoById(nodeTrojanGo *module.NodeTrojanGo) error {
+func UpdateNodeTrojanGoById(nodeTrojanGo *model.NodeTrojanGo) error {
 	where := map[string]interface{}{"id": *nodeTrojanGo.Id}
 	update := map[string]interface{}{}
 	if nodeTrojanGo.Sni != nil && *nodeTrojanGo.Sni != "" {

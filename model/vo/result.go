@@ -3,7 +3,7 @@ package vo
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 )
 
 // 返回的对象

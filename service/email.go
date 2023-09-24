@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
 )
 
 func SendEmail(sendEmailDto *dto.SendEmailDto) error {
@@ -43,7 +43,7 @@ func SendEmail(sendEmailDto *dto.SendEmailDto) error {
 				state = -1
 			}
 			state = 1
-			emailRecord := module.EmailRecord{
+			emailRecord := model.EmailRecord{
 				ToEmail: &toEmail,
 				Subject: &sendEmailDto.Subject,
 				Content: &sendEmailDto.Content,

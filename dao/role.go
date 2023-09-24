@@ -6,14 +6,14 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 )
 
-func SelectRoleList(roleDto dto.RoleDto) ([]module.Role, error) {
-	var roles []module.Role
+func SelectRoleList(roleDto dto.RoleDto) ([]model.Role, error) {
+	var roles []model.Role
 
 	where := map[string]interface{}{
 		"_orderby": "create_time desc",
@@ -81,7 +81,7 @@ func SelectRoleNameByParentId(id *uint, includeSelf bool) ([]string, error) {
 }
 
 func SelectRoleById(id *uint) (*vo.RoleVo, error) {
-	var role module.Role
+	var role model.Role
 	buildSelect, values, err := builder.NamedQuery("select id,`name`,`desc`,`path` from `role` where id = {{id}}",
 		map[string]interface{}{"id": *id})
 	if err != nil {

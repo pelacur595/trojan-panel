@@ -5,13 +5,13 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
 func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
-	var nodeTypes []module.NodeType
+	var nodeTypes []model.NodeType
 
 	buildSelect, values, err := builder.NamedQuery(
 		"select id,`name` from node_type order by create_time desc", nil)
@@ -41,8 +41,8 @@ func SelectNodeTypeList() ([]vo.NodeTypeVo, error) {
 	return nodeTypeVos, nil
 }
 
-func SelectNodeTypeById(id *uint) (*module.NodeType, error) {
-	var nodeType module.NodeType
+func SelectNodeTypeById(id *uint) (*model.NodeType, error) {
+	var nodeType model.NodeType
 	buildSelect, values, err := builder.NamedQuery(
 		"select id,`name` from node_type where id = {{id}}", map[string]interface{}{"id": *id})
 	if err != nil {

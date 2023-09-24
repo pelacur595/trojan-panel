@@ -5,15 +5,15 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
 func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
 	var (
 		total     uint
-		fileTasks []module.FileTask
+		fileTasks []model.FileTask
 	)
 
 	// 查询总数
@@ -98,8 +98,8 @@ func DeleteFileTaskById(id *uint) error {
 	return nil
 }
 
-func SelectFileTaskById(id *uint) (*module.FileTask, error) {
-	var fileTask module.FileTask
+func SelectFileTaskById(id *uint) (*model.FileTask, error) {
+	var fileTask model.FileTask
 
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "name", "path", "`type`", "status", "err_msg", "create_time"}
@@ -125,7 +125,7 @@ func SelectFileTaskById(id *uint) (*module.FileTask, error) {
 	return &fileTask, nil
 }
 
-func CreateFileTask(fileTask *module.FileTask) (uint, error) {
+func CreateFileTask(fileTask *model.FileTask) (uint, error) {
 	fileTaskCreate := map[string]interface{}{
 		"name":   *fileTask.Name,
 		"`type`": *fileTask.Type,
@@ -166,7 +166,7 @@ func CreateFileTask(fileTask *module.FileTask) (uint, error) {
 	return uint(id), nil
 }
 
-func UpdateFileTaskById(fileTask *module.FileTask) error {
+func UpdateFileTaskById(fileTask *model.FileTask) error {
 	where := map[string]interface{}{"id": *fileTask.Id}
 	update := map[string]interface{}{}
 

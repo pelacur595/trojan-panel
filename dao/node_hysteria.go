@@ -5,12 +5,12 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
 )
 
-func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
-	var nodeHysteria module.NodeHysteria
+func SelectNodeHysteriaById(id *uint) (*model.NodeHysteria, error) {
+	var nodeHysteria model.NodeHysteria
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "protocol", "obfs", "up_mbps", "down_mbps", "server_name", "insecure", "fast_open"}
 	buildSelect, values, err := builder.BuildSelect("node_hysteria", where, selectFields)
@@ -34,7 +34,7 @@ func SelectNodeHysteriaById(id *uint) (*module.NodeHysteria, error) {
 	return &nodeHysteria, nil
 }
 
-func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
+func CreateNodeHysteria(nodeHysteria *model.NodeHysteria) (uint, error) {
 	nodeHysteriaCreate := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {
 		nodeHysteriaCreate["protocol"] = *nodeHysteria.Protocol
@@ -80,7 +80,7 @@ func CreateNodeHysteria(nodeHysteria *module.NodeHysteria) (uint, error) {
 	return 0, errors.New(constant.SysError)
 }
 
-func UpdateNodeHysteriaById(nodeHysteria *module.NodeHysteria) error {
+func UpdateNodeHysteriaById(nodeHysteria *model.NodeHysteria) error {
 	where := map[string]interface{}{"id": *nodeHysteria.Id}
 	update := map[string]interface{}{}
 	if nodeHysteria.Protocol != nil && *nodeHysteria.Protocol != "" {

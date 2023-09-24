@@ -11,7 +11,7 @@ import (
 	"net"
 	"strconv"
 	"time"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 )
 
 func Ping(ip string) (int, error) {

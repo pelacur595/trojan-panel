@@ -6,12 +6,12 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
 )
 
-func SelectNodeById(id *uint) (*module.Node, error) {
-	var node module.Node
+func SelectNodeById(id *uint) (*model.Node, error) {
+	var node model.Node
 	where := map[string]interface{}{"id": *id}
 	selectFields := []string{"id", "node_server_id", "`node_sub_id`", "node_type_id", "name", "node_server_ip", "node_server_grpc_port", "domain", "port", "priority", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node", where, selectFields)
@@ -35,7 +35,7 @@ func SelectNodeById(id *uint) (*module.Node, error) {
 	return &node, nil
 }
 
-func CreateNode(node *module.Node) error {
+func CreateNode(node *model.Node) error {
 	nodeEntity := map[string]interface{}{
 		"node_server_id": *node.NodeServerId,
 		"node_sub_id":    *node.NodeSubId,
@@ -68,10 +68,10 @@ func CreateNode(node *module.Node) error {
 	return nil
 }
 
-func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSize *uint) (*[]module.Node, uint, error) {
+func SelectNodePage(queryName *string, nodeServerId *uint, pageNum *uint, pageSize *uint) (*[]model.Node, uint, error) {
 	var (
 		total uint
-		nodes []module.Node
+		nodes []model.Node
 	)
 
 	// 查询总数
@@ -138,7 +138,7 @@ func DeleteNodeById(id *uint) error {
 	return nil
 }
 
-func UpdateNodeById(node *module.Node) error {
+func UpdateNodeById(node *model.Node) error {
 	where := map[string]interface{}{"id": *node.Id}
 	update := map[string]interface{}{}
 	if node.NodeServerId != nil {
@@ -240,8 +240,8 @@ func CountNodeByNameAndNodeServerId(id *uint, queryName *string, nodeServerId *u
 	return count, nil
 }
 
-func SelectNodes() ([]module.Node, error) {
-	var nodes []module.Node
+func SelectNodes() ([]model.Node, error) {
+	var nodes []model.Node
 
 	where := map[string]interface{}{
 		"_orderby": "priority desc,create_time desc"}
@@ -265,8 +265,8 @@ func SelectNodes() ([]module.Node, error) {
 	return nodes, nil
 }
 
-func SelectNodesIpGrpcPortDistinct() ([]module.Node, error) {
-	var nodes []module.Node
+func SelectNodesIpGrpcPortDistinct() ([]model.Node, error) {
+	var nodes []model.Node
 
 	buildSelect, values, err := builder.NamedQuery("select node_server_ip, node_server_grpc_port from node group by node_server_ip, node_server_grpc_port", nil)
 	if err != nil {

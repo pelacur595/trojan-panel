@@ -7,8 +7,8 @@ import (
 	redisgo "github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 )
 

@@ -12,11 +12,11 @@ import (
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module"
-	"trojan-panel/module/bo"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/bo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/util"
 )
 
@@ -30,7 +30,7 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 	}
 	toByte := util.ToByte(*accountCreateDto.Quota)
 	lastLoginTime := uint(time.Now().UnixMilli())
-	account := module.Account{
+	account := model.Account{
 		Username:      accountCreateDto.Username,
 		Pass:          accountCreateDto.Pass,
 		RoleId:        accountCreateDto.RoleId,
@@ -58,7 +58,7 @@ func CreateAccount(accountCreateDto dto.AccountCreateDto) error {
 	return nil
 }
 
-func SelectAccountById(id *uint) (*module.Account, error) {
+func SelectAccountById(id *uint) (*model.Account, error) {
 	return dao.SelectAccountById(id)
 }
 
@@ -96,7 +96,7 @@ func DeleteAccountById(token string, id *uint) error {
 	return nil
 }
 
-func SelectAccountByUsername(username *string) (*module.Account, error) {
+func SelectAccountByUsername(username *string) (*model.Account, error) {
 	return dao.SelectAccountByUsername(username)
 }
 
@@ -160,7 +160,7 @@ func GetAccountInfo(c *gin.Context) (*vo.AccountInfo, error) {
 	return &userInfo, nil
 }
 
-func UpdateAccountById(token string, account *module.Account) error {
+func UpdateAccountById(token string, account *model.Account) error {
 	mutex, err := redis.RsLock(constant.UpdateAccountByIdLock)
 	if err != nil {
 		return err
@@ -211,7 +211,7 @@ func Register(accountRegisterDto dto.AccountRegisterDto) error {
 	milli := util.DayToMilli(systemVo.RegisterExpireDays)
 	registerQuota := util.ToByte(systemVo.RegisterQuota)
 	lastLoginTime := uint(time.Now().UnixMilli())
-	account := module.Account{
+	account := model.Account{
 		Quota:         &registerQuota,
 		Username:      accountRegisterDto.Username,
 		Pass:          accountRegisterDto.Pass,
@@ -347,7 +347,7 @@ Clash for windows 参考文档：
 2. https://github.com/crossutility/Quantumult/blob/master/extra-subscription-feature.md
 3. https://github.com/Dreamacro/clash/wiki/Configuration
 */
-func SubscribeClash(pass string) (*module.Account, string, []byte, vo.SystemVo, error) {
+func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, error) {
 	account, err := dao.SelectAccountClashSubscribe(pass)
 	if err != nil {
 		return nil, "", []byte{}, vo.SystemVo{}, err
@@ -570,7 +570,7 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 
 	var fileTaskType uint = constant.TaskTypeAccountImport
 	var fileTaskStatus = constant.TaskDoing
-	fileTask := module.FileTask{
+	fileTask := model.FileTask{
 		Name:            &fileName,
 		Path:            nil,
 		Type:            &fileTaskType,
@@ -586,7 +586,7 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 	go func(fileTaskId uint) {
 		var fail = constant.TaskFail
 		var success = constant.TaskSuccess
-		fileTask := module.FileTask{
+		fileTask := model.FileTask{
 			Id:     &fileTaskId,
 			Status: &fail,
 		}
@@ -603,7 +603,7 @@ func ImportAccount(cover uint, file *multipart.FileHeader, accountId uint, accou
 			return
 		}
 
-		var accounts []module.Account
+		var accounts []model.Account
 		decoder := json.NewDecoder(src)
 		if err = decoder.Decode(&accounts); err != nil {
 			logrus.Errorf("ImportAccount decoder Decode err: %v", err)
@@ -675,7 +675,7 @@ func CreateAccountBatch(accountId uint, accountUsername string, dto dto.CreateAc
 		randStr := util.RandString(12)
 		role := constant.USER
 		toByte := util.ToByte(*dto.PresetQuota)
-		account := module.Account{
+		account := model.Account{
 			Username:     &randStr,
 			Pass:         &randStr,
 			RoleId:       &role,
@@ -717,7 +717,7 @@ func ExportTaskJson[T any](accountId uint, accountUsername string, fileTaskType 
 	filePath := fmt.Sprintf("%s/%s", constant.ExportPath, fileNameRand)
 
 	var fileTaskStatus = constant.TaskDoing
-	fileTask := module.FileTask{
+	fileTask := model.FileTask{
 		Name:            &fileNameRand,
 		Path:            &filePath,
 		Type:            &fileTaskType,
@@ -737,7 +737,7 @@ func ExportTaskJson[T any](accountId uint, accountUsername string, fileTaskType 
 		}
 		var fail = constant.TaskFail
 		var success = constant.TaskSuccess
-		fileTask := module.FileTask{
+		fileTask := model.FileTask{
 			Id:     &fileTaskId,
 			Status: &fail,
 		}

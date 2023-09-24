@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 	"trojan-panel/util"
 )

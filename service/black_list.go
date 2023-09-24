@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/vo"
 )
 
 func DeleteBlackListByIp(ip *string) error {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 )
 
 var bot = new(tgbotapi.BotAPI)

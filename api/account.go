@@ -10,10 +10,10 @@ import (
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 	"trojan-panel/util"
 )
@@ -77,7 +77,7 @@ func Login(c *gin.Context) {
 			} else {
 				milli := uint(time.Now().UnixMilli())
 				// 记录最后登录时间
-				accountUpdate := module.Account{
+				accountUpdate := model.Account{
 					Id:            account.Id,
 					LastLoginTime: &milli,
 				}
@@ -301,7 +301,7 @@ func UpdateAccountById(c *gin.Context) {
 		return
 	}
 	toByte := util.ToByte(*accountUpdateDto.Quota)
-	account := module.Account{
+	account := model.Account{
 		Id:         accountUpdateDto.Id,
 		Quota:      &toByte,
 		Username:   accountUpdateDto.Username,

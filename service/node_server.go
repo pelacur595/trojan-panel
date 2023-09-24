@@ -9,18 +9,18 @@ import (
 	"sync"
 	"trojan-panel/core"
 	"trojan-panel/dao"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/util"
 )
 
-func SelectNodeServerById(id *uint) (*module.NodeServer, error) {
+func SelectNodeServerById(id *uint) (*model.NodeServer, error) {
 	return dao.SelectNodeServer(map[string]interface{}{"id": *id})
 }
 
-func CreateNodeServer(nodeServer *module.NodeServer) error {
+func CreateNodeServer(nodeServer *model.NodeServer) error {
 	count, err := dao.CountNodeServerByName(nil, nodeServer.Name)
 	if err != nil {
 		return err
@@ -124,7 +124,7 @@ func UpdateNodeServerById(dto *dto.NodeServerUpdateDto) error {
 		return errors.New(constant.NodeServerNameExist)
 	}
 
-	nodeServer := module.NodeServer{
+	nodeServer := model.NodeServer{
 		Id:       dto.Id,
 		Ip:       dto.Ip,
 		Name:     dto.Name,
@@ -186,7 +186,7 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 
 	var fileTaskType uint = constant.TaskTypeNodeServerImport
 	var fileTaskStatus = constant.TaskDoing
-	fileTask := module.FileTask{
+	fileTask := model.FileTask{
 		Name:            &fileName,
 		Path:            nil,
 		Type:            &fileTaskType,
@@ -202,7 +202,7 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 	go func(fileTaskId uint) {
 		var fail = constant.TaskFail
 		var success = constant.TaskSuccess
-		fileTask := module.FileTask{
+		fileTask := model.FileTask{
 			Id:     &fileTaskId,
 			Status: &fail,
 		}
@@ -219,7 +219,7 @@ func ImportNodeServer(cover uint, file *multipart.FileHeader, accountId uint, ac
 			return
 		}
 
-		var nodeServers []module.NodeServer
+		var nodeServers []model.NodeServer
 		decoder := json.NewDecoder(src)
 		if err = decoder.Decode(&nodeServers); err != nil {
 			logrus.Errorf("ImportNodeServer decoder Decode err: %v", err)

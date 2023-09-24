@@ -2,9 +2,9 @@ package service
 
 import (
 	"trojan-panel/dao"
-	"trojan-panel/module"
+	"trojan-panel/model"
 )
 
-func SelectNodeXrayById(id *uint) (*module.NodeXray, error) {
+func SelectNodeXrayById(id *uint) (*model.NodeXray, error) {
 	return dao.SelectNodeXrayById(id)
 }

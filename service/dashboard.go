@@ -9,8 +9,8 @@ import (
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 	"trojan-panel/util"
 )
 

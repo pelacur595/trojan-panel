@@ -8,7 +8,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
-	"trojan-panel/module/constant"
+	"trojan-panel/model/constant"
 	"trojan-panel/util"
 )
 

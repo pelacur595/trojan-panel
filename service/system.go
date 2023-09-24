@@ -10,11 +10,11 @@ import (
 	"time"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module"
-	"trojan-panel/module/bo"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/bo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 )
 
 func SelectSystemByName(name *string) (vo.SystemVo, error) {
@@ -181,7 +181,7 @@ func UpdateSystemById(systemDto dto.SystemUpdateDto) error {
 	}
 	systemTemplateConfigBoStr := string(systemTemplateConfigBoByte)
 
-	system := module.System{
+	system := model.System{
 		Id:             systemDto.Id,
 		AccountConfig:  &accountConfigBoJsonStr,
 		EmailConfig:    &systemEmailConfigBoStr,

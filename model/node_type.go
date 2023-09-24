@@ -1,10 +1,10 @@
-package module
+package model
 
 import "time"
 
-type BlackList struct {
+type NodeType struct {
 	Id         *uint      `ddb:"id"`
-	Ip         *string    `ddb:"ip"`
+	Name       *string    `ddb:"name"`
 	CreateTime *time.Time `ddb:"create_time"`
 	UpdateTime *time.Time `ddb:"update_time"`
 }

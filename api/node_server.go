@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 	"trojan-panel/util"
 )
@@ -41,7 +41,7 @@ func CreateNodeServer(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
-	nodeServer := module.NodeServer{
+	nodeServer := model.NodeServer{
 		Name:     nodeServerCreateDto.Name,
 		Ip:       nodeServerCreateDto.Ip,
 		GrpcPort: nodeServerCreateDto.GrpcPort,

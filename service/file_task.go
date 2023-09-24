@@ -4,9 +4,9 @@ import (
 	"os"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
 func SelectFileTaskPage(taskType *uint, accountUsername *string, pageNum *uint, pageSize *uint) (*vo.FileTaskPageVo, error) {
@@ -32,6 +32,6 @@ func DeleteFileTaskById(id *uint) error {
 	return nil
 }
 
-func SelectFileTaskById(id *uint) (*module.FileTask, error) {
+func SelectFileTaskById(id *uint) (*model.FileTask, error) {
 	return dao.SelectFileTaskById(id)
 }

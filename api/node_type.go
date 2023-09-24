@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 )
 

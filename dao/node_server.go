@@ -6,13 +6,13 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
-func SelectNodeServer(where map[string]interface{}) (*module.NodeServer, error) {
-	var nodeServer module.NodeServer
+func SelectNodeServer(where map[string]interface{}) (*model.NodeServer, error) {
+	var nodeServer model.NodeServer
 	selectFields := []string{"id", "ip", "grpc_port", "`name`", "create_time"}
 	buildSelect, values, err := builder.BuildSelect("node_server", where, selectFields)
 	if err != nil {
@@ -35,7 +35,7 @@ func SelectNodeServer(where map[string]interface{}) (*module.NodeServer, error) 
 	return &nodeServer, nil
 }
 
-func CreateNodeServer(nodeServer *module.NodeServer) error {
+func CreateNodeServer(nodeServer *model.NodeServer) error {
 	nodeServerEntity := map[string]interface{}{
 		"ip":   *nodeServer.Ip,
 		"name": *nodeServer.Name,
@@ -58,10 +58,10 @@ func CreateNodeServer(nodeServer *module.NodeServer) error {
 	return nil
 }
 
-func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pageSize *uint) (*[]module.NodeServer, uint, error) {
+func SelectNodeServerPage(queryName *string, queryIp *string, pageNum *uint, pageSize *uint) (*[]model.NodeServer, uint, error) {
 	var (
 		total       uint
-		nodeServers []module.NodeServer
+		nodeServers []model.NodeServer
 	)
 
 	// 查询总数
@@ -128,7 +128,7 @@ func DeleteNodeServerById(id *uint) error {
 	return nil
 }
 
-func UpdateNodeServerById(nodeServer *module.NodeServer) error {
+func UpdateNodeServerById(nodeServer *model.NodeServer) error {
 	where := map[string]interface{}{"id": *nodeServer.Id}
 	update := map[string]interface{}{}
 	if nodeServer.Name != nil {
@@ -184,8 +184,8 @@ func CountNodeServerByName(id *uint, queryName *string) (int, error) {
 	return count, nil
 }
 
-func SelectNodeServerList(ip *string, name *string) ([]module.NodeServer, error) {
-	var nodeServers []module.NodeServer
+func SelectNodeServerList(ip *string, name *string) ([]model.NodeServer, error) {
+	var nodeServers []model.NodeServer
 	where := map[string]interface{}{
 		"_orderby": "create_time desc"}
 	if ip != nil && *ip != "" {
@@ -238,7 +238,7 @@ func SelectNodeServerAll() ([]vo.NodeServerExportVo, error) {
 }
 
 // CreateOrUpdateNodeServer 插入数据时，如果数据已经存在，则更新数据；如果数据不存在，则插入新数据
-func CreateOrUpdateNodeServer(nodeServerModule module.NodeServer, cover uint) error {
+func CreateOrUpdateNodeServer(nodeServerModule model.NodeServer, cover uint) error {
 	nodeServer, err := SelectNodeServer(map[string]interface{}{"ip": *nodeServerModule.Ip})
 	if err != nil && err.Error() != constant.NodeNotExist {
 		logrus.Errorln(err.Error())

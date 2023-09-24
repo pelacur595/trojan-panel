@@ -14,11 +14,11 @@ import (
 	"trojan-panel/core"
 	"trojan-panel/dao"
 	"trojan-panel/dao/redis"
-	"trojan-panel/module"
-	"trojan-panel/module/bo"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/dto"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/bo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/dto"
+	"trojan-panel/model/vo"
 	"trojan-panel/util"
 )
 
@@ -183,7 +183,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	})
 	// 数据插入到数据库中
 	if *nodeCreateDto.NodeTypeId == constant.Xray {
-		nodeXray := module.NodeXray{
+		nodeXray := model.NodeXray{
 			Protocol:       nodeCreateDto.XrayProtocol,
 			XrayFlow:       nodeCreateDto.XrayFlow,
 			XraySSMethod:   nodeCreateDto.XraySSMethod,
@@ -199,7 +199,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			return err
 		}
 	} else if *nodeCreateDto.NodeTypeId == constant.TrojanGo {
-		trojanGo := module.NodeTrojanGo{
+		trojanGo := model.NodeTrojanGo{
 			Sni:             nodeCreateDto.TrojanGoSni,
 			MuxEnable:       nodeCreateDto.TrojanGoMuxEnable,
 			WebsocketEnable: nodeCreateDto.TrojanGoWebsocketEnable,
@@ -214,7 +214,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 			return err
 		}
 	} else if *nodeCreateDto.NodeTypeId == constant.Hysteria {
-		hysteria := module.NodeHysteria{
+		hysteria := model.NodeHysteria{
 			Protocol:   nodeCreateDto.HysteriaProtocol,
 			Obfs:       nodeCreateDto.HysteriaObfs,
 			UpMbps:     nodeCreateDto.HysteriaUpMbps,
@@ -230,7 +230,7 @@ func CreateNode(token string, nodeCreateDto dto.NodeCreateDto) error {
 	}
 
 	// 在主表中插入数据
-	node := module.Node{
+	node := model.Node{
 		NodeServerId:       nodeCreateDto.NodeServerId,
 		NodeSubId:          &nodeId,
 		NodeTypeId:         nodeCreateDto.NodeTypeId,
@@ -434,7 +434,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 	if *nodeUpdateDto.NodeTypeId == *nodeEntity.NodeTypeId {
 		// 没有修改节点类型的情况
 		if *nodeEntity.NodeTypeId == constant.Xray {
-			nodeXray := module.NodeXray{
+			nodeXray := model.NodeXray{
 				Id:             nodeEntity.NodeSubId,
 				Protocol:       nodeUpdateDto.XrayProtocol,
 				XrayFlow:       nodeUpdateDto.XrayFlow,
@@ -449,7 +449,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return err
 			}
 		} else if *nodeEntity.NodeTypeId == constant.TrojanGo {
-			nodeTrojanGo := module.NodeTrojanGo{
+			nodeTrojanGo := model.NodeTrojanGo{
 				Id:              nodeEntity.NodeSubId,
 				Sni:             nodeUpdateDto.TrojanGoSni,
 				MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
@@ -463,7 +463,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return err
 			}
 		} else if *nodeEntity.NodeTypeId == constant.Hysteria {
-			nodeHysteria := module.NodeHysteria{
+			nodeHysteria := model.NodeHysteria{
 				Id:         nodeEntity.NodeSubId,
 				Protocol:   nodeUpdateDto.HysteriaProtocol,
 				Obfs:       nodeUpdateDto.HysteriaObfs,
@@ -483,7 +483,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			*nodeEntity.Domain != *nodeUpdateDto.Domain ||
 			*nodeEntity.Port != *nodeUpdateDto.Port ||
 			*nodeEntity.Priority != *nodeUpdateDto.Priority {
-			node := module.Node{
+			node := model.Node{
 				Id:           nodeUpdateDto.Id,
 				NodeServerId: nodeUpdateDto.NodeServerId,
 				Name:         nodeUpdateDto.Name,
@@ -515,7 +515,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 		// 修改了节点类型
 		var nodeId uint
 		if *nodeUpdateDto.NodeTypeId == constant.Xray {
-			nodeXray := module.NodeXray{
+			nodeXray := model.NodeXray{
 				Protocol:       nodeUpdateDto.XrayProtocol,
 				XrayFlow:       nodeUpdateDto.XrayFlow,
 				XraySSMethod:   nodeUpdateDto.XraySSMethod,
@@ -530,7 +530,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return nil
 			}
 		} else if *nodeUpdateDto.NodeTypeId == constant.TrojanGo {
-			trojanGo := module.NodeTrojanGo{
+			trojanGo := model.NodeTrojanGo{
 				Sni:             nodeUpdateDto.TrojanGoSni,
 				MuxEnable:       nodeUpdateDto.TrojanGoMuxEnable,
 				WebsocketEnable: nodeUpdateDto.TrojanGoWebsocketEnable,
@@ -545,7 +545,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 				return nil
 			}
 		} else if *nodeUpdateDto.NodeTypeId == constant.Hysteria {
-			hysteria := module.NodeHysteria{
+			hysteria := model.NodeHysteria{
 				Protocol:   nodeUpdateDto.HysteriaProtocol,
 				Obfs:       nodeUpdateDto.HysteriaObfs,
 				UpMbps:     nodeUpdateDto.HysteriaUpMbps,
@@ -560,7 +560,7 @@ func UpdateNodeById(token string, nodeUpdateDto *dto.NodeUpdateDto) error {
 			}
 		}
 
-		node := module.Node{
+		node := model.Node{
 			Id:                 nodeUpdateDto.Id,
 			NodeServerId:       nodeUpdateDto.NodeServerId,
 			NodeSubId:          &nodeId,

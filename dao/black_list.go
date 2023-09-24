@@ -6,9 +6,9 @@ import (
 	"github.com/didi/gendry/builder"
 	"github.com/didi/gendry/scanner"
 	"github.com/sirupsen/logrus"
-	"trojan-panel/module"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 )
 
 func CountBlackListByIp(ip *string) (int, error) {
@@ -70,7 +70,7 @@ func CreateBlackList(ips []string) error {
 func SelectBlackListPage(ip *string, pageNum *uint, pageSize *uint) (*vo.BlackListPageVo, error) {
 	var (
 		total      uint
-		blackLists []module.BlackList
+		blackLists []model.BlackList
 	)
 
 	// 查询总数

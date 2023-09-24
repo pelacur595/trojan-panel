@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"strings"
 	"trojan-panel/dao"
-	"trojan-panel/module/constant"
-	"trojan-panel/module/vo"
+	"trojan-panel/model/constant"
+	"trojan-panel/model/vo"
 	"trojan-panel/service"
 )
 
