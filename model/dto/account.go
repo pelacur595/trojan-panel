@@ -9,7 +9,7 @@ type AccountDto struct {
 	Username      *string `json:"username" form:"username" validate:"omitempty,min=0,max=20"`
 	Deleted       *uint   `json:"deleted" form:"deleted" validate:"omitempty,oneof=0 1"`
 	LastLoginTime *uint   `json:"lastLoginTime" form:"lastLoginTime" validate:"omitempty,oneof=0 1"`
-	OrderFields   *string `json:"orderFields" form:"orderFields" validate:"omitempty,min=0,max=64"`
+	OrderFields   *string `json:"orderFields" form:"orderFields" validate:"omitempty,min=0,max=64,validateOrderFields"`
 	OrderBy       *string `json:"orderBy" form:"orderBy" validate:"omitempty,oneof=asc desc"`
 }
 

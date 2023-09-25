@@ -4,6 +4,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"regexp"
 	"strconv"
+	"strings"
+	"trojan-panel/util"
 )
 
 var validate *validator.Validate
@@ -16,6 +18,7 @@ func InitValidator() {
 	_ = validate.RegisterValidation("validateEmail", validateEmail)
 	_ = validate.RegisterValidation("validatePort", validatePort)
 	_ = validate.RegisterValidation("validateInt", validateInt)
+	_ = validate.RegisterValidation("validateOrderFields", validateOrderFields)
 }
 
 // 字符串必须是字母和数字的组合
@@ -59,4 +62,13 @@ func validatePort(f validator.FieldLevel) bool {
 	reg := "^([0-9]|[1-9]\\d{1,3}|[1-5]\\d{4}|6[0-4]\\d{4}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$"
 	compile := regexp.MustCompile(reg)
 	return compile.MatchString(field)
+}
+
+func validateOrderFields(f validator.FieldLevel) bool {
+	if f.Field().Len() == 0 {
+		return true
+	}
+	field := f.Field().String()
+	splitArr := strings.Split(field, ",")
+	return util.ArrContainKeys([]string{"quota", "role_id", "last_login_time", "expire_time", "deleted", "create_time"}, splitArr)
 }

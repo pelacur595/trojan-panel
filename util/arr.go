@@ -43,3 +43,21 @@ func ArraysEqualPrefix(a, b []string) bool {
 	}
 	return true
 }
+
+func ArrContainKeys(arr []string, keys []string) bool {
+	for _, item := range keys {
+		if !ArrContain(arr, item) {
+			return false
+		}
+	}
+	return true
+}
+
+func ArrContain(arr []string, key string) bool {
+	for _, item := range arr {
+		if item == key {
+			return true
+		}
+	}
+	return false
+}
