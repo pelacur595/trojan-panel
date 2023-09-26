@@ -28,7 +28,9 @@ func newGrpcInstance(token string, ip string, grpcPort uint, timeout time.Durati
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	clo = func() {
 		cancel()
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 	if err != nil {
 		logrus.Errorf("gRPC instance init err ip: %s grpcPort: %d err: %v", ip, grpcPort, err)
