@@ -19,6 +19,7 @@ func InitValidator() {
 	_ = validate.RegisterValidation("validatePort", validatePort)
 	_ = validate.RegisterValidation("validateInt", validateInt)
 	_ = validate.RegisterValidation("validateOrderFields", validateOrderFields)
+	_ = validate.RegisterValidation("validateObfsPassword", validateObfsPassword)
 }
 
 // 字符串必须是字母和数字的组合
@@ -71,4 +72,10 @@ func validateOrderFields(f validator.FieldLevel) bool {
 	field := f.Field().String()
 	splitArr := strings.Split(field, ",")
 	return util.ArrContainKeys([]string{"quota", "role_id", "last_login_time", "expire_time", "deleted", "create_time"}, splitArr)
+}
+
+func validateObfsPassword(f validator.FieldLevel) bool {
+	field := f.Field().String()
+	fieldLen := len(field)
+	return fieldLen == 0 || fieldLen >= 4 && fieldLen <= 64
 }
