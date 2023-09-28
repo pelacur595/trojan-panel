@@ -63,5 +63,5 @@ func Subscribe(c *gin.Context) {
 	c.String(200, result)
 	return
 	//}
-	//vo.Fail("不支持该客户端", c)
+	//vo.Fail("This client is not supported", c)
 }
