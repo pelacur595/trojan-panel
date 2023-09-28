@@ -72,7 +72,7 @@ func Login(c *gin.Context) {
 		} else {
 			if _, err := redis.Client.String.
 				Set(fmt.Sprintf("trojan-panel:token:%s", *accountLoginDto.Username), tokenStr,
-					time.Hour.Milliseconds()*2/1000).Result(); err != nil {
+					time.Hour.Milliseconds()*12/1000).Result(); err != nil {
 				vo.Fail(constant.SysError, c)
 			} else {
 				milli := uint(time.Now().UnixMilli())

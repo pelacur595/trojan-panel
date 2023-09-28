@@ -11,8 +11,8 @@ import (
 	"trojan-panel/util"
 )
 
-// TokenExpireDuration 过期时间默认2小时
-const TokenExpireDuration = time.Hour * 2
+// TokenExpireDuration 过期时间默认12小时
+const TokenExpireDuration = time.Hour * 12
 
 type MyClaims struct {
 	AccountVo vo.AccountVo `json:"accountVo"`
