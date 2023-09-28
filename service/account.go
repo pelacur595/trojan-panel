@@ -389,16 +389,17 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 			}
 			switch *nodeXray.Protocol {
 			case constant.ProtocolVless:
-				vless := bo.Vless{}
-				vless.Name = *item.Name
-				vless.Type = constant.ClashVless
-				vless.Server = *item.Domain
-				vless.Port = *item.Port
-				vless.Uuid = util.GenerateUUID(pass)
-				vless.Network = streamSettings.Network
-				vless.Tls = true
-				vless.Udp = true
-				vless.Flow = *nodeXray.XrayFlow
+				vless := bo.Vless{
+					Name:    *item.Name,
+					Type:    constant.ClashVless,
+					Server:  *item.Domain,
+					Port:    *item.Port,
+					Uuid:    util.GenerateUUID(pass),
+					Network: streamSettings.Network,
+					Tls:     true,
+					Udp:     true,
+					Flow:    *nodeXray.XrayFlow,
+				}
 				if streamSettings.Security == "tls" {
 					vless.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					vless.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
@@ -424,21 +425,22 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				ClashConfigInterface = append(ClashConfigInterface, vless)
 				proxies = append(proxies, *item.Name)
 			case constant.ProtocolVmess:
-				vmess := bo.Vmess{}
-				vmess.Name = *item.Name
-				vmess.Type = constant.ClashVmess
-				vmess.Server = *item.Domain
-				vmess.Port = *item.Port
-				vmess.Uuid = util.GenerateUUID(pass)
-				vmess.AlterId = 0
+				vmess := bo.Vmess{
+					Name:    *item.Name,
+					Type:    constant.ClashVmess,
+					Server:  *item.Domain,
+					Port:    *item.Port,
+					Uuid:    util.GenerateUUID(pass),
+					AlterId: 0,
+					Tls:     true,
+					Udp:     true,
+					Network: streamSettings.Network,
+				}
 				if settings.Encryption != "none" {
 					vmess.Cipher = "auto"
 				} else {
 					vmess.Cipher = "none"
 				}
-				vmess.Tls = true
-				vmess.Udp = true
-				vmess.Network = streamSettings.Network
 				if streamSettings.Security == "tls" {
 					vmess.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					vmess.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
@@ -455,13 +457,14 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				ClashConfigInterface = append(ClashConfigInterface, vmess)
 				proxies = append(proxies, *item.Name)
 			case constant.ProtocolTrojan:
-				trojan := bo.Trojan{}
-				trojan.Name = *item.Name
-				trojan.Type = constant.ClashTrojan
-				trojan.Server = *item.Domain
-				trojan.Port = *item.Port
-				trojan.Password = pass
-				trojan.Udp = true
+				trojan := bo.Trojan{
+					Name:     *item.Name,
+					Type:     constant.ClashTrojan,
+					Server:   *item.Domain,
+					Port:     *item.Port,
+					Password: pass,
+					Udp:      true,
+				}
 				if streamSettings.Security == "tls" {
 					trojan.ClientFingerprint = streamSettings.TlsSettings.Fingerprint
 					trojan.Sni = streamSettings.TlsSettings.ServerName
@@ -478,14 +481,15 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				ClashConfigInterface = append(ClashConfigInterface, trojan)
 				proxies = append(proxies, *item.Name)
 			case constant.ProtocolShadowsocks:
-				shadowsocks := bo.Shadowsocks{}
-				shadowsocks.Name = *item.Name
-				shadowsocks.Type = constant.ClashShadowsocks
-				shadowsocks.Server = *item.Domain
-				shadowsocks.Port = *item.Port
-				shadowsocks.Cipher = *nodeXray.XraySSMethod
-				shadowsocks.Password = pass
-				shadowsocks.Udp = true
+				shadowsocks := bo.Shadowsocks{
+					Name:     *item.Name,
+					Type:     constant.ClashShadowsocks,
+					Server:   *item.Domain,
+					Port:     *item.Port,
+					Cipher:   *nodeXray.XraySSMethod,
+					Password: pass,
+					Udp:      true,
+				}
 				ClashConfigInterface = append(ClashConfigInterface, shadowsocks)
 				proxies = append(proxies, *item.Name)
 			}
@@ -494,14 +498,15 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 			if err != nil {
 				return nil, "", []byte{}, vo.SystemVo{}, err
 			}
-			trojanGo := bo.TrojanGo{}
-			trojanGo.Name = *item.Name
-			trojanGo.Type = constant.ClashTrojan
-			trojanGo.Server = *item.Domain
-			trojanGo.Port = *item.Port
-			trojanGo.Password = pass
-			trojanGo.Udp = true
-			trojanGo.SNI = *nodeTrojanGo.Sni
+			trojanGo := bo.TrojanGo{
+				Name:     *item.Name,
+				Type:     constant.ClashTrojan,
+				Server:   *item.Domain,
+				Port:     *item.Port,
+				Password: pass,
+				Udp:      true,
+				SNI:      *nodeTrojanGo.Sni,
+			}
 			if *nodeTrojanGo.WebsocketEnable == 1 {
 				trojanGo.Network = "ws"
 				trojanGo.WsOpts.Path = *nodeTrojanGo.WebsocketPath
@@ -514,20 +519,38 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 			if err != nil {
 				return nil, "", []byte{}, vo.SystemVo{}, err
 			}
-			hysteria := bo.Hysteria{}
-			hysteria.Name = *item.Name
-			hysteria.Type = constant.ClashSHysteria
-			hysteria.Server = *item.Domain
-			hysteria.Port = *item.Port
-			hysteria.AuthStr = pass
-			hysteria.Obfs = *nodeHysteria.Obfs
-			hysteria.Protocol = *nodeHysteria.Protocol
-			hysteria.Up = *nodeHysteria.UpMbps
-			hysteria.Down = *nodeHysteria.DownMbps
-			hysteria.Sni = *nodeHysteria.ServerName
-			hysteria.SkipCertVerify = *nodeHysteria.Insecure == 1
-			hysteria.FastOpen = *nodeHysteria.FastOpen == 1
+			hysteria := bo.Hysteria{
+				Name:           *item.Name,
+				Type:           constant.ClashSHysteria,
+				Server:         *item.Domain,
+				Port:           *item.Port,
+				AuthStr:        pass,
+				Obfs:           *nodeHysteria.Obfs,
+				Protocol:       *nodeHysteria.Protocol,
+				Up:             *nodeHysteria.UpMbps,
+				Down:           *nodeHysteria.DownMbps,
+				Sni:            *nodeHysteria.ServerName,
+				SkipCertVerify: *nodeHysteria.Insecure == 1,
+				FastOpen:       *nodeHysteria.FastOpen == 1,
+			}
 			ClashConfigInterface = append(ClashConfigInterface, hysteria)
+			proxies = append(proxies, *item.Name)
+		} else if *item.NodeTypeId == constant.Hysteria2 {
+			nodeHysteria2, err := dao.SelectNodeHysteria2ById(item.NodeSubId)
+			if err != nil {
+				return nil, "", []byte{}, vo.SystemVo{}, err
+			}
+			hysteria2 := bo.Hysteria2{
+				Name:           *item.Name,
+				Type:           constant.ClashSHysteria,
+				Server:         *item.Domain,
+				Port:           *item.Port,
+				Up:             *nodeHysteria2.UpMbps,
+				Down:           *nodeHysteria2.DownMbps,
+				Sni:            *nodeHysteria2.ServerName,
+				SkipCertVerify: *nodeHysteria2.Insecure == 1,
+			}
+			ClashConfigInterface = append(ClashConfigInterface, hysteria2)
 			proxies = append(proxies, *item.Name)
 		}
 	}

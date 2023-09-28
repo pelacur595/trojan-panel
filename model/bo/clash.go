@@ -94,6 +94,20 @@ type Hysteria struct {
 	FastOpen       bool   `yaml:"fast-open"`
 }
 
+type Hysteria2 struct {
+	Name           string `yaml:"name"`
+	Type           string `yaml:"type"`
+	Server         string `yaml:"server"`
+	Port           uint   `yaml:"port"`
+	Up             int    `yaml:"up"`
+	Down           int    `yaml:"down"`
+	Password       string `yaml:"password"`
+	Obfs           string `yaml:"obfs"`
+	ObfsPassword   string `yaml:"obfs-password"`
+	Sni            string `yaml:"sni"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+}
+
 type WsOpts struct {
 	Path    string        `yaml:"path"`
 	Headers WsOptsHeaders `yaml:"headers"`
