@@ -221,7 +221,7 @@ CREATE TABLE `node_hysteria` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Hyeteria节点';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Hysteria节点';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
