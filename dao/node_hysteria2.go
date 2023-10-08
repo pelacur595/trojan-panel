@@ -12,7 +12,7 @@ import (
 func SelectNodeHysteria2ById(id *uint) (*model.NodeHysteria2, error) {
 	var nodeHysteria2 model.NodeHysteria2
 	where := map[string]interface{}{"id": *id}
-	selectFields := []string{"id", "obfs_password", "up_mbps", "down_mbps", "server_name", "insecure", "fast_open"}
+	selectFields := []string{"id", "obfs_password", "up_mbps", "down_mbps", "server_name", "insecure"}
 	buildSelect, values, err := builder.BuildSelect("node_hysteria2", where, selectFields)
 	if err != nil {
 		logrus.Errorln(err.Error())
