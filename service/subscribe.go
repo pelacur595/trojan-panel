@@ -219,6 +219,7 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				Type:           constant.ClashSHysteria,
 				Server:         *item.Domain,
 				Port:           *item.Port,
+				Password:       pass,
 				Up:             *nodeHysteria2.UpMbps,
 				Down:           *nodeHysteria2.DownMbps,
 				SkipCertVerify: *nodeHysteria2.Insecure == 1,
