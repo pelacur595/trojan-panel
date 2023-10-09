@@ -36,7 +36,7 @@ func SelectNodeHysteria2ById(id *uint) (*model.NodeHysteria2, error) {
 
 func CreateNodeHysteria2(nodeHysteria2 *model.NodeHysteria2) (uint, error) {
 	nodeHysteria2Create := map[string]interface{}{}
-	if nodeHysteria2.ObfsPassword != nil && *nodeHysteria2.ObfsPassword != "" {
+	if nodeHysteria2.ObfsPassword != nil {
 		nodeHysteria2Create["obfs_password"] = *nodeHysteria2.ObfsPassword
 	}
 	if nodeHysteria2.UpMbps != nil {
@@ -45,7 +45,7 @@ func CreateNodeHysteria2(nodeHysteria2 *model.NodeHysteria2) (uint, error) {
 	if nodeHysteria2.DownMbps != nil {
 		nodeHysteria2Create["down_mbps"] = *nodeHysteria2.DownMbps
 	}
-	if nodeHysteria2.ServerName != nil && *nodeHysteria2.ServerName != "" {
+	if nodeHysteria2.ServerName != nil {
 		nodeHysteria2Create["server_name"] = *nodeHysteria2.ServerName
 	}
 	if nodeHysteria2.Insecure != nil {
