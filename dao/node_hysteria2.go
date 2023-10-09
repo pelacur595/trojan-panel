@@ -77,7 +77,7 @@ func CreateNodeHysteria2(nodeHysteria2 *model.NodeHysteria2) (uint, error) {
 func UpdateNodeHysteria2ById(nodeHysteria2 *model.NodeHysteria2) error {
 	where := map[string]interface{}{"id": *nodeHysteria2.Id}
 	update := map[string]interface{}{}
-	if nodeHysteria2.ObfsPassword != nil && *nodeHysteria2.ObfsPassword != "" {
+	if nodeHysteria2.ObfsPassword != nil {
 		update["obfs_password"] = *nodeHysteria2.ObfsPassword
 	}
 	if nodeHysteria2.UpMbps != nil {
