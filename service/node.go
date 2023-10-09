@@ -813,18 +813,16 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 		if err != nil {
 			return "", 0, errors.New(constant.NodeURLError)
 		}
-		headBuilder.WriteString(fmt.Sprintf("hysteria2://%s@%s:%d/?",
+		headBuilder.WriteString(fmt.Sprintf("hysteria2://%s@%s:%d?insecure=%d",
 			password,
 			*node.Domain,
-			*node.Port))
+			*node.Port,
+			*nodeHysteria2.Insecure))
 		if nodeHysteria2.ObfsPassword != nil && *nodeHysteria2.ObfsPassword != "" {
 			headBuilder.WriteString(fmt.Sprintf("&obfs=salamander&obfs-password=%s", *nodeHysteria2.ObfsPassword))
 		}
 		if nodeHysteria2.ServerName != nil && *nodeHysteria2.ServerName != "" {
 			headBuilder.WriteString(fmt.Sprintf("&sni=%s", *nodeHysteria2.ServerName))
-		}
-		if nodeHysteria2.Insecure != nil {
-			headBuilder.WriteString(fmt.Sprintf("&insecure=%d", *nodeHysteria2.Insecure))
 		}
 	} else if *nodeType.Id == constant.NaiveProxy {
 		headBuilder.WriteString(fmt.Sprintf("naive+https://%s:%s@%s:%d", *username, password, *node.Domain, *node.Port))
