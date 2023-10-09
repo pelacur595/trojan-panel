@@ -216,7 +216,7 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 			}
 			hysteria2 := bo.Hysteria2{
 				Name:           *item.Name,
-				Type:           constant.ClashSHysteria,
+				Type:           constant.ClashSHysteria2,
 				Server:         *item.Domain,
 				Port:           *item.Port,
 				Password:       pass,
