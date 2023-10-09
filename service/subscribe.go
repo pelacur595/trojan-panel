@@ -221,8 +221,14 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				Port:           *item.Port,
 				Up:             *nodeHysteria2.UpMbps,
 				Down:           *nodeHysteria2.DownMbps,
-				Sni:            *nodeHysteria2.ServerName,
 				SkipCertVerify: *nodeHysteria2.Insecure == 1,
+			}
+			if nodeHysteria2.ObfsPassword != nil && *nodeHysteria2.ObfsPassword != "" {
+				hysteria2.Obfs = "salamander"
+				hysteria2.ObfsPassword = *nodeHysteria2.ObfsPassword
+			}
+			if nodeHysteria2.ServerName != nil && *nodeHysteria2.ServerName != "" {
+				hysteria2.Sni = *nodeHysteria2.ServerName
 			}
 			ClashConfigInterface = append(ClashConfigInterface, hysteria2)
 			proxies = append(proxies, *item.Name)
