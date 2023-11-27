@@ -297,6 +297,20 @@ func UpdateAccountById(c *gin.Context) {
 		vo.Fail(constant.ValidateFailed, c)
 		return
 	}
+
+	if accountUpdateDto.Deleted != nil && *accountUpdateDto.Deleted != 0 {
+		// sysadmin cannot not be disabled
+		account, err := service.SelectAccountById(accountUpdateDto.Id)
+		if err != nil {
+			vo.Fail(err.Error(), c)
+			return
+		}
+		if *account.RoleId == constant.SYSADMIN {
+			vo.Fail(constant.NoDisableSysadmin, c)
+			return
+		}
+	}
+
 	toByte := util.ToByte(*accountUpdateDto.Quota)
 	account := model.Account{
 		Id:         accountUpdateDto.Id,
