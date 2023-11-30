@@ -72,13 +72,13 @@ type Socks struct {
 	Type           string `yaml:"type"`
 	Server         string `yaml:"server"`
 	Port           uint   `yaml:"port"`
-	Username       string `yaml:"username"`
-	Password       string `yaml:"password"`
-	Tls            bool   `yaml:"tls"`
-	Fingerprint    string `yaml:"fingerprint"`
-	SkipCertVerify bool   `yaml:"skip-cert-verify"`
-	Udp            bool   `yaml:"udp"`
-	IpVersion      string `yaml:"ip-version"`
+	Username       string `yaml:"username,omitempty"`
+	Password       string `yaml:"password,omitempty"`
+	Tls            bool   `yaml:"tls,omitempty"`
+	Fingerprint    string `yaml:"fingerprint,omitempty"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify,omitempty"`
+	Udp            bool   `yaml:"udp,omitempty"`
+	IpVersion      string `yaml:"ip-version,omitempty"`
 }
 
 type TrojanGo struct {
