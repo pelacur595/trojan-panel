@@ -16,9 +16,9 @@ type Vless struct {
 	Flow              string      `yaml:"flow"`
 	ClientFingerprint string      `yaml:"client-fingerprint"`
 	ServerName        string      `yaml:"servername"`
-	SkipCertVerify    bool        `yaml:"skip-cert-verify"`
-	RealityOpts       RealityOpts `yaml:"reality-opts"`
-	WsOpts            WsOpts      `yaml:"ws-opts"`
+	SkipCertVerify    bool        `yaml:"skip-cert-verify,omitempty"`
+	RealityOpts       RealityOpts `yaml:"reality-opts,omitempty"`
+	WsOpts            WsOpts      `yaml:"ws-opts,omitempty"`
 }
 
 type RealityOpts struct {
@@ -34,13 +34,13 @@ type Vmess struct {
 	Uuid              string `yaml:"uuid"`
 	AlterId           uint   `yaml:"alterId"`
 	Cipher            string `yaml:"cipher"`
-	Udp               bool   `yaml:"udp"`
-	Tls               bool   `yaml:"tls"`
-	ClientFingerprint string `yaml:"client-fingerprint"`
-	SkipCertVerify    bool   `yaml:"skip-cert-verify"`
-	ServerName        string `yaml:"servername"`
-	Network           string `yaml:"network"`
-	WsOpts            WsOpts `yaml:"ws-opts"`
+	Udp               bool   `yaml:"udp,omitempty"`
+	Tls               bool   `yaml:"tls,omitempty"`
+	ClientFingerprint string `yaml:"client-fingerprint,omitempty"`
+	SkipCertVerify    bool   `yaml:"skip-cert-verify,omitempty"`
+	ServerName        string `yaml:"servername,omitempty"`
+	Network           string `yaml:"network,omitempty"`
+	WsOpts            WsOpts `yaml:"ws-opts,omitempty"`
 }
 
 type Trojan struct {
@@ -49,12 +49,12 @@ type Trojan struct {
 	Server            string   `yaml:"server"`
 	Port              uint     `yaml:"port"`
 	Password          string   `yaml:"password"`
-	ClientFingerprint string   `yaml:"client-fingerprint"`
-	Udp               bool     `yaml:"udp"`
-	Sni               string   `yaml:"sni"`
-	SkipCertVerify    bool     `yaml:"skip-cert-verify"`
-	Alpn              []string `yaml:"alpn"`
-	WsOpts            WsOpts   `yaml:"ws-opts"`
+	ClientFingerprint string   `yaml:"client-fingerprint,omitempty"`
+	Udp               bool     `yaml:"udp,omitempty"`
+	Sni               string   `yaml:"sni,omitempty"`
+	SkipCertVerify    bool     `yaml:"skip-cert-verify,omitempty"`
+	Alpn              []string `yaml:"alpn,omitempty"`
+	WsOpts            WsOpts   `yaml:"ws-opts,omitempty"`
 }
 
 type Shadowsocks struct {
@@ -90,7 +90,7 @@ type TrojanGo struct {
 	SNI      string `yaml:"sni"`
 	Udp      bool   `yaml:"udp"`
 	Network  string `yaml:"network"`
-	WsOpts   WsOpts `yaml:"ws-opts"`
+	WsOpts   WsOpts `yaml:"ws-opts,omitempty"`
 }
 
 type Hysteria struct {
@@ -98,14 +98,14 @@ type Hysteria struct {
 	Type           string `yaml:"type"`
 	Server         string `yaml:"server"`
 	Port           uint   `yaml:"port"`
-	AuthStr        string `yaml:"auth-str"`
-	Obfs           string `yaml:"obfs"`
+	AuthStr        string `yaml:"auth-str,omitempty"`
+	Obfs           string `yaml:"obfs,omitempty"`
 	Protocol       string `yaml:"protocol"`
 	Up             int    `yaml:"up"`
 	Down           int    `yaml:"down"`
-	Sni            string `yaml:"sni"`
-	SkipCertVerify bool   `yaml:"skip-cert-verify"`
-	FastOpen       bool   `yaml:"fast-open"`
+	Sni            string `yaml:"sni,omitempty"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify,omitempty"`
+	FastOpen       bool   `yaml:"fast-open,omitempty"`
 }
 
 type Hysteria2 struct {
@@ -113,13 +113,13 @@ type Hysteria2 struct {
 	Type           string `yaml:"type"`
 	Server         string `yaml:"server"`
 	Port           uint   `yaml:"port"`
-	Up             int    `yaml:"up"`
-	Down           int    `yaml:"down"`
+	Up             int    `yaml:"up,omitempty"`
+	Down           int    `yaml:"down,omitempty"`
 	Password       string `yaml:"password"`
-	Obfs           string `yaml:"obfs"`
-	ObfsPassword   string `yaml:"obfs-password"`
-	Sni            string `yaml:"sni"`
-	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+	Obfs           string `yaml:"obfs,omitempty"`
+	ObfsPassword   string `yaml:"obfs-password,omitempty"`
+	Sni            string `yaml:"sni,omitempty"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify,omitempty"`
 }
 
 type WsOpts struct {
