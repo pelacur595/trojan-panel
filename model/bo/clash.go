@@ -73,7 +73,7 @@ type Socks struct {
 	Server         string `yaml:"server"`
 	Port           uint   `yaml:"port"`
 	Username       string `yaml:"username"`
-	Password       string `yaml:"username"`
+	Password       string `yaml:"password"`
 	Tls            bool   `yaml:"tls"`
 	Fingerprint    string `yaml:"fingerprint"`
 	SkipCertVerify bool   `yaml:"skip-cert-verify"`
