@@ -166,6 +166,25 @@ func SubscribeClash(pass string) (*model.Account, string, []byte, vo.SystemVo, e
 				}
 				ClashConfigInterface = append(ClashConfigInterface, shadowsocks)
 				proxies = append(proxies, *item.Name)
+			case constant.ProtocolSocks:
+				socks := bo.Socks{
+					Name:     *item.Name,
+					Type:     constant.ClashSocks5,
+					Server:   *item.Domain,
+					Port:     *item.Port,
+					Username: settings.Accounts[0].User,
+					Password: settings.Accounts[0].Pass,
+					Udp:      settings.Udp,
+				}
+				if streamSettings.Security == "tls" {
+					socks.Tls = true
+					socks.Fingerprint = streamSettings.TlsSettings.Fingerprint
+					socks.SkipCertVerify = streamSettings.TlsSettings.AllowInsecure
+				} else if streamSettings.Security == "none" {
+					socks.SkipCertVerify = false
+				}
+				ClashConfigInterface = append(ClashConfigInterface, socks)
+				proxies = append(proxies, *item.Name)
 			}
 		} else if *item.NodeTypeId == constant.TrojanGo {
 			nodeTrojanGo, err := dao.SelectNodeTrojanGoById(item.NodeSubId)

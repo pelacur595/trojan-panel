@@ -41,7 +41,14 @@ type WsSettingsHost struct {
 }
 
 type Settings struct {
-	Encryption string `json:"encryption"`
+	Encryption string         `json:"encryption"`
+	Accounts   []SocksAccount `json:"accounts"`
+	Udp        bool           `json:"udp"`
+}
+
+type SocksAccount struct {
+	User string `json:"user"`
+	Pass string `json:"pass"`
 }
 
 type XrayConfigBo struct {

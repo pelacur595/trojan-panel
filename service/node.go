@@ -755,6 +755,15 @@ func NodeURL(accountId *uint, username *string, id *uint) (string, uint, error) 
 		} else if *nodeXray.Protocol == "shadowsocks" {
 			headBuilder.WriteString(fmt.Sprintf("ss://%s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s@%s:%d", *nodeXray.XraySSMethod,
 				connectPass, *node.Domain, *node.Port)))))
+		} else if *nodeXray.Protocol == "socks" {
+			settings := bo.Settings{}
+			if nodeXray.Settings != nil && *nodeXray.Settings != "" {
+				if err := json.Unmarshal([]byte(*nodeXray.Settings), &settings); err != nil {
+					return "", 0, errors.New(constant.NodeURLError)
+				}
+			}
+			headBuilder.WriteString(fmt.Sprintf("socks://%s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s@%s:%d", settings.Accounts[0].User,
+				settings.Accounts[0].Pass, *node.Domain, *node.Port)))))
 		}
 	} else if *nodeType.Id == constant.TrojanGo {
 		nodeTrojanGo, err := dao.SelectNodeTrojanGoById(node.NodeSubId)

@@ -67,6 +67,20 @@ type Shadowsocks struct {
 	Udp      bool   `yaml:"udp"`
 }
 
+type Socks struct {
+	Name           string `yaml:"name"`
+	Type           string `yaml:"type"`
+	Server         string `yaml:"server"`
+	Port           uint   `yaml:"port"`
+	Username       string `yaml:"username"`
+	Password       string `yaml:"username"`
+	Tls            bool   `yaml:"tls"`
+	Fingerprint    string `yaml:"fingerprint"`
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+	Udp            bool   `yaml:"udp"`
+	IpVersion      string `yaml:"ip-version"`
+}
+
 type TrojanGo struct {
 	Name     string `yaml:"name"`
 	Type     string `yaml:"type"`
