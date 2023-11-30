@@ -87,6 +87,7 @@ type XrayStreamSettingsEntity struct {
 type XraySettingEntity struct {
 	Fallbacks []XrayFallback `json:"fallbacks"`
 	Network   string         `json:"network"`
+	Udp       bool           `json:"udp"`
 }
 
 type XrayFallback struct {
