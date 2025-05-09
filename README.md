@@ -6,13 +6,11 @@ Trojan Panel Backend
 
 [compile.bat](./compile.bat)
 
-## Author
+## Other
 
-[jonssonyan](https://github.com/jonssonyan)
+Telegram Channel: https://t.me/jonssonyan_channel
 
-## Community
-
-Telegram Channel: [Trojan Panel](https://t.me/TrojanPanel)
+You can subscribe to my channel on YouTube: https://www.youtube.com/@jonssonyan
 
 ## Support
 
